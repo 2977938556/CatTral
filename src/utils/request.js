@@ -10,7 +10,9 @@ import router from '@/router'
 
 // 配置基准地址
 // 这里我把基准地址的配置设置在vite.config.js中
+export const baseURL = 'http://172.16.67.175:3000/api';
 const instance = axios.create({
+    baseURL,
     timeout: 5000
 })
 
@@ -18,13 +20,11 @@ const instance = axios.create({
 instance.interceptors.request.use(config => {
     // 拦截业务逻辑
     // 如果有token那么就获取
-
-    let user = store.user
-    if (user.profile.token) {
+    let { profile } = store.state.user
+    if (profile) {
         // 如果有token请求的话那么就会携带token进行请求添加在头部
         config.headers.Authorization = `Bearer ${profile.token}`
     }
-
     return config
 }, err => {
     return Promise.reject(err)

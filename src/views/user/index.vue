@@ -5,12 +5,7 @@
 </template>
 
 <script>
-import { useStore } from 'vuex'
 export default {
     name: "User",
-    setup() {
-        let store = useStore();
-
-    }
 }
 </script>

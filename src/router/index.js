@@ -1,25 +1,35 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
-// 首页
-import Home from '@/views/home/index.vue'
-import Search from '@/views/search/index.vue'
-import Message from '@/views/message/index.vue'
-import User from '@/views/user/index.vue'
+
+import Home from '@/views/home/index.vue'// 首页
+import Search from '@/views/search/index.vue'//搜索
+import Message from '@/views/message/index.vue'//消息
+import User from '@/views/user/index.vue'//个人中心
+import CatLogin from '@/views/login/index.vue'//登录
+import CatRegister from '@/views/register/index.vue'// 注册
+
+// 四个首页子模块
+import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'
+import CatMjsdPage from '@/views/home/subset/cat-mjsd-page.vue'
+import CatMjznPage from '@/views/home/subset/cat-mjzn-page.vue'
+import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'
 
 
 const routes = [
-  {
-    path: "/", component: Home,
-  },
-  {
-    path: "/search", component: Search,
-  },
-  {
-    path: "/message", component: Message,
-  },
-  {
-    path: "/user", component: User,
-  }
+  { path: "/", redirect: '/home', },
+  { path: "/home", component: Home, },// 首页,
+  { path: "/message", component: Message, },// 消息
+  { path: "/user", component: User, },// 我的
+  { path: "/search", component: Search, },// 搜索
+  { path: '/home/mjgs', component: CatMjgsPage },//猫迹故事
+  { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
+  { path: '/home/mjzn', component: CatMjznPage },// 猫迹指南
+  { path: '/home/mjhd', component: CatMjhdPage },// 猫迹活动
+
+  { path: '/login', component: CatLogin },
+  { path: '/register', component: CatRegister }
+
+
 ]
 
 // 创建路由实例

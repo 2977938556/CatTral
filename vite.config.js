@@ -7,21 +7,17 @@ import pxtoviewport from 'postcss-px-to-viewport';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  server: {
+    port: 8080,
+    host: true,
+  },
   // 配置@符号src
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
     }
   },
-  // 配置代理
-  proxy: {
-    // 将本地 /api/xxx 转发到 target 地址
-    '/api': {
-      target: 'http://127.0.0.1:8848',
-      changeOrigin: true,
-      rewrite: path => path.replace(/^\/api/, '')
-    }
-  },
+
   // 配置适配移动端
   css: {
     plugins: [
@@ -33,7 +29,15 @@ export default defineConfig({
         minPixelValue: 1,
         mediaQuery: false
       })
-    ]
+    ],
+    preprocessorOptions: {
+      less: {
+        additionalData: `
+              @import "@/assets/styeles/rule.less";
+              @import "@/assets/styeles/default.less";
+            `,
+      },
+    },
   },
 
 })
