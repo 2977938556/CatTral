@@ -7,6 +7,7 @@ import Message from '@/views/message/index.vue'//消息
 import User from '@/views/user/index.vue'//个人中心
 import CatLogin from '@/views/login/index.vue'//登录
 import CatRegister from '@/views/register/index.vue'// 注册
+import Release from '@/views/release/index.vue'// 发布
 
 // 四个首页子模块
 import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'
@@ -25,6 +26,8 @@ const routes = [
   { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
   { path: '/home/mjzn', component: CatMjznPage },// 猫迹指南
   { path: '/home/mjhd', component: CatMjhdPage },// 猫迹活动
+  { path: '/user/release', component: Release },// 发布帖子
+
 
   { path: '/login', component: CatLogin },
   { path: '/register', component: CatRegister }

@@ -14,6 +14,8 @@ import CatRecommendBar from './cat-recommend-bar.vue'
 import CatRecommendBarSkice from './cat-recommend-bar-skice.vue'
 // 底部加载效果
 import CatLoding from './cat-loding.vue'
+// 返回模块
+import CatReturn from './cat-return.vue'
 
 
 
@@ -29,6 +31,7 @@ export default {
         app.component(CatRecommendBar.name, CatRecommendBar)
         app.component(CatRecommendBarSkice.name, CatRecommendBarSkice)
         app.component(CatLoding.name, CatLoding)
+        app.component(CatReturn.name, CatReturn)
 
     }
 }
