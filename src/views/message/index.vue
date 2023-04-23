@@ -1,89 +1,207 @@
 <template>
-    <div class="waterfall">
-        <div v-for="(item, index) in items" :key="index" class="waterfall-item" :style="{ height: item.height + 'px' }">
-            {{ item.text }}
-        </div>
-    </div>
+    <div class="message">
+        <CartStatusBav :isstyle="false">
+            <template #center>
+                <p class="tltes">消息</p>
+            </template>
+        </CartStatusBav>
 
-    <div class="nbs">
-        和
+        <div class="message-conent">
+            <div class="message-item">
+                <a href="javascript:;">
+                    <div class="message-item-center">
+                        <!-- 头像 -->
+                        <div class="message-user-img">
+                            <div>
+                                <img src="../../assets/image/cat-message-tz.png" alt="领养通知">
+                            </div>
+                            <span>9</span>
+                        </div>
+                        <!-- 信息 -->
+                        <div class="message-xiaoxi">
+                            <div class="xiaoxi-center">
+                                <p class="title">申请通知</p>
+                                <p class="content">你好，我想知道这只猫是在哪里呢？我想养一只猫你好，我想知道这只猫是在哪里呢？我想养一只猫你好，我想知道这只猫是在哪里呢？我想养一只猫</p>
+                            </div>
+                        </div>
+                        <!-- 时间 -->
+                        <div class="message-time">
+                            <p>21:30</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="message-item" v-for="(item, index) in 20" :key="index">
+                <a href="javascript:;">
+                    <div class="message-item-center">
+                        <!-- 头像 -->
+                        <div class="message-user-img">
+                            <div>
+                                <img class="user"
+                                    src="https://img.iplaysoft.com/wp-content/uploads/2019/free-images/free_stock_photo.jpg!0x0.webp"
+                                    alt="领养通知">
+                            </div>
+                            <span>9</span>
+                        </div>
+                        <!-- 信息 -->
+                        <div class="message-xiaoxi">
+                            <div class="xiaoxi-center">
+                                <p class="title">申请通知</p>
+                                <p class="content">你好，我想知道这只猫是在哪里呢？我想养一只猫你好，我想知道这只猫是在哪里呢？我想养一只猫你好，我想知道这只猫是在哪里呢？我想养一只猫</p>
+                            </div>
+                        </div>
+                        <!-- 时间 -->
+                        <div class="message-time">
+                            <p>21:30</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+
+        <cat-loding></cat-loding>
+
     </div>
 </template>
-<script>
-import { ref, onMounted } from 'vue';
-export default {
-    name: 'Waterfall',
-    setup() {
-        const items = ref([
-            { text: '1', height: 100 },
-            { text: '2', height: 150 },
-            { text: '3', height: 200 },
-            { text: '4', height: 250 },
-            { text: '5', height: 300 },
-            { text: '6', height: 350 },
-            { text: '7', height: 400 },
-            { text: '8', height: 450 },
-            { text: '9', height: 500 },
-            { text: '10', height: 550 },
-            { text: '11', height: 600 },
-            { text: '12', height: 650 },
-            { text: '12', height: 650 },
-            { text: '12', height: 650 },
-            { text: '12', height: 650 },
-            { text: '12', height: 650 },
-            { text: '12', height: 650 },
-        ]);
-        onMounted(() => {
-            const waterfall = document.querySelector('.waterfall');
-            const items = document.querySelectorAll('.waterfall-item');
-            const itemWidth = items[0].offsetWidth;
-            const gap = 20;
-            const columnCount = 2;
-            const columnHeights = [0, 0];
-            for (let i = 0; i < items.length; i++) {
-                const item = items[i];
-                const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-                const x = (itemWidth + gap) * shortestColumnIndex;
-                const y = columnHeights[shortestColumnIndex];
-                item.style.transform = `translate(${x}px, ${y}px)`;
-                columnHeights[shortestColumnIndex] += item.offsetHeight + gap;
+
+
+<style lang="less" scoped>
+.message-conent {
+    width: 100%;
+    height: 100%;
+    // border: 1px solid red;
+
+    .message-item {
+        width: 375px;
+        height: 76px;
+        // border: 1px solid red;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid @background-color;
+
+        // 主体内容区域
+        .message-item-center {
+            width: 345px;
+            height: 64px;
+            // background: red;
+            display: flex;
+            justify-content: space-between;
+
+
+            // 头像区域
+            .message-user-img {
+                width: 68px;
+                height: 63px;
+                display: flex;
+                align-items: center;
+                position: relative;
+
+
+                div {
+                    width: 48px;
+                    height: 48px;
+                    background: @transition-color;
+                    border-radius: 100px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+
+
+                    img {
+                        object-fit: cover;
+                        width: 25px;
+                        height: 30px;
+                    }
+
+                    .user {
+                        object-fit: cover;
+                        width: 100%;
+                        height: 100%;
+                    }
+
+                }
+
+                span {
+                    display: block;
+                    background: @primary-color;
+                    width: auto;
+                    width: 20px;
+                    line-height: 20px;
+                    height: 20px;
+                    position: absolute;
+                    right: 13px;
+                    border-radius: 10px;
+                    top: 1px;
+                    font-size: @body-font-size;
+                    font-weight: 500;
+                    letter-spacing: 0px;
+                    color: @background-color;
+                    text-align: center;
+                }
+
+
             }
-            const maxHeight = Math.max(...columnHeights);
-            console.log(maxHeight);
-            waterfall.style.height = maxHeight + 'px';
-        });
-        return {
-            items,
-        };
-    },
-};
-</script>
-<style scoped>
-.waterfall {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    max-width: 345px;
-    margin: 0 auto;
-    background-color: rgb(255, 82, 82);
 
-}
+            // 消息区域
+            .message-xiaoxi {
+                width: 250px;
+                height: 63px;
+                // border: 1px solid red;
+                display: flex;
+                align-items: center;
+                justify-content: center;
 
-.waterfall-item {
-    position: absolute;
-    left: 0;
-    width: 162px;
-    background-color: #eee;
-    padding: 10px;
-    box-sizing: border-box;
-    height: 120px;
-    /* margin-top: 30px; */
-}
+                .title {
+                    font-size: 12px;
+                    font-weight: 500;
+                    letter-spacing: 0px;
+                    color: @heading-color;
+                }
 
-.nbs {
-    width: 345px;
-    height: 300px;
-    background-color: rgb(236, 153, 153);
+                .xiaoxi-center {
+                    // border: 1px solid red;
+                    width: 250px;
+                    height: 40px;
+
+                    .content {
+                        font-size: @body-font-size;
+                        font-weight: 500;
+                        letter-spacing: 0px;
+                        color: @secondary-text-color;
+                        vertical-align: top;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 1;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+
+
+            }
+
+            // 时间区域
+            .message-time {
+                width: 32px;
+                height: 63px;
+                // border: 1px solid red;
+
+                p {
+                    font-size: 8px;
+                    font-weight: 500;
+                    letter-spacing: 0px;
+                    color: @heading-color;
+                    text-align: right;
+                }
+
+            }
+
+
+        }
+    }
 }
 </style>

@@ -1,11 +1,10 @@
 <template>
-    <div class="message">
-        用户页面
+    <div class="user">
+        <div class="user-bg">
+            <!-- <i></i> -->
+        </div>
     </div>
 </template>
 
-<script>
-export default {
-    name: "User",
-}
+<script >
 </script>

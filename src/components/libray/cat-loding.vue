@@ -1,6 +1,7 @@
 <template>
     <div class="endof">
-        <p>~没有更多内容了哦~</p>
+        <p v-if="loding">~正在加载内容~</p>
+        <p v-else>~没有更多内容了哦~~</p>
     </div>
 </template>
 
@@ -8,6 +9,12 @@
 <script>
 export default {
     name: "CatLoding",
+    props: {
+        loding: {
+            type: Boolean,
+        }
+    }
+
 }
 
 

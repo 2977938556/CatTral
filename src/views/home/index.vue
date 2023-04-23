@@ -1,6 +1,6 @@
 <template>
     <!-- 状态栏组件 -->
-    <CartStatusBav>
+    <CartStatusBav :isstyle="true">
         <!-- 左边内容插槽 -->
         <template #left>
             <img class="addrs-img" src="../../assets/image/cat-position.png" alt="">
@@ -67,7 +67,7 @@
     </div>
 
     <!-- loding加载效果 -->
-    <CatLoding />
+    <CatLoding :loding="true" />
 </template>
 
 

@@ -1,7 +1,7 @@
 <template>
     <div class="guding"></div>
 
-    <div class="status-bar">
+    <div class="status-bar" :class="{ borders: isstyle == false, shadow: isstyle == true }">
         <div class="status-box">
             <div class="status-bar-left">
                 <a href="javascript:;">
@@ -27,17 +27,32 @@
 
 <script >
 export default {
-    name: "CartStatusBav"
+    name: "CartStatusBav",
+    props: {
+        isstyle: {
+            type: Boolean,
+            default: false
+        }
+    }
 }
 </script>
 
 
 <style lang="less" scoped>
+.shadow {
+    box-shadow: @default-showdow;
+}
+
+.borders {
+    border-bottom: 1px solid @background-color;
+}
+
 .guding {
     width: 375px;
-    height: 40px;
+    height: 44px;
     border: 1px solid red;
 }
+
 
 .status-bar {
     width: 100%;
@@ -46,10 +61,13 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: @default-showdow;
+
+
+
     position: fixed;
     z-index: 100;
     top: 0;
+    left: 0;
 
 
 
