@@ -1,7 +1,7 @@
 <template>
     <div class="fh" @click="goBack">
-        <!-- <img src="../../assets/image/cat-fanhui-icon.png" alt="返回"> -->
-        返回
+        <img class="fanhui" src="../../assets/image/cat-fanhui-active-icon.png" alt="返回">
+        <slot></slot>
     </div>
 </template>
 
@@ -10,6 +10,7 @@ import { useRouter } from 'vue-router'
 export default {
     name: "CatReturn",
     setup() {
+        // 这个是返回上一个页
         let router = useRouter()
         let goBack = () => {
             router.go(-1);
@@ -21,13 +22,15 @@ export default {
 
 
 <style lang="less" scoped>
-.fn {
-    border: 1px solid red;
+.fanhui {
+    width: 10px;
+    height: 19px;
+    // background: red;
 
     img {
+        width: 100%;
         object-fit: cover;
-        width: 9px;
-        height: 9px;
     }
+
 }
 </style>

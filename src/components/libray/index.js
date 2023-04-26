@@ -16,6 +16,12 @@ import CatRecommendBarSkice from './cat-recommend-bar-skice.vue'
 import CatLoding from './cat-loding.vue'
 // 返回模块
 import CatReturn from './cat-return.vue'
+// 提示组件
+import CatMessage from './cat-message.vue'
+// 提示组件的js使用
+import MessageJs from './CarMessage.js'
+// 地区组件
+import CatAddrs from './cat-addrs.vue'
 
 
 
@@ -32,6 +38,8 @@ export default {
         app.component(CatRecommendBarSkice.name, CatRecommendBarSkice)
         app.component(CatLoding.name, CatLoding)
         app.component(CatReturn.name, CatReturn)
-
+        app.component(CatMessage.name, CatMessage)
+        app.config.globalProperties.$MessageJs = MessageJs// 原型函数挂在提示组件
+        app.component(CatAddrs.name, CatAddrs)
     }
 }

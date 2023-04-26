@@ -98,6 +98,12 @@ export default {
             align-items: center;
             justify-content: center;
 
+            p {
+                font-size: @heading1-font-size;
+                font-weight: 700;
+                color: @heading-color;
+            }
+
             a {
                 font-size: @heading1-font-size;
                 font-weight: 700;

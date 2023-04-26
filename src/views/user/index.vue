@@ -182,6 +182,8 @@ export default {
     border: 1px solid rgba(255, 0, 0, 0);
     position: relative;
     // z-index: -100;
+    transition: all 0.5s ease;
+
 
     // 用户背景图片
     .user-bg {
@@ -315,6 +317,12 @@ export default {
                         line-height: 20px;
                         color: @heading-color;
                         text-align: center;
+                        transition: all 0.5s ease;
+
+                        &:hover {
+                            background: @primary-color;
+                            color: @white-color;
+                        }
                     }
                 }
 
