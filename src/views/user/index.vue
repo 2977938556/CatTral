@@ -82,7 +82,9 @@
                                     <img src="../../assets/image/cat-user-lsjl-icon.png" alt="">
                                 </div>
                                 <div class="item-title">
-                                    <p>历史记录</p>
+                                    <router-link to="/user/history">
+                                        <p>历史记录</p>
+                                    </router-link>
                                 </div>
                                 <div class="item-fanhui-icon">
                                     <a href="javascript:;">

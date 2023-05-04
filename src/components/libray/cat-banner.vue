@@ -22,14 +22,17 @@ import { ref, watch } from 'vue';
 export default {
     name: "CatBannner",
     props: {
+        // 轮播图数据
         items: {
             type: [Array],
             default: () => []
         },
+        // 自动切换的时间
         rollingtime: {
             type: [Number, String],
             default: 3000
         },
+        // 是否开启自动切换
         autoPlay: {
             type: Boolean,
             default: true,
@@ -118,14 +121,14 @@ export default {
     .banner-box {
         width: 345px;
         height: 160px;
-        // background: rgb(255, 102, 102);
+        background: rgb(255, 183, 183);
         border-radius: 20px;
 
         .item-banner {
             width: 345px;
             height: 160px;
             border-radius: 20px;
-            // background: rgb(0, 255, 242);
+            background: rgb(0, 255, 242);
             position: absolute;
             transition: all 0.5s;
             opacity: 0;

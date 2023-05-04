@@ -7,7 +7,8 @@ import Message from '@/views/message/index.vue'//消息
 import User from '@/views/user/index.vue'//个人中心
 import CatLogin from '@/views/login/index.vue'//登录
 import CatRegister from '@/views/register/index.vue'// 注册
-import Release from '@/views/release/index.vue'// 发布
+import Release from '@/views/release/index.vue'// 发布页面
+
 
 // 四个首页子模块
 import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'
@@ -16,19 +17,38 @@ import CatMjznPage from '@/views/home/subset/cat-mjzn-page.vue'
 import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'
 
 
+// 个人中心的功能模块
+import History from '@/views/user/subset/cat-history-page.vue'
+import CatDetail from '@/views/cat-details/index.vue'
+
 const routes = [
+  // 首页模块功能路由
   { path: "/", redirect: '/home', },
   { path: "/home", component: Home, },// 首页,
-  { path: "/message", component: Message, },// 消息
-  { path: "/user", component: User, },// 我的
-  { path: "/search", component: Search, },// 搜索
   { path: '/home/mjgs', component: CatMjgsPage },//猫迹故事
   { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
   { path: '/home/mjzn', component: CatMjznPage },// 猫迹指南
   { path: '/home/mjhd', component: CatMjhdPage },// 猫迹活动
   { path: '/user/release', component: Release },// 发布帖子
 
+  // 消息模块
+  { path: "/message", component: Message, },
 
+  // 搜索模块
+  { path: "/search", component: Search, },
+
+  // 详情模块
+  { path: '/catdetail/:id', component: CatDetail },
+
+
+
+  // 我的模块功能
+  { path: "/user", component: User },
+  { path: '/user/history', component: History },// 历史记录
+
+
+
+  // 登录与注册
   { path: '/login', component: CatLogin },
   { path: '/register', component: CatRegister }
 
