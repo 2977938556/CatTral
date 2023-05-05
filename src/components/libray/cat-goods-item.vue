@@ -2,19 +2,21 @@
     <div class="waterfall">
         <!-- 单个item内容 -->
         <div :class="{ 'recommende-count-item': true }" v-for="(item, index) in goodsitem" :key="item.id">
-            <div class="item-img">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRerelBBiyL8B9YtcIrH90tjszGIqzUy9569Q&usqp=CAU"
-                    alt="">
-            </div>
-            <div class="item-text">
-                <div class="item-text-top">
-                    <p>{{ index }}有需要领奖猫猫的吗，个人因为工作的原因，不方便养猫了。。便养猫了。。便养猫了。。</p>
+            <router-link :to="`/catdetail/${index}`">
+                <div class="item-img">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRerelBBiyL8B9YtcIrH90tjszGIqzUy9569Q&usqp=CAU"
+                        alt="">
                 </div>
-                <div class="item-text-booton">
-                    <span>赣州</span>
-                    <span>2023.4.{{ index }}</span>
+                <div class="item-text">
+                    <div class="item-text-top">
+                        <p>{{ index }}有需要领奖猫猫的吗，个人因为工作的原因，不方便养猫了。。便养猫了。。便养猫了。。</p>
+                    </div>
+                    <div class="item-text-booton">
+                        <span>赣州</span>
+                        <span>2023.4.{{ index }}</span>
+                    </div>
                 </div>
-            </div>
+            </router-link>
         </div>
     </div>
 </template>

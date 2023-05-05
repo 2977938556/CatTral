@@ -22,6 +22,10 @@ import CatMessage from './cat-message.vue'
 import MessageJs from './CarMessage.js'
 // 地区组件
 import CatAddrs from './cat-addrs.vue'
+// 推荐标题组件
+import RecenGood from './cat-remind-tj.vue'
+// 评论详情
+import CatComment from './cat-comment.vue'
 
 
 
@@ -41,5 +45,7 @@ export default {
         app.component(CatMessage.name, CatMessage)
         app.config.globalProperties.$MessageJs = MessageJs// 原型函数挂在提示组件
         app.component(CatAddrs.name, CatAddrs)
+        app.component(RecenGood.name, RecenGood)
+        app.component(CatComment.name, CatComment)
     }
 }

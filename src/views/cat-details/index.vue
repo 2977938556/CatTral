@@ -1,5 +1,6 @@
 <template>
     <div class="Cat-details">
+        <!-- 头部标题栏 -->
         <CartStatusBav :isstyle="true">
             <template #left>
                 <CatReturn></CatReturn>
@@ -55,7 +56,7 @@
                 <!-- 简介模块 -->
                 <div class="dateil-jj" v-if="true">
                     <div class="detail-jj-center">
-                        <p>
+                        <p class=".cancel-ellipsis">
                             如果你正在寻找一只可爱的金渐层猫猫作为你的宠物，那么你来对地了我有一只金渐层猫猫需要领养，因为我的工作原因无法照顾它。如果你对猫咪有经验，愿意给它提供一个温暖的家，那么请私信联系我。如果你正在寻找一只可爱的金渐层猫猫作为你的宠物，那么你来对地方了。我有一只金渐层猫猫需要领养，因为我的工作原因无法照顾它。如果你对猫咪有经验，愿意给它提供一个温暖的家，那么请私信联系我。如果你正在寻找一只可爱的金渐层猫猫作为你的宠物，那么你来对地方了。我有一只金渐层猫猫需要领养，因为我的工作原因无法照顾它。如果你对猫咪有经验，愿意给它提供一个温暖的家，那么请私信联系我。如果你正在寻找一只可爱的金渐层猫猫作为你的宠物，那么你来对地方了。我有一只金渐层猫猫需要领养，因为我的工作原因无法照顾它。如果你对猫咪有经验，愿意给它提供一个温暖的家，那么请私信联系我。
                         </p>
                     </div>
@@ -73,7 +74,6 @@
                     </ul>
                 </div>
 
-
                 <!-- 时间与地区 -->
                 <div class="detail-city-time">
                     <div class="detail-city-time-center">
@@ -86,11 +86,10 @@
                     </div>
                 </div>
 
-
                 <!-- 评论模块 -->
                 <div class="detail-pinglun">
                     <div class="detail-pinglun-center">
-                        <a href="javascript:;">
+                        <a href="javascript:;" @click="showComment == false ? showComment = true : showComment = false">
                             <span class="pl-count">99</span>
                             <div class="pinglun-left">
                                 <div class="pinglun-title">
@@ -108,20 +107,38 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 推荐内容区域 -->
+            <!-- 内容区域 -->
+            <div class="recommendeCount">
+                <RecenGood></RecenGood>
+                <!-- 循环渲染 内容组件 -->
+                <div class="recommende-count">
+                    <CarGoodsItem :goodsitem="4"></CarGoodsItem>
+                </div>
+            </div>
+
+            <!-- loding加载效果 -->
+            <CatLoding :loding="false" />
         </div>
 
 
 
+        <!-- 评论组件 -->
+        <CatComment v-show="showComment" @change="showComment = false" :showComment="showComment"></CatComment>
 
     </div>
 </template>
 
 
 <script>
+import { ref } from 'vue'
 export default {
     name: "CatDetail",
     setup() {
+        let showComment = ref(false)
 
+        return { showComment }
     }
 }
 
@@ -308,7 +325,7 @@ export default {
                 justify-content: center;
 
                 .cancel-ellipsis {
-                    display: block !important;
+                    display: block;
                     overflow: visible;
                     text-overflow: unset;
                     -webkit-line-clamp: initial;
@@ -342,21 +359,20 @@ export default {
                 flex-direction: column;
                 align-items: center;
                 flex-wrap: wrap;
-                padding: 10px;
 
                 ul {
                     width: 325px;
                     height: auto;
                     display: flex;
                     flex-wrap: wrap;
+                    padding: 9px;
 
                     li {
                         padding: 10px;
-                        display: block;
                         height: 14px;
                         border-radius: 217px;
                         background: @primary-color;
-                        // margin-left: 4px;
+                        margin-left: 4px;
                         margin-top: 2px;
                         line-height: 0px;
 
@@ -386,9 +402,7 @@ export default {
                 .detail-city-time-center {
                     width: 325px;
                     height: 38px;
-
                     display: flex;
-
 
                     .city-left {
                         flex: 1;

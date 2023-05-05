@@ -1,5 +1,5 @@
 <template>
-    <div class="endof">
+    <div class="endof" :class="{ smia: smail == true }">
         <p v-if="loding">~正在加载内容~</p>
         <p v-else>~没有更多内容了哦~~</p>
     </div>
@@ -12,6 +12,10 @@ export default {
     props: {
         loding: {
             type: Boolean,
+        },
+        smail: {
+            type: Boolean,
+            default: false
         }
     }
 
@@ -24,6 +28,10 @@ export default {
 
 <style lang="less" scoped>
 // 提示语
+.smia{
+    width: 345px !important;
+    padding-bottom: 0px;
+}
 .endof {
     width: 375px;
     min-height: 136px;

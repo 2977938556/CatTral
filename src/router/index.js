@@ -19,7 +19,10 @@ import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'
 
 // 个人中心的功能模块
 import History from '@/views/user/subset/cat-history-page.vue'
+
+// 流浪猫详情组件
 import CatDetail from '@/views/cat-details/index.vue'
+import CommentDetail from '@/views/cat-details/subset/cat-commentDeatil-page.vue'
 
 const routes = [
   // 首页模块功能路由
@@ -38,7 +41,8 @@ const routes = [
   { path: "/search", component: Search, },
 
   // 详情模块
-  { path: '/catdetail/:id', component: CatDetail },
+  { path: '/catdetail/:id', component: CatDetail },//流浪猫详情组件
+  { path: '/comment/detail/:id', component: CommentDetail },//流浪猫评论详情组件
 
 
 
