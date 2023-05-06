@@ -10,7 +10,7 @@
                 <p>启示详情</p>
             </template>
             <template #right>
-                <span class="btn">申请领养</span>
+                <span class="btn" @click="$router.push('/comment/applyfor')">申请领养</span>
             </template>
         </CartStatusBav>
 
