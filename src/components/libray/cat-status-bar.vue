@@ -4,7 +4,7 @@
     <div class="status-bar" :class="{ borders: isstyle == false, shadow: isstyle == true }">
         <div class="status-box">
             <div class="status-bar-left">
-                <a href="javascript:;">
+                <a href="javascript:;" >
                     <slot name="left"></slot>
                 </a>
             </div>
@@ -28,11 +28,15 @@
 <script >
 export default {
     name: "CartStatusBav",
+    emits:["change"],
     props: {
         isstyle: {
             type: Boolean,
             default: false
         }
+    },
+    setup(props, { emit }) {
+
     }
 }
 </script>
@@ -44,13 +48,13 @@ export default {
 }
 
 .borders {
-    border-bottom: 1px solid @background-color;
+    // border-bottom: 1px solid @background-color;
 }
 
 .guding {
     width: 375px;
     height: 44px;
-    border: 1px solid red;
+    // border: 1px solid red;
 }
 
 
@@ -65,7 +69,7 @@ export default {
 
 
     position: fixed;
-    z-index: 900;
+    z-index: 1000;
     top: 0;
     left: 0;
 

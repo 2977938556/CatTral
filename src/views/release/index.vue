@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="release-c">
-                    <CatAddrs @change="GetAddres" />
+                    <CatAddrs @changes="GetAddres" />
                 </div>
 
 

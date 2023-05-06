@@ -11,7 +11,7 @@
                 历史记录
             </template>
             <template #right>
-                <p class="remover-p">清空全部</p>
+                <p class="remover-p" @click="cesjo">清空全部</p>
             </template>
         </CartStatusBav>
 
@@ -43,8 +43,8 @@
             <!-- 显示组件 -->
             <CatLoding></CatLoding>
 
-            
-            
+
+
         </div>
 
 
@@ -57,7 +57,10 @@
 export default {
     name: 'History',
     setup() {
-        console.log("11");
+        let cesjo = () => {
+            console.log("11");
+        }
+        return {cesjo}
     },
 
 }
@@ -72,9 +75,10 @@ export default {
         color: @primary-color;
         font-size: 12px;
         font-weight: 500;
-        &:hover{
+
+        &:hover {
             font-weight: 900;
-            color:@transition-color;
+            color: @transition-color;
         }
     }
 
@@ -95,6 +99,7 @@ export default {
             ul {
                 display: flex;
                 flex-direction: column;
+
                 li {
                     width: 345px;
                     height: 74px;
@@ -161,7 +166,7 @@ export default {
                                     font-size: @body-font-size;
                                     font-weight: 500;
                                     letter-spacing: 0px;
-                                    line-height:20px;
+                                    line-height: 20px;
                                     text-align: right;
                                     color: @comment-color;
                                 }
@@ -170,7 +175,8 @@ export default {
                         }
                     }
                 }
-                li:nth-child(1){
+
+                li:nth-child(1) {
                     margin-top: 0px;
                 }
             }
@@ -178,5 +184,4 @@ export default {
     }
 
 
-}
-</style>
+}</style>

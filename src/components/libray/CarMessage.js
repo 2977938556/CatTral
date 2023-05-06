@@ -24,5 +24,5 @@ export default ({ type, text }) => {
     clearTimeout(time)
     time = setTimeout(() => {
         render(null, div)
-    }, 30000)
+    }, 3000)
 }

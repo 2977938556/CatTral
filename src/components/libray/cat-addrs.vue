@@ -29,7 +29,21 @@ import axios from 'axios'
 import { computed, ref, reactive, watch, toRaw } from 'vue';
 export default {
     name: "CatAddrs",
-    props: {},
+    emits:["changes"],
+    props: {
+        provinceCode: {
+            type: [Number, String],
+            default: 110000,
+        },// 省code
+        cityCode: {
+            type: [Number, String],
+            default: 110100,
+        },// 市code
+        countyCode: {
+            type: [Number, String],
+            default: 110101,
+        },// 县市区code
+    },
     setup(props, { emit }) {
         let cityList = ref([])
 
@@ -42,6 +56,7 @@ export default {
         let province = ref('');
         let city = ref('');
         let county = ref('');
+
 
 
 
@@ -101,7 +116,7 @@ export default {
             changeResult.cityCode = city.value;
 
             // 由于封装的问题所如果用户重新选了那么就需要设置为false帮助父级进行判断
-            emit("change", { isFlage: false, changeResult: toRaw(changeResult) })
+            emit("changes", { isFlage: false, changeResult: toRaw(changeResult) })
         })
 
 
@@ -122,7 +137,7 @@ export default {
             changeResult.provinceCode = province.value;
             changeResult.cityCode = city.value;
 
-            emit("change", { isFlage: false, changeResult: toRaw(changeResult) })
+            emit("changes", { isFlage: false, changeResult: toRaw(changeResult) })
         })
 
 
@@ -143,7 +158,8 @@ export default {
                 // 这里是拼接数据
                 changeResult.fullLocation = `${changeResult.provinceName}|${changeResult.cityName}|${changeResult.countyName}`
                 // 这里是发送正确的数据给服务器
-                emit("change", { isFlage: true, changeResult: toRaw(changeResult) })
+                // console.log("这里是发送正确的数据给服务器");
+                emit("changes", { isFlage: true, changeResult: toRaw(changeResult) })
             }
         })
 
@@ -204,20 +220,20 @@ let GetCityJson = () => {
 
 
     div {
-        width: 90%;
-        // display: flex;
-        // flex-direction: column;
-        // justify-content: space-around;
-        //  
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+         
 
         // height: 77px;
         select {
-            width: auto;
+            width: 100px;
             padding: 4px;
             border-radius: 10px;
             border: none;
             background: @background-color;
             margin: 2px;
+            font-size: 14px;
 
             option {
                 border-radius: 10px;

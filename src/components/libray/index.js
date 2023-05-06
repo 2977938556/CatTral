@@ -26,6 +26,8 @@ import CatAddrs from './cat-addrs.vue'
 import RecenGood from './cat-remind-tj.vue'
 // 评论详情
 import CatComment from './cat-comment.vue'
+// 弹窗选择地区组件
+import CatOpenCity from './cat-open-city.vue'
 
 
 
@@ -47,5 +49,6 @@ export default {
         app.component(CatAddrs.name, CatAddrs)
         app.component(RecenGood.name, RecenGood)
         app.component(CatComment.name, CatComment)
+        app.component(CatOpenCity.name, CatOpenCity)
     }
 }

@@ -1,19 +1,16 @@
 <template>
     <!-- 状态栏组件 -->
     <CartStatusBav :isstyle="true">
-        <!-- 左边内容插槽 -->
         <template #left>
-            <img class="addrs-img" src="../../assets/image/cat-position.png" alt="">
-            <span class='cat-postion'>
-                地区
-            </span>
+            <p @click="showfalge = true">
+                <img id="city" class="addrs-img" src="../../assets/image/cat-position.png" alt="">
+                <span>地区</span>
+            </p>
         </template>
-        <!-- 中间内容插槽 -->
         <template #center>
             <img class="logio-img" src="../../assets/image/cat-logo.png" alt="">
         </template>
     </CartStatusBav>
-
 
 
     <!-- 轮播图组件 -->
@@ -68,13 +65,32 @@
 
     <!-- loding加载效果 -->
     <CatLoding :loding="true" />
+
+
+    <!-- 选择地区组件 -->
+    <CatOpenCity v-model:show="showfalge" @cancel="cancels" @confirm="confirms">
+        <template #title>
+            选择地区
+        </template>
+        <template #content>
+            <span class='cat-postion'>
+                <CatAddrs @changes="GetcityAddrs" />
+            </span>
+        </template>
+    </CatOpenCity>
+
+
+
+    
 </template>
 
 
 <script>
 
-import { GetHomePageBanner, GetHomePageTuiJian } from '@/api/home.js'
-import { ref, onMounted } from 'vue';
+import { GetHomePageBanner } from '@/api/home.js'
+import MessageJs from '@/components/libray/CarMessage.js'
+
+import { ref } from 'vue';
 
 export default {
     setup() {
@@ -85,14 +101,47 @@ export default {
         })
 
 
-        let goodsitem = ref(10)
-
-        setInterval(() => {
-            goodsitem.value++
-        }, 1000)
+        // 卡片数据集合
+        let goodsitem = ref(10);
 
 
-        return { items, goodsitem }
+        // 控制选择地区组件的显示隐藏
+        let showfalge = ref(false);
+
+
+
+        // 保存地区的数据
+        let cityAddrs = ref({})
+        let GetcityAddrs = (value) => {
+            cityAddrs.value = value
+        }
+
+
+
+        // 定义是否需要修改地区数据
+        let CityVilive = ref(false);
+
+        let cancels = () => {
+            CityVilive.value = false
+            cityAddrs.value = {}
+            console.log("取消数据");
+        }
+
+
+        // 确定修改地区
+        let confirms = () => {
+            if (cityAddrs.value.isFlage && cityAddrs.value.isFlage == true) {
+                //在这里 修改 vuex
+                console.log(cityAddrs.value);
+            } else {
+                CityVilive.value = true
+                MessageJs({ typeo: 'error', text: "请选择完整地址" })
+            }
+        }
+
+
+
+        return { items, goodsitem, showfalge, GetcityAddrs, cityAddrs, cancels, confirms }
     }
 
 };
@@ -113,7 +162,6 @@ export default {
 
 //  banenr 轮播图
 .banner {
-    // border: 1px solid red;
     height: 194px;
     display: flex;
     align-items: center;

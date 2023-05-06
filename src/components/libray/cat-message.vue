@@ -1,7 +1,7 @@
 <template>
     <Transition name="ShowHidden">
-        <div class="message" v-show="flage">
-            <div :class="type">
+        <div class="message" v-show="flage" >
+            <div :class="type" style="border-radius: 100px;overflow: hidden;">
                 <p>{{ text }}</p>
             </div>
         </div>
@@ -25,8 +25,7 @@ export default {
 
     },
     setup() {
-        let flage = ref(true)
-
+        let flage = ref(false)
 
         onMounted(() => {
             flage.value = true
@@ -86,7 +85,6 @@ export default {
     text-align: center;
     font-size: @heading2-font-size;
     font-weight: 700;
-
     position: absolute;
     top: 10%;
     left: 40%;
@@ -106,6 +104,7 @@ export default {
 
 // 错误
 .warn {
+
     background: @auxiliary-color1;
 
 
@@ -119,7 +118,7 @@ export default {
 
 // 成功
 .success {
-    background: @auxiliary-color5;
+    background: @transition-color;
 
 }
 </style>

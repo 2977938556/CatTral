@@ -20,7 +20,7 @@
                 </div>
                 <div class="applyfor-btn">
                     <div class="btn">
-                        <button>提交</button>
+                        <button @click="sub">提交</button>
                     </div>
                     <div class="zysx">
                         <p>
@@ -42,9 +42,16 @@
     </div>
 </template>
 <script>
+import  MessageJs  from '@/components/libray/CarMessage.js'
 export default {
     name: "CatAppluyFor",
     setup() {
+        let sub = () => {
+            MessageJs({type:"success",text:"提交成功"})
+        }
+        return {sub}
+
+
 
     }
 }
@@ -93,6 +100,7 @@ export default {
                 align-items: flex-start;
                 padding: 10px 10px 10px 10px;
                 background: @background-color;
+                border: none;
 
 
 
