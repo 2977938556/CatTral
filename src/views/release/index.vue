@@ -82,7 +82,7 @@ import { baseURL } from '@/utils/request.js'
 import axios from 'axios'
 import { ref, reactive, computed, watch } from 'vue'
 import MessageJs from '@/components/libray/CarMessage.js'
-import { GetCityJson } from '@/api/register.js'
+// import { GetCityJson } from '@/api/register.js'
 
 export default {
     name: "release",

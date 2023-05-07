@@ -5,76 +5,79 @@
                 <img src="../../assets/image/cat-logo.png" alt="">
             </div>
             <div class="login-content-input">
-                <div class="input-center">
-                    <!-- 用户名称 -->
-                    <div class="box input-cente-box-user">
-                        <div class="user-top">
-                            <img src="../../assets/image/cat-login-user-icon.png" alt="用户名称">
-                            <input type="text" placeholder="请输入用户名称">
+                <form>
+                    <div class=" input-center">
+                        <!-- 用户名称 -->
+                        <div class="box input-cente-box-user">
+                            <div class="user-top">
+                                <img src="../../assets/image/cat-login-user-icon.png" alt="用户名称">
+                                <input v-model="FromData.username" name="username" type="text" placeholder="请输入用户名称" />
+                            </div>
+                            <div class="err-user">
+                                <p v-if="FromErroe.username">{{ FromErroe.username }}</p>
+                            </div>
                         </div>
-                        <div class="err-user">
-                            <p v-show="false">错误</p>
+                        <!-- 密码 -->
+                        <div class="box input-cente-box-password">
+                            <div class="password-top">
+                                <img src="../../assets/image/cat-login-password-icon.png" alt="用户名称">
+                                <input v-model="FromData.password" name="password" type="password" placeholder="请设置密码" />
+                            </div>
+                            <div class="err-user">
+                                <p v-if="FromErroe.password">{{ FromErroe.password }}</p>
+                            </div>
+                        </div>
+                        <!-- 用户密码 -->
+                        <div class="box input-cente-box-password-tow">
+                            <div class="passwordtow-top">
+                                <input v-model="FromData.passwordtow" name="passwordtow" type="password"
+                                    placeholder="请设置密码" />
+                            </div>
+                            <div class="err-user">
+                                <p v-if="FromErroe.passwordtow">{{ FromErroe.passwordtow }}</p>
+                            </div>
+                        </div>
+                        <!-- 用户手机号 -->
+                        <div class="box input-cente-box-phone">
+                            <div class="phone-top">
+                                <img src="../../assets/image/cat-login-phone-icon.png" alt="用户名称">
+                                <input v-model="FromData.mobile" name="mobile" type="text" placeholder="请输入手机号" />
+                            </div>
+                            <div class="err-user">
+                                <p v-if="FromErroe.mobile">{{ FromErroe.mobile }}</p>
+                            </div>
+                        </div>
+                        <!-- 验证码 -->
+                        <div class="box input-cente-box-code">
+                            <div class="code-top">
+                                <input v-model="FromData.code" name="code" type="text" placeholder="验证码" />
+                                <span :class="{ disabled: codeTime != 10 }" @click="getCode">{{ codeTitle }}</span>
+                                <div class="abn"></div>
+                            </div>
+                            <div class="err-user">
+                                <p v-if="FromErroe.code">{{ FromErroe.code }}</p>
+                            </div>
                         </div>
                     </div>
-                    <!-- 密码 -->
-                    <div class="box input-cente-box-password">
-                        <div class="password-top">
-                            <img src="../../assets/image/cat-login-password-icon.png" alt="用户名称">
-                            <input type="password" placeholder="请设置密码">
-                        </div>
-                        <div class="err-user">
-                            <p v-show="false">错误</p>
-                        </div>
-                    </div>
-                    <!-- 用户密码 -->
-                    <div class="box input-cente-box-password-tow">
-                        <div class="passwordtow-top">
-                            <input type="password" placeholder="请设置密码">
-                        </div>
-                        <div class="err-user">
-                            <p v-show="false">错误</p>
-                        </div>
-                    </div>
-                    <!-- 用户手机号 -->
-                    <div class="box input-cente-box-phone">
-                        <div class="phone-top">
-                            <img src="../../assets/image/cat-login-phone-icon.png" alt="用户名称">
-                            <input type="text" placeholder="请输入手机号">
-                        </div>
-                        <div class="err-user">
-                            <p v-show="false">错误</p>
-                        </div>
-                    </div>
-                    <!-- 验证码 -->
-                    <div class="box input-cente-box-code">
-                        <div class="code-top">
-                            <input type="text" placeholder="验证码">
-                            <span>发送验证码</span>
-                            <div class="abn"></div>
-                        </div>
-                        <div class="err-user">
-                            <p v-show="false">错误</p>
-                        </div>
-                    </div>
-
-
-
-
-                </div>
+                </form>
             </div>
             <div class="login-content-submit">
                 <div class="submit-box-a">
-                    <p v-show="false">错误提示</p>
+                    <!-- <p v-show="false">错误提示</p> -->
                 </div>
                 <div class="submit-box-b">
                     <div class="login-content-submit-top">
-                        <span>注册用户</span>
+                        <span @click="submitRegister">注册用户</span>
                     </div>
                     <div class="login-content-submit-button">
                         <router-link to="/login">已经账户登录</router-link>
                         <span>
-                            <input type="checkbox" />
+                            <span v-if="FromErroe.select" style="color:red">{{ FromErroe.select }}</span>
+
+                            <input type="checkbox" v-model="FromData.select" />
                             条款协议
+
+
                         </span>
                     </div>
                 </div>
@@ -86,10 +89,242 @@
 </template>
 
 <script>
+import { reactive, watch, ref } from 'vue'
+import { GetUserRegister, GetUserRegisterCode } from '@/api/register.js'
 export default {
     name: "CatRegister",
     setup() {
 
+        // 收集数据
+        let FromData = reactive({
+            username: "",
+            password: "",
+            passwordtow: "",
+            mobile: "",
+            code: "",
+            select: false,
+        })
+        // 校验规则表单对象
+
+        let FromErroe = reactive({
+            username: "",
+            password: "",
+            passwordtow: "",
+            mobile: "",
+            code: "",
+            select: "",
+        })
+
+
+
+
+
+        // 提示文本
+        let codeTitle = ref("发送验证码")
+        // 倒计时
+        let codeTime = ref(10)
+        // 保存验证码的
+        let code = ref("")
+
+
+        // 这个函数用户发送验证码和倒计时的
+        let getCode = async () => {
+            // 这里判断手机号是否正确
+            if (FromData.mobile.length == 11) {
+                if (codeTitle.value == "发送验证码") {
+                    let { result } = await GetUserRegisterCode(FormData.mobile)
+                    //  将code 设置在input上
+                    FromData.code = result.code
+                    code.value = result.code
+
+                    // 修改提示文本
+                    codeTitle.value = `重新发送${codeTime.value}`
+
+                    // 定时器 倒计时
+                    let time = setInterval(() => {
+                        codeTitle.value = `重新发送${codeTime.value--}`
+                        codeTime.value--
+                        if (codeTime.value <= 0) {
+                            codeTime.value = 10
+                            codeTitle.value = "发送验证码"
+                            clearInterval(time)
+                            return false
+                        }
+                    }, 1000)
+                }
+            } else {
+                // 判断手机号
+                // 判断二次密码
+                if (FromData.mobile.length != 11) {
+                    FromErroe.mobile = "手机号格式有误请重新输入"
+                } else {
+                    FromErroe.mobile = ""
+                }
+            }
+        }
+
+
+
+
+        // 判断是否含有特殊字符
+        function containsSymbols(str, symbols) {
+            const regex = new RegExp('[' + symbols + ']', 'g');
+            return regex.test(str);
+        }
+        let fuhao = '~!@#$%^&**()+|}{_}'
+
+        // 判断是合法的手机号
+        function isMobilePhone(str) {
+            const regex = /^1[3456789]\d{9}$/;
+            return regex.test(str);
+        }
+
+
+
+
+
+        // 这里是监听是否修改了那么就修改状态
+        watch(() => JSON.parse(JSON.stringify(FromData)), (newvl, olval) => {
+            console.log("变化了");
+            // 判断用户名称
+            if (newvl.username != olval.username) {
+                if (newvl.username.length < 1 || newvl.username.length > 8 || containsSymbols(FromData.username, fuhao)) {
+                    FromErroe.username = "用户名称长度1-8不允许出现特殊符"
+                } else {
+                    FromErroe.username = ""
+                }
+            }
+
+
+            if (newvl.password != olval.password) {
+                // 判断用户密码
+                if (newvl.password.length < 6 || newvl.username.length > 16) {
+                    FromErroe.password = "用户名称长度6-16之间"
+                } else {
+                    FromErroe.password = ""
+                }
+            }
+
+
+            if (newvl.passwordtow != olval.passwordtow) {
+                // 判断二次密码
+                if (newvl.passwordtow != newvl.password || newvl.passwordtow.length == 0) {
+                    FromErroe.passwordtow = "两个密码不相等，请重新输入"
+                } else {
+                    FromErroe.passwordtow = ""
+                }
+            }
+
+
+            if (newvl.mobile != olval.mobile) {
+                // 判断手机号
+                // 判断二次密码
+                if (newvl.mobile.length == 0) {
+                    FromErroe.mobile = "手机号格式有误请重新输入"
+                } else {
+                    FromErroe.mobile = ""
+                }
+            }
+
+
+            if (newvl.code != olval.code) {
+                // 判断验证码
+                if (newvl.code == "" || newvl.code != code.value) {
+                    FromErroe.code = "验证码错误"
+                } else {
+                    FromErroe.code = ""
+                }
+            }
+
+            if (newvl.select != olval.select) {
+                if (newvl.select == true) {
+                    FromErroe.select = ""
+                } else {
+                    FromErroe.select = "请勾选协议"
+                }
+            }
+
+
+
+
+
+
+        })
+
+
+
+
+        // 提交数据
+        let submitRegister = () => {
+            // 判断用户名称
+            if (FromData.username.length < 1 || FromData.username.length > 8 || containsSymbols(FromData.username, fuhao)) {
+                FromErroe.username = "用户名称长度1-8不允许出现特殊符"
+            } else {
+                FromErroe.username = ""
+            }
+
+            // 判断用户密码
+            if (FromData.password.length < 6 || FromData.username.length > 16) {
+                FromErroe.password = "密码长度在6-16之间"
+            } else {
+                FromErroe.password = ""
+            }
+
+            // 判断二次密码
+            if (FromData.passwordtow != FromData.password || FromData.passwordtow.length == 0) {
+                FromErroe.passwordtow = "两个密码不相等，请重新输入"
+            } else {
+                FromErroe.passwordtow = ""
+            }
+
+
+            // 判断手机号
+            // 判断二次密码
+            if (FromData.mobile.length == 0) {
+                FromErroe.mobile = "手机号格式有误请重新输入"
+            } else {
+                FromErroe.mobile = ""
+            }
+
+            // 判断验证码
+            if (FromData.code == "" || FromData.code != code.value) {
+                FromErroe.code = "验证码错误"
+            } else {
+                FromErroe.code = ""
+            }
+
+            // 判断验证码
+            if (FromData.code == "" || FromData.code != code.value) {
+                console.log("错误");
+                FromErroe.code = "验证码错误"
+            } else {
+                FromErroe.code = ""
+            }
+
+            // 判断是否勾选协议
+            if (FromData.select === false) {
+                FromErroe.select = "请勾选协议"
+            } else {
+                FromErroe.select = ""
+            }
+
+
+
+
+            // 提交数据 注册用户
+            // 这里是判断是否全部都为正确的情况
+            const isAllEmpty = Object.values(FromErroe).every(value => value === '');
+
+            if (!isAllEmpty) {
+                return false;
+            } else {
+                GetUserRegister(FromData).then(value => {
+                    cosnole.log("注册用户")
+                })
+            }
+        }
+
+        return { FromData, FromErroe, submitRegister, codeTitle, codeTime, getCode }
     }
 }
 </script>
@@ -98,6 +333,15 @@ export default {
 
 
 <style scoped lang="less">
+.disabled {
+    pointer-events: none !important;
+    background: rgb(255, 169, 94) !important;
+}
+
+.err {
+    coloe: red !important;
+}
+
 .login {
     height: 100%;
     min-height: 812px;

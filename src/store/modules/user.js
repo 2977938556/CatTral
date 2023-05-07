@@ -4,12 +4,13 @@ export default {
         return {
             // 用户信息
             profile: {
-                id: '1',
-                avatar: '2',
-                nickname: '3',
-                account: '4',
-                mobile: '5',
-                token: '6'
+                id: '',
+                avatar: '',
+                nickname: '',
+                account: '',
+                mobile: '',
+                token: '',
+                time: '',
             }
         }
     },

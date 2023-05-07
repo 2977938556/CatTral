@@ -78,10 +78,6 @@
             </span>
         </template>
     </CatOpenCity>
-
-
-
-    
 </template>
 
 
