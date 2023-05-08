@@ -9,6 +9,7 @@
                     <div class="input-cente-box-user">
                         <img src="../../assets/image/cat-login-user-icon.png" alt="用户名称">
                         <input type="text" placeholder="请输入用户名称">
+                        
                     </div>
                     <div class="input-cente-box-password">
                         <img src="../../assets/image/cat-login-password-icon.png" alt="用户名称">
@@ -40,6 +41,10 @@
 export default {
     name: "CatLogin",
     setup() {
+        
+        
+        
+        
 
     }
 }

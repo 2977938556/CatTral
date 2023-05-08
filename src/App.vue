@@ -28,4 +28,15 @@ export default {
   color: @heading-color;
 
 }
+
+.message-app {
+  width: 100%;
+  height: auto;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 1000000000;
+  display: flex;
+  justify-content: center;
+}
 </style>

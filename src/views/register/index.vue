@@ -90,6 +90,7 @@
 
 <script>
 import { reactive, watch, ref } from 'vue'
+import MessageJs from '@/components/libray/CarMessage.js'
 import { GetUserRegister, GetUserRegisterCode } from '@/api/register.js'
 export default {
     name: "CatRegister",
@@ -185,7 +186,6 @@ export default {
 
         // 这里是监听是否修改了那么就修改状态
         watch(() => JSON.parse(JSON.stringify(FromData)), (newvl, olval) => {
-            console.log("变化了");
             // 判断用户名称
             if (newvl.username != olval.username) {
                 if (newvl.username.length < 1 || newvl.username.length > 8 || containsSymbols(FromData.username, fuhao)) {
@@ -243,15 +243,7 @@ export default {
                     FromErroe.select = "请勾选协议"
                 }
             }
-
-
-
-
-
-
         })
-
-
 
 
         // 提交数据
@@ -310,19 +302,39 @@ export default {
 
 
 
-
             // 提交数据 注册用户
             // 这里是判断是否全部都为正确的情况
             const isAllEmpty = Object.values(FromErroe).every(value => value === '');
-
+            // 这里是还有错误的情况下
             if (!isAllEmpty) {
                 return false;
             } else {
-                GetUserRegister(FromData).then(value => {
-                    cosnole.log("注册用户")
+                // 这是发送注册请求
+                GetUserRegister(FromData).then(result => {
+                    // 这里是注册成功
+                    if (result.code == 201 || result.code == 200) {
+                        // 给予提示
+                        MessageJs({ type: "success", text: `${result.message},准备跳转到登录页面` })
+                        return false
+                    }
+
+                }).catch(err => {
+                    // 这里是不等于正确返回的状态
+                    if (err.response.data.code != 201 || err.response.data.code != 200) {
+                        // 给予提示
+                        MessageJs({ type: "error", text: err.response.data.message })
+                        return false
+                    }
+
                 })
+
             }
         }
+
+
+
+
+
 
         return { FromData, FromErroe, submitRegister, codeTitle, codeTime, getCode }
     }

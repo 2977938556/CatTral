@@ -1,8 +1,10 @@
 <template>
     <Transition name="ShowHidden">
-        <div class="message" v-show="flage" >
-            <div :class="type" style="border-radius: 100px;overflow: hidden;">
-                <p>{{ text }}</p>
+        <div class="miaoya">
+            <div class="message" v-show="flage">
+                <div :class="type">
+                    <p>{{ text }}</p>
+                </div>
             </div>
         </div>
     </Transition>
@@ -42,7 +44,7 @@ export default {
 <style lang="less" scoped>
 // 过渡动画
 .ShowHidden-enter-from {
-    transform: translate3d(0, -60px, 0);
+    transition: all 0.5s;
     opacity: 0;
 }
 
@@ -51,14 +53,14 @@ export default {
 }
 
 .ShowHidden-enter-to {
-    transform: none;
+    transition: all 0.5s;
     opacity: 1;
 }
 
 
 // 结束
 .ShowHidden-leave-from {
-    transform: none;
+    transition: all 0.5s;
     opacity: 1;
 }
 
@@ -67,16 +69,18 @@ export default {
 }
 
 .ShowHidden-leave-to {
-    transform: translate3d(0, 0px, 0);
+    transition: all 0.5s;
     opacity: 0;
 }
 
-
-
-
+.miaoya {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
 
 .message {
-    width: auto;
+    width: 100%;
     min-width: 150px;
     height: 46px;
     box-shadow: @default-showdow;
@@ -85,18 +89,13 @@ export default {
     text-align: center;
     font-size: @heading2-font-size;
     font-weight: 700;
-    position: absolute;
-    top: 10%;
-    left: 40%;
-    transform: translate(-20%, -0%);
-    border-radius: 20px;
+    border-radius: 10px;
+    transition: all 0.5s;
 
-
+    // transform: translateY(-100%);
 
     p {
-        padding: 5px 5px 5px 5px;
-        border-radius: 50px;
-
+        // padding: 5px 5px 5px 5px;
         color: #fff;
     }
 }
@@ -104,10 +103,7 @@ export default {
 
 // 错误
 .warn {
-
     background: @auxiliary-color1;
-
-
 }
 
 // 错误提示
