@@ -69,4 +69,46 @@ const router = createRouter({
   routes
 })
 
+
+
+
+
+// 获取token 
+// let token = JSON.parse(localStorage.getItem('user-store')) && JSON.parse(localStorage.getItem('user-store')).user && JSON.parse(localStorage.getItem('user-store')).user.profile && JSON.parse(localStorage.getItem('user-store')).user.profile.token || ""
+let token = JSON.parse(localStorage.getItem('user-store'))?.user?.profile?.token || ""
+// 白名单
+let whiteList = ['/login', '/register'];
+
+router.beforeEach((to, from, next) => {
+  // 如果当前路由在白名单中，则直接跳过拦截
+  if (whiteList.includes(to.path)) {
+    return next();
+  }
+
+  // 获取用户token
+  if (!token) {
+    // 如果用户没有token，则跳转到登录页面
+    return next('/login');
+  }
+
+  // 判断到这个位置已经是表示有token
+  // 如果用户已经登录，但访问的是登录页面，则直接跳转到首页
+  if (to.path === '/login') {
+    return next('/');
+  }
+  next();
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default router

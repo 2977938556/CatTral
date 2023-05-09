@@ -8,22 +8,21 @@
                 <div class="input-center">
                     <div class="input-cente-box-user">
                         <img src="../../assets/image/cat-login-user-icon.png" alt="用户名称">
-                        <input type="text" placeholder="请输入用户名称">
-                        
+                        <input v-model="FromDat.username" type="text" placeholder="请输入用户名称">
                     </div>
                     <div class="input-cente-box-password">
                         <img src="../../assets/image/cat-login-password-icon.png" alt="用户名称">
-                        <input type="password" placeholder="请输入密码">
+                        <input v-model="FromDat.password" type="password" placeholder="请输入密码">
                     </div>
                 </div>
             </div>
             <div class="login-content-submit">
                 <div class="submit-box-a">
-                    <p v-show="false">错误提示</p>
+                    <p v-if="FromErr.username">{{ FromErr.username }}</p>
                 </div>
                 <div class="submit-box-b">
                     <div class="login-content-submit-top">
-                        <span>提交</span>
+                        <span @click="submitLogin">提交</span>
                     </div>
                     <div class="login-content-submit-button">
                         <a href="javascript:;">忘记密码</a>
@@ -38,13 +37,113 @@
 </template>
 
 <script>
+import { reactive, watch } from 'vue'
+import { GetUserLogin } from '@/api/login.js'
+import MessageJs from '@/components/libray/CarMessage.js'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
+
+
 export default {
     name: "CatLogin",
     setup() {
-        
-        
-        
-        
+        let FromDat = reactive({
+            username: "FeiMao",
+            password: "111111"
+        })
+
+        let FromErr = reactive({
+            username: "",
+        })
+
+        // 使用store
+        const store = useStore()
+        let router = useRouter()
+
+
+
+        // 判断是否含有特殊字符
+        function containsSymbols(str, symbols) {
+            const regex = new RegExp('[' + symbols + ']', 'g');
+            return regex.test(str);
+        }
+        let fuhao = '~!@#$%^&**()+|}{_}'
+
+
+        watch(() => JSON.parse(JSON.stringify(FromDat)), (newvl, oldValue) => {
+            // 这里是监听用户名称
+            if (newvl.username != oldValue.username) {
+                if (newvl.username.length < 1 || newvl.username.length < 8 || containsSymbols(FromDat.username, fuhao)) {
+                    FromErr.username = "用户名称长度1-8不允许出现特殊符"
+                } else {
+                    FromErr.username = ""
+                }
+            }
+
+            if (newvl.password != oldValue.username) {
+                if (newvl.password.length < 6 || newvl.username.length > 16) {
+                    FromErr.username = "密码长度6-16之间"
+                } else {
+                    FromErr.username = ""
+                }
+            }
+        })
+
+
+
+        let submitLogin = async () => {
+            // 这里是监听用户名称
+            if (FromDat.username.length < 1 || FromDat.username.length < 8 || containsSymbols(FromDat.username, fuhao)) {
+                FromErr.username = "用户名称长度1-8不允许出现特殊符"
+            } else {
+                FromErr.username = ""
+            }
+
+            if (FromDat.password.length < 6 || FromDat.username.length > 16) {
+                FromErr.username = "密码长度6-16之间"
+            } else {
+                FromErr.username = ""
+            }
+
+
+
+            // 判断是否校验合格然后发送请求
+            let loginVaild = Object.values(FromErr).every(item => item == "");
+
+            if (loginVaild) {
+
+                try {
+                    // 成功登录那么就保存用户数据到vuex中持久化存储
+                    let result = await GetUserLogin(FromDat)
+                    if (result.code == 200 || result.code == 201) {
+                        console.log(result);
+                        store.commit("user/SetUser", { ...result.result.user, token: result.result.token })
+                        router.push('/')
+                    }
+                } catch (error) {
+                    let resultErr = error.response.data;
+                    if (resultErr.code === 400 || resultErr.code === 500) {
+                        MessageJs({ text: `${resultErr.message}`, type: 'warn' })
+                    }
+                }
+
+
+
+            }
+
+
+
+
+        }
+
+
+
+
+
+        return { FromDat, FromErr, submitLogin }
+
+
 
     }
 }

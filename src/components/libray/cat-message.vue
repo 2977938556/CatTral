@@ -108,7 +108,7 @@ export default {
 
 // 错误提示
 .error {
-    background: @auxiliary-color2;
+    background: @auxiliary-color4;
 
 }
 

@@ -91,16 +91,18 @@
 <script>
 import { reactive, watch, ref } from 'vue'
 import MessageJs from '@/components/libray/CarMessage.js'
+import { useRouter } from 'vue-router'
 import { GetUserRegister, GetUserRegisterCode } from '@/api/register.js'
 export default {
     name: "CatRegister",
     setup() {
+        let router = useRouter()
 
         // 收集数据
         let FromData = reactive({
             username: "",
-            password: "",
-            passwordtow: "",
+            password: "111111",
+            passwordtow: "111111",
             mobile: "",
             code: "",
             select: false,
@@ -199,7 +201,7 @@ export default {
             if (newvl.password != olval.password) {
                 // 判断用户密码
                 if (newvl.password.length < 6 || newvl.username.length > 16) {
-                    FromErroe.password = "用户名称长度6-16之间"
+                    FromErroe.password = "密码长度6-16之间"
                 } else {
                     FromErroe.password = ""
                 }
@@ -314,8 +316,15 @@ export default {
                     // 这里是注册成功
                     if (result.code == 201 || result.code == 200) {
                         // 给予提示
-                        MessageJs({ type: "success", text: `${result.message},准备跳转到登录页面` })
-                        return false
+                        MessageJs({ type: "success", text: `${result.message},注册成功` })
+
+                        // 定时跳转页面并清除定时器
+                        let time = setTimeout(() => {
+                            router.push('/login')
+                            clearTimeout(time)
+                        }, 3000);
+
+
                     }
 
                 }).catch(err => {

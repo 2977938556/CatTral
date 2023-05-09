@@ -21,7 +21,7 @@ let store = createStore({
     // 持久化配置
     plugins: [
         createPersistedstate({
-            key: 'erabbit-client-pc-store',
+            key: 'user-store',
             paths: ['user']
         })
     ]

@@ -143,7 +143,7 @@
                         </div>
                         <!-- 功能3-->
                         <div class="user-fun-c">
-                            <div>退出当前账户</div>
+                            <div @click="userOut">退出当前账户</div>
                         </div>
                     </div>
                 </div>
@@ -161,15 +161,25 @@
 
 <script>
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 export default {
     name: "User",
     setup() {
         let router = useRouter()
+        let store = useStore()
         let goBack = () => {
-            console.log("测试");
             router.push('/user/release');
         }
-        return { goBack }
+
+        // 退出登录
+        let userOut = () => {
+            store.commit('user/SetUser', {})
+            // 这里可以优化一下 弹窗确认
+            router.push('/login')
+        }
+
+
+        return { goBack, userOut }
     }
 }
 </script>

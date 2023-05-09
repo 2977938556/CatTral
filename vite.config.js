@@ -17,7 +17,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
-
   // 配置适配移动端
   css: {
     plugins: [
@@ -39,5 +38,10 @@ export default defineConfig({
       },
     },
   },
+
+  publicPath: '/',
+  devServer: {
+    historyApiFallback: true // 配置 history 模式，解决路由跳转失败问题
+  }
 
 })
