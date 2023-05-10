@@ -116,15 +116,15 @@ export default {
                 try {
                     // 成功登录那么就保存用户数据到vuex中持久化存储
                     let result = await GetUserLogin(FromDat)
-                    if (result.code == 200 || result.code == 201) {
-                        console.log(result);
+                    if (result.code === 200 || result.code === 201) {
+                        MessageJs({ text: `登录成功`, type: 'warn', timeout: 1000 })
                         store.commit("user/SetUser", { ...result.result.user, token: result.result.token })
                         router.push('/')
                     }
                 } catch (error) {
                     let resultErr = error.response.data;
                     if (resultErr.code === 400 || resultErr.code === 500) {
-                        MessageJs({ text: `${resultErr.message}`, type: 'warn' })
+                        MessageJs({ text: `${resultErr.message}`, type: 'error' })
                     }
                 }
 

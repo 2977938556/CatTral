@@ -42,18 +42,20 @@ instance.interceptors.request.use(config => {
 instance.interceptors.response.use(res => res.data, err => {
     // 判断是否是401状态
     if (err.response && err.response.status === 401) {
-        console.log("状态过期了");
         // 1. 清空无效用户信息
         // 2. 跳转到登录页
         // 3. 跳转需要传参（当前路由地址）给登录页码
         store.commit('user/SetUser', {})
+
         // 基于当前的路径存储在回调地址中
+        MessageJs({ text: `${err.response.data.message}`, type: "error" })
         if (router.currentRoute.value.fullPath) {
             const fullPath = encodeURIComponent(router.currentRoute.value.fullPath)
             router.push('/login?redirectUrl=' + fullPath)
         } else {
             router.push('/login')
         }
+
     }
 
     return Promise.reject(err)

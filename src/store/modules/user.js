@@ -26,7 +26,6 @@ export default {
                     }
                 }
             } else {
-                console.log("清空了");
                 state.profile = {
                     _id: "",
                     username: "",

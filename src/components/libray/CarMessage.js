@@ -14,7 +14,7 @@ document.body.appendChild(div)
 
 
 let time = null
-export default ({ type, text }) => {
+export default ({ type, text, timeout = 3000 }) => {
     // 创建虚拟节点
     let vndom = createVNode(CatMessage, { type, text })
     // 准备dom容器
@@ -24,5 +24,5 @@ export default ({ type, text }) => {
     clearTimeout(time)
     time = setTimeout(() => {
         render(null, div)
-    }, 3000)
+    }, timeout)
 }

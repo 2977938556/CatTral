@@ -108,13 +108,13 @@ export default {
 
 // 错误提示
 .error {
-    background: @auxiliary-color4;
+    background: @auxiliary-color2;
 
 }
 
 // 成功
 .success {
-    background: @transition-color;
+    background: @auxiliary-color5;
 
 }
 </style>
