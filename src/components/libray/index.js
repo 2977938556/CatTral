@@ -28,7 +28,12 @@ import RecenGood from './cat-remind-tj.vue'
 import CatComment from './cat-comment.vue'
 // 弹窗选择地区组件
 import CatOpenCity from './cat-open-city.vue'
-
+// 确认组件[js]
+import CatConfire from './CatConfire.js'
+// 弹窗组件【vue】
+import CatConfires from './cat-confire.vue'
+// 发布组件
+import CatRegisterLoding from './cat-register-loding.vue'
 
 
 
@@ -50,5 +55,10 @@ export default {
         app.component(RecenGood.name, RecenGood)
         app.component(CatComment.name, CatComment)
         app.component(CatOpenCity.name, CatOpenCity)
+        app.config.globalProperties.$CatConfire = CatConfire// 原型函数挂在提示组件
+        app.component(CatConfires.name, CatConfires)
+        app.component(CatRegisterLoding.name, CatRegisterLoding)
+
+
     }
 }

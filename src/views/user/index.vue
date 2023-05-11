@@ -10,16 +10,16 @@
                     <!-- 用户头像 -->
                     <div class="user-img">
                         <span>
-                            <img src="https://static.runoob.com/images/demo/demo2.jpg" alt="头像">
+                            <img :src="UserData.bgimgUrl" alt="头像">
                         </span>
                     </div>
 
                     <!-- 用户信息 -->
                     <div class="user-infor">
                         <div class="infor-box">
-                            <p class="p1">FeiMao@110</p>
-                            <p class="p2">2023.3.5日加入猫迹社区</p>
-                            <p class="p3" v-if="false">超级管理员</p>
+                            <p class="p1">{{ UserData.username }}</p>
+                            <p class="p2">{{ UserData.slogin }}</p><br>
+                            <p class="p3">{{ lable }}</p>
                         </div>
                     </div>
 
@@ -153,33 +153,52 @@
 
             </div>
         </div>
-
-
-
     </div>
 </template>
 
 <script>
 import { useRouter } from 'vue-router'
+import { toRefs, computed } from 'vue'
 import { useStore } from 'vuex'
+import MessageJs from '@/components/libray/CarMessage.js'
+import CatConfire from '@/components/libray/CatConfire.js'
+import { RoleFm } from '@/utils/userRole.js'
 export default {
     name: "User",
     setup() {
         let router = useRouter()
         let store = useStore()
+
+        let UserData = store.state.user?.profile || {}
+
+        // 点击前往发布页面
+        // 获取vuex中的数据渲染页面，并且跳转到发布页面需要进行判断是否被禁言了
         let goBack = () => {
-            router.push('/user/release');
+            RoleFm(UserData).then(value => {
+                router.push('/user/release');
+            }).catch(err => {
+                // 错误会在这里提示我已经封装好了错误提示函数了
+            })
         }
 
         // 退出登录
         let userOut = () => {
-            store.commit('user/SetUser', {})
-            // 这里可以优化一下 弹窗确认
-            router.push('/login')
+            CatConfire({ title: "系统提示", text: "是否退出登录" }).then(value => {
+                store.commit('user/SetUser', {})
+                // 这里可以优化一下 弹窗确认
+                MessageJs({ text: '退出登录成功', type: 'success', timeout: 1000 })
+                router.push('/login')
+
+            }).catch(e => {
+            })
         }
 
+        // 计算用户是权重
+        let lable = computed(() => {
+            return UserData.role == "user" ? "猫迹社区伙伴" : UserData.role == "admin" ? "超级管理员" : "禁言中"
+        })
 
-        return { goBack, userOut }
+        return { goBack, userOut, UserData, lable }
     }
 }
 </script>
@@ -192,8 +211,6 @@ export default {
     height: 100%;
     box-sizing: border-box;
     border: 1px solid rgba(255, 0, 0, 0);
-    position: relative;
-    // z-index: -100;
     transition: all 0.5s ease;
 
 
@@ -201,12 +218,11 @@ export default {
     .user-bg {
         width: 100%;
         height: 309px;
-        // border: 1px solid red;
-        position: absolute;
-        z-index: -100;
-
+        border: 1px solid red;
         align-items: center;
-        // position: fixed;
+        position: fixed;
+        z-index: -100000;
+
 
         img {
             object-fit: cover;
@@ -225,7 +241,8 @@ export default {
         justify-content: center;
         align-items: center;
         // position: fixed;
-        // z-index: -9;
+        // top: 0px;
+        // left: 0px;
 
 
 
@@ -279,14 +296,13 @@ export default {
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    // background: pink;
 
                     .infor-box {
                         width: 142px;
                         height: 50px;
                         // background: red;
-                        display: flex;
-                        flex-wrap: wrap;
-                        line-height: 25px;
+
 
                         .p1 {
                             font-size: 18px;
@@ -302,8 +318,8 @@ export default {
                         }
 
                         .p3 {
-                            font-size: 12px;
-                            font-weight: 900;
+                            font-size: 8px;
+                            // font-weight: 900;
                             color: @white-color;
                         }
                     }
@@ -360,6 +376,7 @@ export default {
         .user-fun-center {
             width: 345px;
             height: 100%;
+
             // background: @white-color;
             // display: flex;
             // flex-direction: column;

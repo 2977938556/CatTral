@@ -41,8 +41,7 @@
                             <span v-for="(item, index) in SubmitData.lable" :key="index">{{ item }}</span>
                             <!-- <span>金渐层</span> -->
                             <!-- <span>金渐层</span> -->
-                            <input @keydown="addlable" @blur="addlable" v-model.trim="vlabel" type="text"
-                                placeholder="添加标签">
+                            <input @blur="addlable" v-model.trim="vlabel" type="text" placeholder="添加标签">
 
                         </div>
                     </div>
@@ -67,6 +66,8 @@
             <div class="buttton">
                 <button @click="subCat">提交</button>
             </div>
+
+            <CatRegisterLoding :loading="loading" :message="message"></CatRegisterLoding>
         </div>
 
 
@@ -78,33 +79,38 @@
 
 <script >
 
-import { baseURL } from '@/utils/request.js'
-import axios from 'axios'
 import { ref, reactive, computed, watch } from 'vue'
 import MessageJs from '@/components/libray/CarMessage.js'
-// import { GetCityJson } from '@/api/register.js'
+import { GetUploadCard } from '@/api/release.js'
+import { useStore } from 'vuex'
+import { RoleFm } from '@/utils/userRole.js'
+
+
 
 export default {
     name: "release",
     setup() {
+        let store = useStore()
 
+        let loading = ref(false);
+        let message = ref("正在发布中，请稍后")
         //标签数据
         let vlabel = ref(null);// 数据双向绑定标签
         // 需要提交的数据
         let SubmitData = reactive({
             title: '',// 标题
-            content: '',// 内容
-            addrs: null,// 地址
+            content: '',
+            addrs: '',// 地址
             lable: [],
             imgDataUrl: [],
             maxSize: 1024 * 1024 * 5, // 2M
         })
-
+        // 存储图片的数据
         let formData = new FormData()
 
         // 添加标签函数
         let addlable = () => {
-            // if (lable.value.length > 6) alert("标签最多只能添加6个") 
+            if (SubmitData.lable.length > 6) return MessageJs({ text: "标签最多只能添加6个", type: 'error', timeout: 1000 })
             // input 中没有值那么就不会去添加
             if (vlabel.value == '' || vlabel.value == null) return false
             // 如果标签中已经有数据那么就不会被添加
@@ -113,36 +119,24 @@ export default {
             SubmitData.lable.push(vlabel.value)
             vlabel.value = ''
         }
-
         // 添加图片
         let GetFileFn = (e) => {
             let files = e.target.files
 
             if (SubmitData.imgDataUrl.length >= 5 || files.length + SubmitData.imgDataUrl.length > 5) {
-                alert('有图片大于了5张，请重新选择')
-                return false
+                return MessageJs({ text: "图片大于了五张", type: "error" })
             }
 
 
             if (files.length > 5) {
-                alert('最多只能选择5张')
-
-                return false
+                return MessageJs({ text: "图片大于了五张", type: "error" })
             }
-
-
-
             for (let i = 0; i < files.length; i++) {
                 // 这里是判断图片是否大于了规定大小
                 if (files[i].size > SubmitData.maxSize) {
-                    alert('有图片大于了，请重新选择')
-                    return false
+                    return MessageJs({ text: "有图片大于了设置大小", type: "error" })
                 }
             }
-
-
-
-
             // 二次添加
             // 二次添加 
             // 需要获取到已经保存的数组组后一个元素的名称 并使用正则获取到索引值
@@ -154,13 +148,10 @@ export default {
                     lastKey = key;
                 }
                 let lastNumber = parseInt(lastKey.match(/\d+$/)[0]);
-                console.log(lastNumber);
-
                 // 这里是判断是否有图片被选中了
                 for (let i = 0; i < files.length; i++) {
                     for (let [key, value] of formData.entries()) {
                         if (files[i].size == value.size || files[i].name == value.name) {
-                            console.log("已经被选中了");
                             continue;
                         } else {
                             // 这里需要进入到这里的时候就将索引值加一
@@ -194,11 +185,6 @@ export default {
                 }
                 return false;
             }
-
-
-
-
-
         }
 
         // 删除图片
@@ -225,78 +211,90 @@ export default {
             }
         }
 
+        // 这个函数是用于将文件格式转换成bse64提交给前端返回的是一个promise对象，需要使用promiseAll 进行获取结果
+        let ConvertFile = (file) => {
+            const entries = Array.from(file.entries())
+            return entries.map(item => {
+                return new Promise((reolve, reject) => {
+                    const reader = new FileReader()
+                    reader.onload = (event) => {
+                        let resulss = event.target.result // 将base64字符串保存到数组中
+                        reolve({ name: `${item[1].name}`, size: `${item[1].size}`, base64: resulss })
+                    }
+                    reader.onerror = function (event) {
+                        reject(new Error("图片转换失败"))
+                    }
+                    reader.readAsDataURL(item[1])
+                })
 
+            })
+        }
+        // 初始化数据函数
+        let DefaultData = () => {
+            // 清空数据
+            // 需要提交的数据
+            let defaultData = reactive({
+                title: '',// 标题
+                content: '',
+                addrs: '',// 地址
+                lable: [],
+                imgDataUrl: [],
+                maxSize: 1024 * 1024 * 5, // 2M
+            })
 
+            Object.keys(SubmitData).forEach(key => {
+                if (key !== "addrs") {
+                    SubmitData[key] = defaultData[key];
+                }
+            });
 
-        let subCat = () => {
-            // 判断数据是否填写
+            formData = new FormData();
+        }
+        // 大致步骤
+        // 01 先判断是否合法
+        // 02 将formData数据转换成base64对象及其他参数
+        // 03 获取个人信息在上传的数据中添加用户的上传信息
+        // 04 错误判断 如果上传成功那么就显示上传成功，否则就显示上传失败【帖子需要审核，目前就先只设置一个通过的标识】
+        let subCat = async () => {
+            // 判断数据是否都合法
             if (SubmitData.title != "" && SubmitData.addrs != null && Array.from(formData.entries()).length != 0) {
-                // 发请求
-                // console.log(baseURL);
+                // 处理fromData转换成base64
+                try {
+                    // 转换好的图片数据
+                    let FormDataList = await Promise.all(ConvertFile(formData))
+                    let UserDat = store.state.user.profile
+                    // 验证用户
+                    RoleFm(UserDat)
+                    // 发请求 
+                    // 显示loding加载效果
+                    loading.value = true
+                    GetUploadCard({
+                        FormDataList,             // formData: formData.entries(),
+                        inputData: {
+                            title: SubmitData.title,
+                            content: SubmitData.content,
+                            addrs: SubmitData.addrs,
+                            lable: SubmitData.lable,
+                        },
+                        UserDat
+                    }).then(value => {
+                        // 关闭loding加载效果
+                        loading.value = false
+                        MessageJs({ text: "发布成功正在审核中哦~", type: "success" })
+                        DefaultData()
 
-                // GetCityJson({
-                //     text: {
-                //         formData,
-                //         title: SubmitData.title,
-                //         content: SubmitData.content,
-                //         addrs: SubmitData.addrs,
-                //         lable: SubmitData.lable,
-                //     }
-                // }).then(value => {
-                //     console.log("上传图片和文字成功");
-                //     console.log(value);
-                // })
-
-
-
-                // axios.post(`${baseURL}/release/filte`, {
-                //     text: {
-                //         formData,
-                //         title: SubmitData.title,
-                //         content: SubmitData.content,
-                //         addrs: SubmitData.addrs,
-                //         lable: SubmitData.lable,
-                //     }
-                // },
-                // ).then(valu => {
-                //     console.log(valu);
-                // })
-
-
-                // axios.post(`${baseURL}/release/filte`, formData.entries(), {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data',
-                //     },
-                // }).then(valu => {
-                //     console.log(valu);
-                // })
-
-
-                // 今天到这里了
-
+                    }).catch(err => {
+                        loading.value = false
+                        return MessageJs({ text: `${err.response.data.message}`, type: "error" })
+                    })
+                } catch (error) {
+                    return MessageJs({ text: "上传失败请稍后重试哦~", type: "error" })
+                }
             } else {
-                alert("请查看 ，标题，地区，图片是否填入")
-                return false
+                return MessageJs({ text: "请检查是否有信息没有填写哦~", type: 'error', timeout: 1000 })
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        return { vlabel, SubmitData, addlable, GetFileFn, RemoleImg, GetAddres, subCat }
+        return { vlabel, SubmitData, addlable, GetFileFn, RemoleImg, GetAddres, subCat, loading, message, formData }
     }
 }
 
