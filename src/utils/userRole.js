@@ -9,6 +9,4 @@ export const RoleFm = (UserData, text = "当前账号封禁中，如有问题请
         }
         return reolve({ valve: true })
     })
-
-
 }

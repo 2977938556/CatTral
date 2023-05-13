@@ -186,7 +186,6 @@ export default {
                 return false;
             }
         }
-
         // 删除图片
         let RemoleImg = ({ imgurl, name, size, imgKey }, index) => {
             // console.log(imgKey)
@@ -201,7 +200,6 @@ export default {
             SubmitData.imgDataUrl.splice(index, 1)
 
         }
-
         // 监听地区组件
         let GetAddres = (value) => {
             if (value.isFlage && value.isFlage == true) {

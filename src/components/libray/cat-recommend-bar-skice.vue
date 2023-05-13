@@ -1,40 +1,38 @@
 <template>
-    <div class="Recommendedbar" :class="{ show: y > 394 }">
-        <div class="Recommendedbar-counter">
-            <div class="bar-center">
-                <div class="bar-counter-item ">
-                    <a href="javascript:;">
-                        个人
-                    </a>
-                </div>
-                <div class="bar-counter-item active">
-                    <a href="javascript:;">
-                        推荐
-                    </a>
-                </div>
-                <div class="bar-counter-item">
-                    <a href="javascript:;">
-                        推荐
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div class="Recommendedbars" :class="{ show: y > 360 }">
+        <CatRecommendBar @changeState="changeState" />
     </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue'
+import { useStore } from 'vuex'
+
 export default {
     name: "CatRecommendBarSkice",
-    setup() {
+    setup(props, { emit }) {
+        let store = useStore();
+
+        // 修改状态
+        let changeState = (type) => {
+            store.commit('home/Modify', type)
+        }
+
+
+
         const y = ref(0)
+        // 页面加载进来后就设置页面滚动事件并获取被卷去的距离然后赋值给y
         onMounted(() => {
             window.onscroll = () => {
                 const scrollTop = document.documentElement.scrollTop
                 y.value = scrollTop
             }
         })
-        return { y }
+
+
+
+
+        return { y, changeState }
     }
 
 }
@@ -45,10 +43,9 @@ export default {
 
 <style scoped lang="less">
 // 三个按钮
-.Recommendedbar {
+.Recommendedbars {
     width: 375px;
     height: 40px;
-    // border: 1px solid red;
     display: flex;
     justify-content: center;
     z-index: 100;
@@ -64,7 +61,7 @@ export default {
         transition: all 0.3s linear;
         left: 0px;
         top: 45px;
-        opacity: 1;
+        opacity: 1 !important;
     }
 
     .Recommendedbar-counter {
@@ -123,3 +120,5 @@ export default {
 
 }
 </style>
+
+

@@ -3,7 +3,6 @@
         <!-- <p> {{ cityS.length && cityS[0].areaList }}</p> -->
 
         <!-- {{ inputCity }} -->
-        <p>地区</p>
         <div v-if="cityList && cityList.length">
             <select v-model="province" name="sheng" style="width:100px;">
                 <option value="">请选择省</option>

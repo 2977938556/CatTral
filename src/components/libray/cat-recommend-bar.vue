@@ -2,19 +2,19 @@
     <div class="Recommendedbar">
         <div class="Recommendedbar-counter">
             <div class="bar-center">
-                <div class="bar-counter-item ">
+                <div :class="['bar-counter-item', { active: CatRecommendBar == 'A' }]" @click="StateData('A')">
                     <a href="javascript:;">
-                        个人
+                        关注
                     </a>
                 </div>
-                <div class="bar-counter-item active">
+                <div :class="['bar-counter-item', { active: CatRecommendBar == 'B' }]" @click="StateData('B')">
                     <a href="javascript:;">
                         推荐
                     </a>
                 </div>
-                <div class="bar-counter-item">
+                <div :class="['bar-counter-item', { active: CatRecommendBar == 'C' }]" @click="StateData('C')">
                     <a href="javascript:;">
-                        推荐
+                        最新
                     </a>
                 </div>
             </div>
@@ -23,9 +23,23 @@
 </template>
 
 <script>
+import { ref, watch, computed } from 'vue'
+import { useStore } from 'vuex'
 export default {
     name: "CatRecommendBar",
+    setup(props, { emit }) {
+        // 默认值
+        let store = useStore();
 
+        const CatRecommendBar = computed(() => store.state.home.CatRecommendBar);
+
+        // 发送需要获取的数据
+        let StateData = (type) => {
+            store.commit('home/Modify', type)
+            emit("changeState", type)
+        }
+        return { StateData, CatRecommendBar }
+    }
 }
 
 
@@ -88,6 +102,7 @@ export default {
                     /** 文本1 */
                     font-size: @heading1-font-size;
                     font-weight: 700;
+                    transition: all 0.1s ease-in-out;
                     letter-spacing: 0px;
                     color: @white-color;
                     text-align: left;

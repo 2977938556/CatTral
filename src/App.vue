@@ -29,6 +29,10 @@ export default {
 
 }
 
+body {
+  font-family: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .message-app {
   width: 100%;
   height: auto;

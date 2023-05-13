@@ -114,15 +114,13 @@
                 <RecenGood></RecenGood>
                 <!-- 循环渲染 内容组件 -->
                 <div class="recommende-count">
-                    <CarGoodsItem :goodsitem="4"></CarGoodsItem>
+                    <CarGoodsItem></CarGoodsItem>
                 </div>
             </div>
 
             <!-- loding加载效果 -->
             <CatLoding :loding="false" />
         </div>
-
-
 
         <!-- 评论组件 -->
         <CatComment v-show="showComment" @change="showComment = false" :showComment="showComment"></CatComment>

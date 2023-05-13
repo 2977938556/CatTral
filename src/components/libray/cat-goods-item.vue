@@ -1,19 +1,19 @@
 <template>
-    <div class="waterfall">
+    <div class="waterfall" v-if="goodsitem && goodsitem?._id != ''">
         <!-- 单个item内容 -->
         <div :class="{ 'recommende-count-item': true }" v-for="(item, index) in goodsitem" :key="item.id">
-            <router-link :to="`/catdetail/${index}`">
+            <router-link :to='`/catdetail/${item.cat_id}`'>
+                <!-- {{ item.cat_id }} -->
                 <div class="item-img">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRerelBBiyL8B9YtcIrH90tjszGIqzUy9569Q&usqp=CAU"
-                        alt="">
+                    <img :src="item.imageUrl[0]" alt="">
                 </div>
                 <div class="item-text">
                     <div class="item-text-top">
-                        <p>{{ index }}有需要领奖猫猫的吗，个人因为工作的原因，不方便养猫了。。便养猫了。。便养猫了。。</p>
+                        <p> {{ index }}{{ item.title }}</p>
                     </div>
                     <div class="item-text-booton">
-                        <span>赣州</span>
-                        <span>2023.4.{{ index }}</span>
+                        <span>{{ item.addrs.countyName }}</span>
+                        <span>{{ timeFormat(item.updated_at) }}</span>
                     </div>
                 </div>
             </router-link>
@@ -23,19 +23,30 @@
 
 
 <script>
+import { timeFormat } from '@/utils/timeFilter.js'
+
 export default {
     name: "CarGoodsItem",
     props: {
         goodsitem: {
-            type: [Array, Number, String],
-            default: 10,
+            type: [Array, Object],
         }
     },
+    setup(props) {
+        console.log("01",props.goodsitem);
+        return { timeFormat }
+    }
 }
 
 
 </script>
 
+
+<!-- bug 明天修复
+    元素错位
+    
+    
+ -->
 
 <style scoped lang="less">
 .waterfall {
@@ -44,6 +55,7 @@ export default {
     justify-content: space-between;
     max-width: 345px;
     margin: 0 auto;
+
 }
 
 // 单个item区域
@@ -53,43 +65,50 @@ export default {
     width: 162px;
     height: 280px;
     overflow: hidden;
-    border-radius: 20px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     margin-top: 30px;
+    // background: red;
 
 
     .item-img {
         width: 162px;
-        height: 100%;
+        height: 200px;
         overflow: hidden;
+        border-radius: 16px;
 
         img {
             object-fit: cover;
-            height: 100%;
-            width: 100%;
+            width: 162px;
+            height: 200px;
         }
 
     }
 
+    .active {
+        height: 160px !important;
+    }
+
     .item-text {
         width: 162px;
-        height: 63px;
+        min-height: 80px;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: space-between;
         flex-wrap: nowrap;
+        padding: 4px 0px 4px 0px;
         align-content: center;
+        position: relative;
 
         .item-text-top {
             width: 156px;
-            height: 36px;
+            // height: 100%;
             margin: 0 auto;
             /** 文本1 */
             font-size: @heading3-font-size;
             font-weight: 500;
-            letter-spacing: 0px;
             color: @heading-color;
             vertical-align: top;
             display: -webkit-box;
@@ -97,16 +116,17 @@ export default {
             -webkit-line-clamp: 2;
             overflow: hidden;
             text-overflow: ellipsis;
+
         }
 
         .item-text-booton {
             width: 156px;
-            height: 16px;
+            height: 20px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            // background: red;
+
 
             span {
                 padding: 10px;

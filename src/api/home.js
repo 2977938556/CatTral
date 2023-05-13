@@ -9,6 +9,6 @@ export const GetHomePageBanner = () => {
 
 
 // 获取首页推荐的数据
-export const GetHomePageTuiJian = () => {
-    return request('/home/recommend', 'get')
+export const GetHomePageTuiJian = (data) => {
+    return request('/home/recommend', 'post', data)
 }
