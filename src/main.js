@@ -10,8 +10,8 @@ let app = createApp(App)
 import 'normalize.css'
 
 // 导入重置样式
-// import '@/assets/styeles/default.less'
-// import '@/assets/styeles/rule.less'
+import '@/assets/styeles/default.less'
+import '@/assets/styeles/rule.less'
 
 
 // 注册全局插件

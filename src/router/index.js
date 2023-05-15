@@ -28,7 +28,7 @@ import CatAppluyFor from '@/views/cat-details/subset/cat-applyfor-page.vue'
 const routes = [
   // 首页模块功能路由
   { path: "/", redirect: '/home', },
-  { path: "/home", component: Home, },// 首页,
+  { path: "/home", component: Home }, // 开启路由缓存 },// 首页,
   { path: '/home/mjgs', component: CatMjgsPage },//猫迹故事
   { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
   { path: '/home/mjzn', component: CatMjznPage },// 猫迹指南
@@ -61,12 +61,25 @@ const routes = [
 
 ]
 
+
+const scrollBehavior = (to, from, savedPosition) => {
+  if (savedPosition) {
+    return savedPosition
+  } else {
+    return { x: 0, y: 0 }
+  }
+}
+
+
+
+
 // 创建路由实例
 const router = createRouter({
   // 使用hash方式实现路由
   history: createWebHashHistory(),
   // 配置路由规则，写法和之前一样
-  routes
+  routes,
+  scrollBehavior
 })
 
 

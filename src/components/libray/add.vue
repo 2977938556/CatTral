@@ -1,6 +1,8 @@
 <template>
     <div class="c enter">
 
+
+
         <div v-if="cityList.length == 0">lodgin</div>
         <div v-else>
             <select v-model="province" name="sheng">
@@ -24,7 +26,7 @@
 import axios from 'axios'
 import { computed, ref, reactive, watch, toRaw } from 'vue';
 export default {
-    name: "CatAddrs",
+    name: "Add",
     emits: ["changes"],
     props: {
         AddsCode: {
@@ -55,7 +57,7 @@ export default {
             cityCode: '',// 市code
             cityName: '',// 市名称
             countyCode: '',// 县市区code
-            countyName: '',// 县市区名称
+            countyData: '',// 县市区名称
             fullLocation: ''
         })
 
@@ -81,14 +83,14 @@ export default {
             if (type == true) {
                 changeResult.provinceName = "全国"
                 changeResult.cityName = "市"
-                changeResult.countyName = "区"
+                changeResult.countyData = "区"
             } else {
                 changeResult.provinceName = cityList.value.find(item => item.code == province.value)?.name || ""
                 changeResult.cityName = cityData.value.find(item => item.code == city.value)?.name || ""
-                changeResult.countyName = countyData.value.find(item => item.code == county.value)?.name || ""
+                changeResult.countyData = countyData.value.find(item => item.code == county.value)?.name || ""
             }
 
-            changeResult.fullLocation = `${changeResult.provinceName}|${changeResult.cityName}|${changeResult.countyName}`
+            changeResult.fullLocation = `${changeResult.provinceName}|${changeResult.cityName}|${changeResult.countyData}`
         }
 
 
@@ -105,7 +107,6 @@ export default {
             } else {
                 city.value = ''
                 county.value = ''
-                emit("changes", { isFlage: false, changeResult: toRaw(changeResult) })
             }
         }, { immediate: true })
 
@@ -186,6 +187,7 @@ let GetCityJson = () => {
 .c {
     display: flex;
     justify-content: space-around;
+    background: red;
 
     div {
         width: 100%;

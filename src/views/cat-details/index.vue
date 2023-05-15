@@ -119,7 +119,7 @@
             </div>
 
             <!-- loding加载效果 -->
-            <CatLoding :loding="false" />
+            <!-- <CatLoding :loding="false" /> -->
         </div>
 
         <!-- 评论组件 -->

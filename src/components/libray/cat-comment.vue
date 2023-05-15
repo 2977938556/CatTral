@@ -68,7 +68,7 @@
                     </li>
                     <!-- 没有更多了 -->
                     <!-- loding加载效果 -->
-                    <CatLoding :loding="false" :smail="true" />
+                    <!-- <CatLoding :loding="false" :smail="true" /> -->
                 </ul>
 
             </div>
@@ -109,10 +109,10 @@ export default {
         // 监听控制是否显示隐藏来进行判断是否可以滚动
         watch(() => props.showComment, (newvalue, oldvalue) => {
             if (newvalue == true) {
-                console.log("进来1");
+                // console.log("进来1");
                 disableBodyScroll()
             } else {
-                console.log("进来2");
+                // console.log("进来2");
                 enableBodyScroll()
             }
         }, {

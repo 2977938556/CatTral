@@ -121,7 +121,6 @@ export default {
     .banner-box {
         width: 345px;
         height: 160px;
-        background: rgb(255, 183, 183);
         border-radius: 20px;
 
         .item-banner {

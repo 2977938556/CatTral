@@ -37,7 +37,6 @@ import CatRegisterLoding from './cat-register-loding.vue'
 
 
 
-
 export default {
     install(app) {
         app.component(CatStatusNav.name, CatStatusNav)
@@ -58,7 +57,5 @@ export default {
         app.config.globalProperties.$CatConfire = CatConfire// 原型函数挂在提示组件
         app.component(CatConfires.name, CatConfires)
         app.component(CatRegisterLoding.name, CatRegisterLoding)
-
-
     }
 }

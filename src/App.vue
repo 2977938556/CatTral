@@ -8,7 +8,18 @@
 
 <script>
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 export default {
+  setup() {
+    // window
+    let store = useStore()
+    // 这里是清空vuex中的持久化数据
+    window.addEventListener("beforeunload", () => {
+      store.commit('home/DeleteGoodsitem', [])
+    })
+  }
+
+
 
 }
 
@@ -26,7 +37,7 @@ export default {
 
 * {
   color: @heading-color;
-
+  transition: all 0.5s ease-in-out;
 }
 
 body {

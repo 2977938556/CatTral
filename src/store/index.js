@@ -22,7 +22,7 @@ let store = createStore({
     plugins: [
         createPersistedstate({
             key: 'user-store',
-            paths: ['user']
+            paths: ['user', 'home']
         })
     ]
 })

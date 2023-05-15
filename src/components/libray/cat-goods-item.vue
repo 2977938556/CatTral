@@ -9,10 +9,10 @@
                 </div>
                 <div class="item-text">
                     <div class="item-text-top">
-                        <p> {{ index }}{{ item.title }}</p>
+                        <p>{{ item.title }}</p>
                     </div>
                     <div class="item-text-booton">
-                        <span>{{ item.addrs.countyName }}</span>
+                        <span>{{ item.addrs.cityName }}</span>
                         <span>{{ timeFormat(item.updated_at) }}</span>
                     </div>
                 </div>
@@ -33,7 +33,7 @@ export default {
         }
     },
     setup(props) {
-        console.log("01",props.goodsitem);
+        // console.log("01",props.goodsitem);
         return { timeFormat }
     }
 }

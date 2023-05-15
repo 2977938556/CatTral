@@ -6,7 +6,7 @@
         </template>
         <template #content>
             <span class='cat-postion'>
-                <CatAddrs @changes="GetcityAddrs" />
+                <CatAddrs @changes="GetcityAddrs" :AddsCode="cityAddrs" />
             </span>
         </template>
     </CatOpenCity>
@@ -18,7 +18,7 @@
         <template #left>
             <p @click="showfalge = true">
                 <img id="city" class="addrs-img" src="../../assets/image/cat-position.png" alt="">
-                <span v-if="cityAddrs">{{ cityAddrs.changeResult.countyName }}</span>
+                <span v-if="cityAddrs">{{ cityAddrs?.changeResult?.provinceName }}</span>
                 <span v-else>全国</span>
             </p>
         </template>
@@ -26,7 +26,6 @@
             <img class="logio-img" src="../../assets/image/cat-logo.png" alt="">
         </template>
     </CartStatusBav>
-
 
     <!-- 轮播图组件 -->
     <div class="banner">
@@ -73,13 +72,16 @@
     <!-- 内容区域 -->
     <div class="recommendeCount">
         <!-- 循环渲染 内容组件 -->
-        <div class="recommende-count" v-if="goodsitem && goodsitem.length != 0">
+        <div class="recommende-count" v-if="goodsitem?.length != 0">
             <CarGoodsItem :goodsitem="goodsitem" />
+        </div>
+        <div class="recommende-count lodings" v-else-if="loading == true">
+            <CatLodingItem v-for="item in 3" key="item" :width="158" :height="100" />
         </div>
     </div>
 
     <!-- loding加载效果 -->
-    <CatLoding :loding="loding" />
+    <CatLoding :loading="loading" :finished="finished" @infinite="getRecommend()" />
 </template>
 
 
@@ -94,16 +96,19 @@ export default {
     setup() {
         let store = useStore()
 
-        let goodsitem = ref([]);// 卡片数据集合
+        let loading = ref(false)// 控制是否在加载  false 代表可以加载
+        let finished = ref(false)// 控制是还有数据 false代表还有数据
 
-        let loding = ref(false);
-
-
-
+        let items = ref([])    // 获取轮播图的数据
+        // 获取banner的数据
+        GetHomePageBanner().then(value => {
+            items.value = value.result
+        })
         // 获取bar的响应性数据
         const CatRecommendBar = computed(() => store.state.home.CatRecommendBar)
         // 获取用户的数据
         const userData = store.state.user.profile || {}
+
 
 
         // 控制选择地区组件的显示隐藏
@@ -111,102 +116,111 @@ export default {
         // 获取地区的响应性数据
         let cityAddrs = computed(() => store.state.home.cityAddrs)
 
-        let cityFlage = ref(false)
+        // 我的打算就是将值传递给一个变量
+        let cityCityCopy = ref()
 
-        // 地区组件的如果有数据那么就传值给vuex
+        // 这里是赋值       
         let GetcityAddrs = (value) => {
-            if (value.isFlage == true) {
-                return store.commit('home/SetcityAddrs', value)
-            }
+            cityCityCopy.value = value
         }
         // 关闭弹窗
         let cancels = () => {
             // 清空数据
-            cityFlage.value = false;
-            return store.commit('home/SetcityAddrs', null)
+            return store.commit('home/SetcityAddrs', cityAddrs?.value)
         }
+
         // 确认弹窗
         let confirms = () => {
-            if (cityAddrs.value?.isFlage && cityAddrs.value?.isFlage == true) {
-                //在这里 修改 vuex
-                cityFlage.value = true;
-                MessageJs({ typeo: 'scuess', text: "修改地区成功", timeout: 1000 })
-                let time = setTimeout(() => {
-                    cityFlage.value = false;
-                    clearTimeout(time)
-                }, 4)
+            // 这个逻辑就是如果地区组件选择数据为合法的并且 当前的最后一个层级的数据必须要有
+            if (cityCityCopy?.value?.isFlage == true && cityCityCopy?.value?.changeResult?.countyCode != "") {
+                // 这里是判断用户的数据是否等于之前的数据如果等于之前的数据那么就不需要发送请求这样以节约服务器资源
+                if (cityAddrs?.value?.changeResult?.countyName != cityCityCopy?.value?.changeResult?.countyName) {
 
+                    //在这里 修改 vuex
+                    store.commit('home/SetcityAddrs', cityCityCopy.value)
+                    MessageJs({ typeo: 'scuess', text: "修改地区成功", timeout: 1000 })
+
+                    // 将数据数组变为空
+                    goodsitem.value = []
+                    // 数据页数复原为1
+                    CartConfig.page = 1;
+                    // 加载效果复原为false
+                    loading.value = false
+                    // 发送请求获取数据
+                    getRecommend(CartConfig)
+                }
             } else {
-                cityFlage.value = false;
                 MessageJs({ typeo: 'error', text: "请选择完整地址", timeout: 1000 })
             }
         }
 
-
-        let items = ref([])    // 获取轮播图的数据
-        // 获取banner的数据
-        GetHomePageBanner().then(value => {
-            items.value = value.result
-        })
-
         // 需要传递的配置参数
         let CartConfig = reactive({
             page: 1,// 当前是第几页
-            pageSize: 10,//每一页需要返回的数据 
+            pageSize: Math.floor(Math.random() * 2) === 0 ? 3 : 5,//每一页需要返回的数据 
             cityAddrs,//地区数据默认为null=全国
             CatRecommendBar,// bar状态
             userData,
         })
-
-        // 获取推荐的数据
-        let getRecommend = (config) => {
+        // 卡片数据集合
+        let goodsitem = computed(() => store.state.home.goodsitem)
+        // 请求推荐的数据请求
+        let getRecommend = (config = CartConfig) => {
+            // 一调用这个方法就需要显示出加载中
+            loading.value = true
+            // 发送请求携带参数
             GetHomePageTuiJian(config).then(({ result }) => {
-                // 将数据添加进去
-                goodsitem.value.push(...result.data)
+                console.log(result);
+                // 判断是否有数据
+                // 这里是如果返回数据了那么就需要设置一下用户的数据状态和将数据转换里面
+                if (result.data && result.data.length !== 0) {
+
+                    // 将数据添加进去
+                    store.commit('home/SetGoodsitem', result.data)
+
+                    // 每次请求之后就将当前页添加1页
+                    CartConfig.page++
+
+                    // 加载结束后将loding状态失效
+                    loading.value = false
+                } else if (result.data && result.data.length === 0) {
+                    // 加载失败的话显示没有数据了就显示提示文本,关闭loding
+                    finished.value = true
+                    loading.value = false
+
+                }
+                loading.value = false
             }).catch(err => {
+                finished.value = false
+                loading.value = false
                 MessageJs({ text: "获取数据失败请重试", type: 'error' })
             })
         }
-
-        //进入页面就发请求
-        onMounted(() => {
-            getRecommend(CartConfig)
-        })
-
-
-        // 监听地区是否被修改了
-        watch(cityFlage, (newVal, olVal) => {
-            if (cityFlage.value == true) {
-                // console.log("可以发送数据");
-                goodsitem.value = []
-                getRecommend(CartConfig)
-            }
-        })
-
-
-
         // 监听bar状态栏
         watch(() => CatRecommendBar.value, (newVal, olVal) => {
+            loading.value = true
+            finished.value = false
+
+            // 先清空数据
+            store.commit('home/DeleteGoodsitem', [])
+            // 变为1
+            CartConfig.page = 1;
+
             if (newVal == "A") {
-                goodsitem.value = []
+                console.log("进来了A");
                 getRecommend(CartConfig)
             } else if (newVal == "B") {
-                goodsitem.value = []
+                console.log("进来了B");
                 getRecommend(CartConfig)
             } else if (newVal == "C") {
-                goodsitem.value = []
+                console.log("进来了C");
                 getRecommend(CartConfig)
             }
         })
 
 
 
-
-
-
-
-
-        return { items, goodsitem, showfalge, GetcityAddrs, cityAddrs, cancels, confirms, CartConfig, cityFlage,loding }
+        return { items, goodsitem, showfalge, GetcityAddrs, CartConfig, cityAddrs, getRecommend, cancels, confirms, CartConfig, loading, finished }
     }
 
 };
@@ -215,6 +229,17 @@ export default {
 <style lang="less" scoped>
 .cat-postion {
     font-size: @heading3-font-size;
+}
+
+.lodings {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    // background: red;
+
+    .loding {
+        margin-top: 20px;
+    }
 }
 
 .header {
@@ -250,7 +275,9 @@ export default {
 // 内容区域
 .recommendeCount {
     width: 375px;
+    min-height: auto;
 
+    // background: red;
     .recommende-count {
         width: 345px;
         margin: 0 auto;

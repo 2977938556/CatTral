@@ -1,15 +1,15 @@
 <template>
     <div class="endof" :class="{ smia: smail == true }" ref="container">
-        <p v-if="loading">~正在加载内容~</p>
-        <p v-if="finished">~没有更多内容了哦~~</p>
+        <p class="loding" v-if="loading"></p>
+        <p class="finished" v-if="finished">~没有更多内容了哦~~</p>
     </div>
 </template>
 
 
 <script>
 
-import { ref } from 'vue'
-// import { useIntersectionObserver } from '@vueuse/core';
+import { ref, onMounted } from 'vue'
+import { useIntersectionObserver } from '@vueuse/core';
 
 export default {
     name: "CatLoding",
@@ -29,21 +29,16 @@ export default {
             default: false
         }
     },
-    setup() {
+    setup(props, { emit }) {
         let container = ref(null)
-        // useIntersectionObserver(container, ([{ isIntersecting }], dom) => {
-        //     console.log("进入可视区域了");
-        // })
-
-        
-
-     
-
-
-
+        useIntersectionObserver(container, ([{ isIntersecting }], dom) => {
+            if (isIntersecting == true && props.loading == false && props.finished == false) {
+                console.log("进入可视区了", isIntersecting);
+                emit("infinite");
+            }
+        }, { threshold: 0.1 })
 
         return { container }
-
     }
 
 
@@ -63,11 +58,37 @@ export default {
 
 .endof {
     width: 375px;
-    min-height: 136px;
-    // border: 1px solid red;
+    min-height: 200px;
+    ;
     padding-bottom: 49px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    p {
+    .loding {
+        display: block;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto;
+        border: 4px solid #0000003b;
+        border-top: 4px solid @primary-color;
+        border-radius: 1000px;
+        animation: spin 1s ease-in-out infinite;
+        font-size: @body-font-size;
+        font-weight: 500;
+        letter-spacing: 0px;
+        color: @transition-color;
+        text-align: center;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+
+    .finished {
         font-size: @body-font-size;
         font-weight: 500;
         letter-spacing: 0px;
@@ -75,6 +96,8 @@ export default {
         line-height: 136px;
         text-align: center;
     }
+
+
 
 }
 </style>

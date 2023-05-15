@@ -75,7 +75,7 @@
                         </li>
                         <!-- 没有更多了 -->
                         <!-- loding加载效果 -->
-                        <CatLoding :loding="false" :smail="true" />
+                        <!-- <CatLoding :loding="false" :smail="true" /> -->
                     </ul>
                 </div>
 
