@@ -1,5 +1,5 @@
+// 01 处理时间戳
 export const timeFormat = (time) => {
-
     if (!time) return "暂无时间"
     // 处理年份的数据
     var date = new Date(time);
@@ -22,4 +22,26 @@ export const timeFormat = (time) => {
 
 
     return formattedDate;
+}
+
+
+// 处理地区的
+export const Processingregion = (city, run = 2) => {
+    if (city.provinceCode == "1") {
+        return city.provinceName
+    }
+
+    if (run == 1) {
+        return city.provinceName
+    }
+
+    if (run == 2) {
+        return city.cityName
+    }
+    if (run == 3) {
+        return city.countyName
+    }
+
+
+    return "地区"
 }

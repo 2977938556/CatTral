@@ -36,7 +36,8 @@ import CatConfires from './cat-confire.vue'
 import CatRegisterLoding from './cat-register-loding.vue'
 // 查看图片全屏组件
 import CatFullImg from './cat-full-img.vue'
-
+// 详情页面的加载骨架
+import CatDetailLoding from './cat-detail-loding.vue'
 
 
 export default {
@@ -60,5 +61,6 @@ export default {
         app.component(CatConfires.name, CatConfires)
         app.component(CatRegisterLoding.name, CatRegisterLoding)
         app.component(CatFullImg.name, CatFullImg)
+        app.component(CatDetailLoding.name, CatDetailLoding)
     }
 }

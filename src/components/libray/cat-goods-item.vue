@@ -12,7 +12,7 @@
                         <p>{{ item.title }}</p>
                     </div>
                     <div class="item-text-booton">
-                        <span>{{ item.addrs.cityName }}</span>
+                        <span>{{ Processingregion(item.addrs) }}</span>
                         <span>{{ timeFormat(item.updated_at) }}</span>
                     </div>
                 </div>
@@ -24,6 +24,8 @@
 
 <script>
 import { timeFormat } from '@/utils/timeFilter.js'
+import { Processingregion } from '@/utils/timeFilter.js'
+
 
 export default {
     name: "CarGoodsItem",
@@ -34,7 +36,7 @@ export default {
     },
     setup(props) {
         // console.log("01",props.goodsitem);
-        return { timeFormat }
+        return { timeFormat, Processingregion }
     }
 }
 

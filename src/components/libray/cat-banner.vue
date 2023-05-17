@@ -141,7 +141,6 @@ export default {
             width: 345px;
             height: 160px;
             border-radius: 20px;
-            background: rgb(0, 255, 242);
             position: absolute;
             transition: all 0.5s;
             opacity: 0;

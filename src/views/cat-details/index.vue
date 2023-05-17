@@ -14,7 +14,6 @@
             </template>
         </CartStatusBav>
 
-
         <!-- 主要内容区域 -->
         <div class="details-content" v-if="DetailData">
             <div class="detail-center">
@@ -84,7 +83,7 @@
                 <div class="detail-city-time">
                     <div class="detail-city-time-center">
                         <div class="city-left">
-                            <p>{{ DetailData.addrs.cityName }}</p>
+                            <p>{{ Processingregion(DetailData.addrs, 1) }}</p>
                         </div>
                         <div class="city-time">
                             <p>{{ timeFormat(DetailData.created_at) }}</p>
@@ -128,11 +127,16 @@
             <!-- <CatLoding :loding="false" /> -->
         </div>
 
+
+        <CatDetailLoding v-else />
+
         <!-- 评论组件 -->
         <CatComment v-show="showComment" @change="showComment = false" :showComment="showComment"></CatComment>
 
-        <CatFullImg v-if="openFullImg" @cancel="cancel" :openImg="openImg" />
 
+
+        <!-- 全屏图片组件 -->
+        <CatFullImg v-if="openFullImg" @cancel="cancel" :openImg="openImg" />
 
     </div>
 </template>
@@ -145,6 +149,7 @@ import { useStore } from 'vuex'
 import { timeFormat } from '@/utils/timeFilter.js'
 import { GetDEtailCat, GetCollect, GetcollectObje } from '@/api/detail.js'
 import MessageJs from '@/components/libray/CarMessage.js'
+import { Processingregion } from '@/utils/timeFilter.js'
 
 
 export default {
@@ -227,7 +232,6 @@ export default {
         }
 
 
-
         GetGetDEtailCat()
 
 
@@ -244,13 +248,13 @@ export default {
             // 这里是查早是否有数据
             let index = collectData.value.bookmarks.findIndex(item => item.cat_id == GoodsId)
 
-
-            console.log(index);
+            // 这里判断是否有被收藏了
             if (index == -1) {
                 collectFlage.value = false
             } else {
                 collectFlage.value = true
             }
+
         }, { immediate: true })
 
 
@@ -265,7 +269,7 @@ export default {
                 Debouncing = setInterval(() => {
                     // 发送请求
                     GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
-                        // 这里由于我直接修改了储存收藏的数据
+                        // 这里由于我直接修改了储存收藏的数据所以会自动更新
                         collectData.value = result.data
                         clearInterval(Debouncing)
                         Debouncing = null
@@ -276,10 +280,7 @@ export default {
 
 
 
-
-
-
-        return { showComment, timeFormat, BriefIntVaildFn, BriefIntVaild, DetailData, opneMax, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
+        return { showComment, timeFormat, BriefIntVaildFn, BriefIntVaild, DetailData, opneMax, Processingregion, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
     }
 }
 
@@ -520,25 +521,23 @@ export default {
                     height: auto;
                     display: flex;
                     flex-wrap: wrap;
-                    padding: 9px;
+                    padding: 6px;
 
                     li {
                         padding: 10px;
-                        height: 14px;
+                        height: 10px;
                         border-radius: 217px;
                         background: @primary-color;
+                        display: flex;
+                        align-items: center;
                         margin-left: 4px;
                         margin-top: 2px;
-                        line-height: 0px;
-
-
 
                         a {
                             /** 文本1 */
                             font-size: 10px;
                             font-weight: 500;
                             color: @white-color;
-                            line-height: 0px;
                         }
                     }
                 }
@@ -707,10 +706,14 @@ export default {
     .recommendeCount {
         width: 375px;
         margin-top: 20px;
+        border: 1px solid red;
+        // min-height: 100px;
 
         .recommende-count {
             width: 345px;
             margin: 0 auto;
+            border: 1px solid red;
+
 
             .tuij-content {
                 width: 345px;
