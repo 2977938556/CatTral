@@ -33,7 +33,6 @@ export default {
         let container = ref(null)
         useIntersectionObserver(container, ([{ isIntersecting }], dom) => {
             if (isIntersecting == true && props.loading == false && props.finished == false) {
-                console.log("进入可视区了", isIntersecting);
                 emit("infinite");
             }
         }, { threshold: 0.1 })

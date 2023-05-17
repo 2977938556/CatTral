@@ -98,10 +98,10 @@ export default {
         let vlabel = ref(null);// 数据双向绑定标签
         // 需要提交的数据
         let SubmitData = reactive({
-            title: '',// 标题
-            content: '',
+            title: '如果您的周边有一只流浪猫，不要将它预判为无家可归的猫如果您的周边有一只流浪猫，不要将它预判为无家可归的猫',// 标题
+            content: '如果您的周边有一只流浪猫，不要将它预判为无家可归的猫如果您的周边有一只流浪猫，不要将它预判为无家可归的猫如果您的周边有一只流浪猫，不要将它预判为无家可归的猫',
             addrs: '',// 地址
-            lable: [],
+            lable: ["测试"],
             imgDataUrl: [],
             maxSize: 1024 * 1024 * 5, // 2M
         })

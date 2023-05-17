@@ -5,7 +5,7 @@ export default {
             CatRecommendBar: "B",// 控制选择那个模式
             cityAddrs: JSON.parse(localStorage.getItem('user-store'))?.home.cityAddrs, // 地区数据
             goodsitem: JSON.parse(localStorage.getItem('user-store'))?.home?.goodsitem || [],
-
+            HomeBanner: JSON.parse(localStorage.getItem('user-store'))?.home.HomeBanner || []
         }
     },
     mutations: {
@@ -23,13 +23,23 @@ export default {
         },
         // 清空推荐等数据
         DeleteGoodsitem(state, payload) {
+            console.log("亲空数据了", payload);
             state.goodsitem = payload
+        },
+        // 设置banner的数据
+        SetHomeBanner(state, payload) {
+            state.HomeBanner = payload
         }
     },
     actions: {
 
     },
     getters: {
+        GetIdGoods: (state) => (id) => {
+            // console.log(state);
+            // return state.goodsitem.find((item) => item.cat_id === id);
+            return JSON.parse(localStorage.getItem("user-store")).home?.goodsitem.find((item) => item.cat_id === id);
+        },
 
     }
 }

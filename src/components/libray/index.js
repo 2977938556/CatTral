@@ -34,6 +34,8 @@ import CatConfire from './CatConfire.js'
 import CatConfires from './cat-confire.vue'
 // 发布组件
 import CatRegisterLoding from './cat-register-loding.vue'
+// 查看图片全屏组件
+import CatFullImg from './cat-full-img.vue'
 
 
 
@@ -57,5 +59,6 @@ export default {
         app.config.globalProperties.$CatConfire = CatConfire// 原型函数挂在提示组件
         app.component(CatConfires.name, CatConfires)
         app.component(CatRegisterLoding.name, CatRegisterLoding)
+        app.component(CatFullImg.name, CatFullImg)
     }
 }

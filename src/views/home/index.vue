@@ -18,7 +18,8 @@
         <template #left>
             <p @click="showfalge = true">
                 <img id="city" class="addrs-img" src="../../assets/image/cat-position.png" alt="">
-                <span v-if="cityAddrs">{{ cityAddrs?.changeResult?.provinceName }}</span>
+                <span v-if="cityAddrs?.changeResult?.provinceName || cityAddrs == null">{{
+                    cityAddrs?.changeResult?.provinceName }}</span>
                 <span v-else>全国</span>
             </p>
         </template>
@@ -30,7 +31,7 @@
     <!-- 轮播图组件 -->
     <div class="banner">
         <CatBannner v-if="items && items.length" :items="items" />
-        <CatLodingItem v-else :width="345" :height="146" />
+        <CatLodingItem v-else :width="380" :height="170" />
     </div>
 
     <!-- 按钮组件 -->
@@ -99,10 +100,11 @@ export default {
         let loading = ref(false)// 控制是否在加载  false 代表可以加载
         let finished = ref(false)// 控制是还有数据 false代表还有数据
 
-        let items = ref([])    // 获取轮播图的数据
+        let items = computed(() => store.state.home.HomeBanner)   // 获取轮播图的数据
         // 获取banner的数据
         GetHomePageBanner().then(value => {
-            items.value = value.result
+            // 将数据添加进去
+            store.commit('home/SetHomeBanner', value.result)
         })
         // 获取bar的响应性数据
         const CatRecommendBar = computed(() => store.state.home.CatRecommendBar)
@@ -123,25 +125,24 @@ export default {
         let GetcityAddrs = (value) => {
             cityCityCopy.value = value
         }
-        // 关闭弹窗
+        // 地区关闭弹窗
         let cancels = () => {
             // 清空数据
             return store.commit('home/SetcityAddrs', cityAddrs?.value)
         }
 
-        // 确认弹窗
+        // 地区确认弹窗
         let confirms = () => {
             // 这个逻辑就是如果地区组件选择数据为合法的并且 当前的最后一个层级的数据必须要有
             if (cityCityCopy?.value?.isFlage == true && cityCityCopy?.value?.changeResult?.countyCode != "") {
                 // 这里是判断用户的数据是否等于之前的数据如果等于之前的数据那么就不需要发送请求这样以节约服务器资源
                 if (cityAddrs?.value?.changeResult?.countyName != cityCityCopy?.value?.changeResult?.countyName) {
+                    store.commit('home/DeleteGoodsitem', [])
 
                     //在这里 修改 vuex
                     store.commit('home/SetcityAddrs', cityCityCopy.value)
                     MessageJs({ typeo: 'scuess', text: "修改地区成功", timeout: 1000 })
 
-                    // 将数据数组变为空
-                    goodsitem.value = []
                     // 数据页数复原为1
                     CartConfig.page = 1;
                     // 加载效果复原为false
@@ -170,7 +171,6 @@ export default {
             loading.value = true
             // 发送请求携带参数
             GetHomePageTuiJian(config).then(({ result }) => {
-                console.log(result);
                 // 判断是否有数据
                 // 这里是如果返回数据了那么就需要设置一下用户的数据状态和将数据转换里面
                 if (result.data && result.data.length !== 0) {
@@ -200,7 +200,6 @@ export default {
         watch(() => CatRecommendBar.value, (newVal, olVal) => {
             loading.value = true
             finished.value = false
-
             // 先清空数据
             store.commit('home/DeleteGoodsitem', [])
             // 变为1

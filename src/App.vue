@@ -14,9 +14,14 @@ export default {
     // window
     let store = useStore()
     // 这里是清空vuex中的持久化数据
-    window.addEventListener("beforeunload", () => {
-      store.commit('home/DeleteGoodsitem', [])
-    })
+    // window.addEventListener("beforeunload", () => {
+    //   store.commit('home/DeleteGoodsitem', [])
+    // })
+
+
+   
+
+
   }
 
 

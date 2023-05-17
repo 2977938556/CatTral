@@ -15,9 +15,9 @@ export const timeFormat = (time) => {
 
     // 这里是判断如果是当年发布的那么就不需要添加年份否则就需要添加当年的年份
     if (currentYear !== year) {
-        var formattedDate = year + '.' + (month < 10 ? '0' + month : month) + '.' + (day < 10 ? '0' + day : day);
+        var formattedDate = year + '.' + month + '.' + (day < 10 ? '0' + day : day);
     } else {
-        var formattedDate = (month < 10 ? '0' + month : month) + '.' + (day < 10 ? '0' + day : day);
+        var formattedDate = month + '.' + (day < 10 ? '0' + day : day);
     }
 
 

@@ -3,15 +3,18 @@
         <div class="banner-box">
             <div class="item-banner" @touchend="open" @touchstart="stop" v-for="(item, index) in items" :key="item.id"
                 :class="{ selectbanner: selectIndex == index }">
-                <a href="javascript:;">
-                    <img :src="item.imgUrl" :title="item.title">
+                <a href="javascript:;" v-if="item?.imgUrl && item?.imgUrl != '' && item?.title != ''">
+                    <img :src="item?.imgUrl" :title="item.title">
+                </a>
+                <a href="javascript:;" v-else>
+                    <img :src="item" :title="item"
+                        @click="opneMax({ target: item, data: JSON.parse(JSON.stringify(items)) })">
                 </a>
             </div>
             <div class="banner-item-checkout">
                 <span @click="slelceBanner(index)" :class="{ active: selectIndex == index }"
                     v-for="(item, index) in items.length" :key="index"></span>
             </div>
-
         </div>
     </div>
 </template>
@@ -39,7 +42,7 @@ export default {
         },
 
     },
-    setup(props) {
+    setup(props, { emit }) {
 
         // 控制显示哪张图片
         let selectIndex = ref(0);
@@ -74,6 +77,8 @@ export default {
 
 
 
+
+
         // 鼠标移入的时候暂停轮播
         let stop = () => {
             // 如果设置了自动播放那么就清除定时器
@@ -96,7 +101,15 @@ export default {
 
 
 
-        return { selectIndex, slelceBanner, stop, open }
+        // 点击查询全屏图片
+        let opneMax = (data) => {
+            emit('opneMax', data)
+        }
+
+
+
+
+        return { selectIndex, slelceBanner, stop, open, opneMax }
     }
 }
 </script>
@@ -114,6 +127,7 @@ export default {
 
     .selectbanner {
         opacity: 1 !important;
+        z-index: 100;
     }
 
 

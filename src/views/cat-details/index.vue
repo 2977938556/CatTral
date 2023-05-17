@@ -16,30 +16,36 @@
 
 
         <!-- 主要内容区域 -->
-        <div class="details-content">
+        <div class="details-content" v-if="DetailData">
             <div class="detail-center">
                 <!--  banner -->
-                <CatBannner :itme="[]"></CatBannner>
+                <CatBannner @opneMax="opneMax" :items="DetailData?.imageUrl"></CatBannner>
                 <!-- 头部用户信息模块 -->
                 <div class="detail-user">
                     <div class="detail-left">
                         <a href="javascript:;">
                             <div class="detail-left-img">
-                                <img src="https://img.js.design/assets/smartFill/img205164da6ef470.jpg" alt="">
+                                <img :src="DetailData.user_id.bgimgUrl" alt="">
                             </div>
                             <div class="detail-left-text">
-                                <p>FeiMao@110</p>
-                                <span>领养替代购买</span>
+                                <p>{{ DetailData.user_id.username }}</p>
+                                <span>{{ DetailData.user_id.slogin }}</span>
                             </div>
                         </a>
                     </div>
                     <div class="detail-right">
-                        <div class="sc">
-                            <img src="../../assets/image/cat-detail-sc.png" alt="">
+                        <!--   -->
+                        <div class="sc" @click="CollectFn">
+                            <!-- 收藏了 -->
+                            <img src="../../assets/image/cat-detail-sc.png" alt="" v-if="collectFlage">
+                            <!-- 未收藏 -->
+                            <img src="../../assets/image/cat-detail-sc-on.png" alt="" v-else>
+
                             <span>收藏</span>
                         </div>
                         <div class="sx">
-                            <img src="../../assets/image/cat-details-message.png">
+                            <img src="../../assets/image/cat-details-message-no.png" v-if="false">
+                            <img src="../../assets/image/cat-details-message.png" alt="">
                             <span>私信</span>
                         </div>
                     </div>
@@ -48,16 +54,16 @@
                 <!-- 标题模块 -->
                 <div class="detail-title">
                     <div class="detail-title-center">
-                        <p>有需要领养猫猫的吗，有只金渐层，个人因为工作的原因，不方便养猫了，需要私信我有需要领养猫猫的吗，有只金渐层，个人因为工作的原因，不方便养猫了，需要私信我</p>
+                        <p>{{ DetailData.title }}</p>
                     </div>
                 </div>
 
 
                 <!-- 简介模块 -->
-                <div class="dateil-jj" v-if="true">
+                <div class="dateil-jj">
                     <div class="detail-jj-center">
-                        <p class=".cancel-ellipsis">
-                            如果你正在寻找一只可爱的金渐层猫猫作为你的宠物，那么你来对地了我有一只金渐层猫猫需要领养，因为我的工作原因无法照顾它。如果你对猫咪有经验，愿意给它提供一个温暖的家，那么请私信联系我。如果你正在寻找一只可爱的金渐层猫猫作为你的宠物，那么你来对地方了。我有一只金渐层猫猫需要领养，因为我的工作原因无法照顾它。如果你对猫咪有经验，愿意给它提供一个温暖的家，那么请私信联系我。如果你正在寻找一只可爱的金渐层猫猫作为你的宠物，那么你来对地方了。我有一只金渐层猫猫需要领养，因为我的工作原因无法照顾它。如果你对猫咪有经验，愿意给它提供一个温暖的家，那么请私信联系我。如果你正在寻找一只可爱的金渐层猫猫作为你的宠物，那么你来对地方了。我有一只金渐层猫猫需要领养，因为我的工作原因无法照顾它。如果你对猫咪有经验，愿意给它提供一个温暖的家，那么请私信联系我。
+                        <p :class="BriefIntVaild" @click="BriefIntVaildFn(DetailData.content)">
+                            {{ DetailData.content }}
                         </p>
                     </div>
                 </div>
@@ -66,7 +72,7 @@
                 <!-- 标签模块 -->
                 <div class="dateil-tab">
                     <ul>
-                        <li v-for="(item, index) in ['金渐层', '个人', '金渐层']" :key="index + 1">
+                        <li v-for="(item, index) in DetailData.lable" :key="index + 1">
                             <a href="javascript:;">
                                 {{ item }}
                             </a>
@@ -78,10 +84,10 @@
                 <div class="detail-city-time">
                     <div class="detail-city-time-center">
                         <div class="city-left">
-                            <p>赣州</p>
+                            <p>{{ DetailData.addrs.cityName }}</p>
                         </div>
                         <div class="city-time">
-                            <p>2023.5.5</p>
+                            <p>{{ timeFormat(DetailData.created_at) }}</p>
                         </div>
                     </div>
                 </div>
@@ -125,18 +131,155 @@
         <!-- 评论组件 -->
         <CatComment v-show="showComment" @change="showComment = false" :showComment="showComment"></CatComment>
 
+        <CatFullImg v-if="openFullImg" @cancel="cancel" :openImg="openImg" />
+
+
     </div>
 </template>
 
 
 <script>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { timeFormat } from '@/utils/timeFilter.js'
+import { GetDEtailCat, GetCollect, GetcollectObje } from '@/api/detail.js'
+import MessageJs from '@/components/libray/CarMessage.js'
+
+
 export default {
     name: "CatDetail",
     setup() {
         let showComment = ref(false)
 
-        return { showComment }
+        let route = useRoute();
+        let store = useStore()
+
+
+        let userData = JSON.parse(localStorage.getItem('user-store')).user.profile
+
+
+        // 01：点击查看全屏图片
+        let openImg = ref({})// 图片的数据
+        let openFullImg = ref(false)// 控制是否开启
+        let opneMax = (result) => {
+            // 这里找出被点击的索引值
+            result.index = result.data.findIndex(item => item == result.target)
+            openFullImg.value = true
+            openImg.value = result
+        }
+        // 02：关闭全屏预览图片
+        let cancel = () => {
+            openFullImg.value = !openFullImg.value
+            console.log("触发了");
+        }
+
+
+        // 03：控制简介的点击开启
+        let BriefIntVaild = ref("")
+        let BriefIntVaildFn = (text) => {
+            if (BriefIntVaild.value != "") {
+                BriefIntVaild.value = ''
+                return false;
+            }
+            // 大于了五十的字符长度那么就需要设置一下
+            if (text.length > 50) {
+                BriefIntVaild.value = 'cancel-ellipsis'
+            }
+        }
+
+
+
+        // 通过routqe中获取parmas的参数 id获取详情数据
+        let GoodsId = route.params.id
+
+
+
+
+        // 01_1 获取当前页面的数据
+        let DetailData = ref(null)
+
+
+
+
+        // 02_2 用户保存用户的收藏信息
+        let collectData = ref({})
+        // 这个是控制是否收藏了
+        let collectFlage = ref(false)
+
+
+
+
+        // 获取数据
+        let GetGetDEtailCat = async () => {
+            // 获取帖子的详情数据
+            let { result: { data } } = await GetDEtailCat(GoodsId)
+            DetailData.value = data
+
+
+            // 获取用户的收藏数据
+            let { result } = await GetCollect(userData.user_id)
+            collectData.value = result.data
+
+            // 这里就是处理数据
+
+
+        }
+
+
+
+        GetGetDEtailCat()
+
+
+
+
+        // 这里我是直接监听数据
+        watch(() => collectData.value, (newVal, olVal) => {
+            // 这里我们设置了一下如果没有值的情况那么就会直接赋值为1
+            if (JSON.stringify(newVal) == "{}") {
+                collectFlage.value = false
+                return
+            }
+
+            // 这里是查早是否有数据
+            let index = collectData.value.bookmarks.findIndex(item => item.cat_id == GoodsId)
+
+
+            console.log(index);
+            if (index == -1) {
+                collectFlage.value = false
+            } else {
+                collectFlage.value = true
+            }
+        }, { immediate: true })
+
+
+
+        // 设置节流阀
+        let Debouncing = null
+
+        // 点击收藏的时候就发送请求将收藏的数据添加进去
+        let CollectFn = () => {
+            if (!Debouncing) {
+                clearInterval(Debouncing)
+                Debouncing = setInterval(() => {
+                    // 发送请求
+                    GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
+                        // 这里由于我直接修改了储存收藏的数据
+                        collectData.value = result.data
+                        clearInterval(Debouncing)
+                        Debouncing = null
+                    })
+                }, 500)
+            }
+        }
+
+
+
+
+
+
+        return { showComment, timeFormat, BriefIntVaildFn, BriefIntVaild, DetailData, opneMax, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
     }
 }
 
@@ -147,6 +290,7 @@ export default {
 <style lang="less" scoped>
 .Cat-details {
     transition: all 0.5s ease-in;
+
 
     // 按钮样式
     .btn {
@@ -321,19 +465,30 @@ export default {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                transition: all 5s ease-in;
 
+                // 开关控制是否
                 .cancel-ellipsis {
-                    display: block;
-                    overflow: visible;
-                    text-overflow: unset;
-                    -webkit-line-clamp: initial;
+                    display: block !important;
+                    overflow: visible !important;
+                    text-overflow: unset !important;
+                    -webkit-line-clamp: initial !important;
+                    font-size: @body-font-size !important;
+                    font-weight: 500 !important;
+                    color: @secondary-text-color !important;
                 }
+
+                // .opne {
+                //     display: block;
+                //     overflow: visible;
+                //     text-overflow: unset;
+                //     -webkit-line-clamp: initial;
+                // }
 
                 .detail-jj-center {
                     width: 325px;
                     height: auto;
 
-                    // background: red;
                     p {
                         display: -webkit-box;
                         -webkit-box-orient: vertical;
@@ -346,6 +501,8 @@ export default {
 
 
                 }
+
+
             }
 
 
