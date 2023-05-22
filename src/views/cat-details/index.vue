@@ -92,9 +92,10 @@
                 </div>
 
                 <!-- 评论模块 -->
-                <div class="detail-pinglun">
+
+                <div class="detail-pinglun" @click="openComment">
                     <div class="detail-pinglun-center">
-                        <a href="javascript:;" @click="showComment == false ? showComment = true : showComment = false">
+                        <a href="javascript:;">
                             <span class="pl-count">99</span>
                             <div class="pinglun-left">
                                 <div class="pinglun-title">
@@ -118,22 +119,20 @@
             <div class="recommendeCount">
                 <RecenGood></RecenGood>
                 <!-- 循环渲染 内容组件 -->
-                <div class="recommende-count">
-                    <CarGoodsItem></CarGoodsItem>
+                <div class="recommende-count" v-if="RemmendData.length != 0">
+                    <CarGoodsItem :goodsitem="RemmendData" />
                 </div>
             </div>
 
             <!-- loding加载效果 -->
-            <!-- <CatLoding :loding="false" /> -->
+            <CatLoding :loading="false" :finished="true" />
         </div>
 
 
         <CatDetailLoding v-else />
 
         <!-- 评论组件 -->
-        <CatComment v-show="showComment" @change="showComment = false" :showComment="showComment"></CatComment>
-
-
+        <CatComment v-if="showComment" :showComment="showComment" :DetailData="DetailData" />
 
         <!-- 全屏图片组件 -->
         <CatFullImg v-if="openFullImg" @cancel="cancel" :openImg="openImg" />
@@ -147,22 +146,27 @@ import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { timeFormat } from '@/utils/timeFilter.js'
-import { GetDEtailCat, GetCollect, GetcollectObje } from '@/api/detail.js'
+import { GetDEtailCat, GetCollect, GetcollectObje, GetRemmed } from '@/api/detail.js'
 import MessageJs from '@/components/libray/CarMessage.js'
 import { Processingregion } from '@/utils/timeFilter.js'
+import router from '../../router'
 
 
 export default {
     name: "CatDetail",
     setup() {
-        let showComment = ref(false)
+
+        // let showComment = ref(false)
 
         let route = useRoute();
         let store = useStore()
 
 
-        let userData = JSON.parse(localStorage.getItem('user-store')).user.profile
 
+        let showComment = computed(() => store.state.detail.showComment)
+
+
+        let userData = JSON.parse(localStorage.getItem('user-store')).user.profile
 
         // 01：点击查看全屏图片
         let openImg = ref({})// 图片的数据
@@ -196,8 +200,7 @@ export default {
 
 
         // 通过routqe中获取parmas的参数 id获取详情数据
-        let GoodsId = route.params.id
-
+        let GoodsId = ref(route.params.id)
 
 
 
@@ -206,11 +209,13 @@ export default {
 
 
 
-
         // 02_2 用户保存用户的收藏信息
         let collectData = ref({})
         // 这个是控制是否收藏了
         let collectFlage = ref(false)
+
+        // 03_3 保存用户的推荐数据
+        let RemmendData = ref([])
 
 
 
@@ -218,44 +223,27 @@ export default {
         // 获取数据
         let GetGetDEtailCat = async () => {
             // 获取帖子的详情数据
-            let { result: { data } } = await GetDEtailCat(GoodsId)
-            DetailData.value = data
+            GetDEtailCat(GoodsId.value).then(({ result }) => {
+                DetailData.value = result.data
+            }).catch(({ response: { data } }) => {
+                // 这里是没有数据的情况下。我们跳转到404页面上
+                router.push('/error')
+                // return MessageJs({ text: `${data.message}`, type: 'error' })
+            })
 
 
             // 获取用户的收藏数据
-            let { result } = await GetCollect(userData.user_id)
-            collectData.value = result.data
+            let GetCollectData = await GetCollect(userData.user_id)
+            collectData.value = GetCollectData.result.data
 
-            // 这里就是处理数据
-
-
+            // 获取用户的推荐数据
+            let remmedData = await GetRemmed()
+            RemmendData.value = remmedData.result.data
         }
-
 
         GetGetDEtailCat()
 
 
-
-
-        // 这里我是直接监听数据
-        watch(() => collectData.value, (newVal, olVal) => {
-            // 这里我们设置了一下如果没有值的情况那么就会直接赋值为1
-            if (JSON.stringify(newVal) == "{}") {
-                collectFlage.value = false
-                return
-            }
-
-            // 这里是查早是否有数据
-            let index = collectData.value.bookmarks.findIndex(item => item.cat_id == GoodsId)
-
-            // 这里判断是否有被收藏了
-            if (index == -1) {
-                collectFlage.value = false
-            } else {
-                collectFlage.value = true
-            }
-
-        }, { immediate: true })
 
 
 
@@ -268,8 +256,9 @@ export default {
                 clearInterval(Debouncing)
                 Debouncing = setInterval(() => {
                     // 发送请求
-                    GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
+                    GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId.value, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
                         // 这里由于我直接修改了储存收藏的数据所以会自动更新
+                        console.log(result.data);
                         collectData.value = result.data
                         clearInterval(Debouncing)
                         Debouncing = null
@@ -278,9 +267,43 @@ export default {
             }
         }
 
+        // 这里我是直接监听收藏的数据
+        watch(() => collectData.value, (newVal, olVal) => {
+            // 这里我们设置了一下如果没有值的情况那么就会直接赋值为1
+            if (newVal?.bookmarks?.length == 0) {
+                collectFlage.value = false
+                return
+            }
+
+            // // 这里是查早是否有数据
+            let index = collectData?.value?.bookmarks?.findIndex(item => item.cat_id == GoodsId.value);
+
+            if (index < 0 || index == "undefined") {
+                collectFlage.value = false
+            } else if (index >= 0) {
+                collectFlage.value = true
+            }
+
+        }, { immediate: true })
 
 
-        return { showComment, timeFormat, BriefIntVaildFn, BriefIntVaild, DetailData, opneMax, Processingregion, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
+        // 这里是监听的当前页面其他的流浪猫卡片
+        watch(() => route.params.id, (newVal, olVal) => {
+            if (newVal != olVal) {
+                // 将当前需要被查询的帖子id进行查询
+                GoodsId.value = newVal
+                GetGetDEtailCat()
+            }
+        })
+
+
+        // 这个是开启评论的
+        let openComment = () => {
+            store.commit('detail/SetShowComment')
+        }
+
+
+        return { showComment, timeFormat, BriefIntVaildFn, GoodsId, BriefIntVaild, DetailData, openComment, opneMax, Processingregion, RemmendData, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
     }
 }
 
@@ -706,13 +729,11 @@ export default {
     .recommendeCount {
         width: 375px;
         margin-top: 20px;
-        border: 1px solid red;
         // min-height: 100px;
 
         .recommende-count {
             width: 345px;
             margin: 0 auto;
-            border: 1px solid red;
 
 
             .tuij-content {

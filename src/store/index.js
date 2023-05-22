@@ -9,13 +9,15 @@ import home from '@/store/modules/home.js'
 import message from '@/store/modules/message.js'
 import search from '@/store/modules/search.js'
 import user from '@/store/modules/user.js'
+import detail from '@/store/modules/detail.js'
 
 let store = createStore({
     modules: {
         home,
         message,
         search,
-        user
+        user,
+        detail
     },
 
     // 持久化配置

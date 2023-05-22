@@ -1,90 +1,99 @@
 <template>
     <div>
-        <div class="mask" @click.prevent="$emit('change', false)"> <!-- 评论数据 -->
-
+        <div class="mask" @click="cloneMask"> <!-- 评论数据 -->
+            {{ CommentDat.addup }}
         </div>
         <!-- 评论的数据 -->
         <div class="detail-comment-content">
-
             <div class="input">
-                <input type="text" placeholder="请输入您的友好评论">
-                <button>评论</button>
+                <input ref="inputs" v-model="CommenTvalue" type="text" @blur="fouceFn" placeholder="请输入您的友好评论"
+                    @keydown.enter="sendCommentOrReply">
+                <!-- <button @click="submitComment">评论</button> -->
             </div>
             <!-- 渲染评论区内容 -->
-            <div class="detail-comment-center">
+            <div class="detail-comment-center" @click="addUpFN">
                 <ul>
-                    <li v-for="item in 6" :key="item" class="center-item">
-                        <div class="detail-pl-title-user">
-                            <a href="javascript:;">
-                                <span>
-                                    <img src="https://img.js.design/assets/smartFill/img195164da6ef470.jpg" alt="">
-                                </span>
-                                <span>
-                                    <h4>FeiMao@110</h4>
-                                    <p>4月14日</p>
-                                </span>
-                            </a>
-                        </div>
-                        <!-- 评论详情 -->
-                        <div class="detail-pl-title-content">
-                            <!-- 分别有三个模块 -->
-                            <div class="detail-pl-top">
-                                <p>这只猫猫好可爱哇，再养一只了，希望他可以找一个好人家，呜呜呜
-                                </p>
-                            </div>
-                            <!-- 评论详情 -->
-                            <div class="detail-pl-center">
-                                <span>
-                                    <img src="../../assets/image/cat-detail-dz.png" alt="">
-                                    <p>19</p>
-                                </span>
-                                <span>
-                                    <img src="../../assets/image/cat-detail-pl.png" alt="">
-                                    <p>90</p>
-                                </span>
-                            </div>
-                            <!-- 回复详情 -->
-                            <div class="detail-pl-hf" v-if="item % 2 != 0">
-                                <ul>
-                                    <!-- 这里需要进行判断是否有回复的数据 -->
-                                    <template v-for="item in 2" :key="item">
-                                        <li v-if="item % 2 != 0">
-                                            <h5>爱猫使者：</h5>
-                                            <span>对哇，这只猫好可爱走了对哇，这只猫好可爱走了</span>
-                                        </li>
-                                        <li v-else>
-                                            <h5>爱猫使者：</h5>
-                                            <span>哈哈哈哈哈，好可爱的猫猫哇</span>
-                                        </li>
-                                    </template>
-                                    <p>
-                                        <router-link :to="`/comment/detail/${item}`">
-                                            共五条评论 >
-                                        </router-link>
-                                    </p>
-                                </ul>
-                            </div>
-                        </div>
-                    </li>
-                    <!-- 没有更多了 -->
-                    <!-- loding加载效果 -->
-                    <!-- <CatLoding :loding="false" :smail="true" /> -->
-                </ul>
+                    <template v-if="CommentDat.length != 0">
+                        <li v-for="(item, index) in  CommentDat " :key="item" class="center-item">
+                            <div class="detail-pl-title-user">
+                                <a href="javascript:;">
+                                    <span>
+                                        <img :src="item.commenter.bgimgUrl" alt="">
+                                    </span>
+                                    <span>
+                                        {{ type }}
+                                        <h4>{{ item.commenter.username }}</h4>
+                                        <p>{{ timeFormat(item.createTime) }}</p>
 
+                                    </span>
+                                </a>
+                            </div>
+
+
+                            <!-- 评论详情 -->
+                            <div class="detail-pl-title-content">
+                                <!-- 分别有三个模块 -->
+                                <div class="detail-pl-top">
+                                    <p>{{ item.content }}</p>
+                                </div>
+                                <!-- 评论详情 -->
+                                <div class="detail-pl-center">
+                                    <span>
+                                        <img src="../../assets/image/cat-detail-dz.png" alt="a" :addup="item?._id">
+                                        <p>{{ item.addup.length }}</p>
+                                        <div :class="{ 'dz-img': item.addup.indexOf(commenter) != -1 }"></div>
+                                    </span>
+                                    <span>
+                                        <img src="../../assets/image/cat-detail-pl.png" alt="b" :addup="item?._id">
+                                        <p>{{ item.replyCount }}</p>
+                                    </span>
+                                </div>
+
+                                <!-- 回复详情 -->
+                                <div class="detail-pl-hf">
+                                    <ul v-if="item.replies && item.replies.length != 0">
+                                        <!-- 这里需要进行判断是否有回复的数据 -->
+                                        <template v-for=" items  in  item.replies" :key="item">
+                                            <li>
+                                                <h5>{{ items.replier.username }}</h5>
+                                                <span>{{ items.content }}</span>
+                                            </li>
+
+                                        </template>
+                                        <p>
+                                            <router-link :to="`/comment/detail/${item}`">
+                                                共五条评论 >
+                                            </router-link>
+                                        </p>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </template>
+                    <!-- loding加载效果 -->
+                    <CatLoding :loading="false" :finished="true" :smail="true" message="没有更多评论哦，快点发布一条评论吧" />
+                </ul>
             </div>
         </div>
-
 
     </div>
 </template>
 
-
 <script>
-import { watch } from 'vue'
+import { refAutoReset } from '@vueuse/core';
+import { watch, ref, computed } from 'vue'
+import MessageJs from '@/components/libray/CarMessage.js'
+import { PushCommentData, GetCommentData, PushAddUp, PushReply } from '@/api/detail.js'
+import { useRoute, useRouter, } from 'vue-router'
+import { useStore } from 'vuex'
+import { timeFormat } from '@/utils/timeFilter.js'
+
+import router from '../../router';
+import less from 'less';
 export default {
     name: 'CatComment',
     props: {
-        // 这个是控制是否显示评论的
+        // // 这个是控制是否显示评论的
         showComment: {
             type: Boolean,
             default: true,
@@ -92,37 +101,121 @@ export default {
         comment: {
             type: Array,
             default: []
+        },
+        DetailData: {
+            type: [Array, Object],
         }
     },
     setup(props) {
-        // 禁止body元素的滚动事件
-        let disableBodyScroll = () => {
-            document.body.style.overflow = 'hidden';
+        let route = useRoute()
+        let state = useStore()
+
+        // 这个是关闭评论模块
+        let cloneMask = () => {
+            state.commit('detail/SetShowComment')
         }
-        // 恢复body元素滚动事件
-        let enableBodyScroll = () => {
-            document.body.style.overflow = '';
+
+        // 用户保存需要评论的id
+        let CommenTvalue = ref('');// 评论内容
+        let CatId = props.DetailData._id// 帖子id
+        let commenter = JSON.parse(localStorage.getItem('user-store')).user.profile._id//当前登录的用户id
+
+
+
+        // 获取评论的数据
+        let getCommitFn = () => {
+            GetCommentData(CatId).then(value => {
+                //这里我们使用vuex进行管理
+                state.commit('detail/SetCommentDat', value.result.data)
+            }).catch(err => {
+                state.commit('detail/SetCommentDat', [])
+            })
+        }
+        getCommitFn()
+
+        // 这个是从vuex中获取评论的数据
+        let CommentDat = computed(() => state.state.detail.CommentDat)
+
+
+        // 发布评论
+        let submitComment = () => {
+
         }
 
 
+        // 获取
+        //  01 鼠标单击回复的时候就将type设置为false
+        //  02 input失去焦点的时候将type设置为true
+        //  03 点击发送评论按钮的时候也是需要设置type 为true
 
-        // 监听控制是否显示隐藏来进行判断是否可以滚动
-        watch(() => props.showComment, (newvalue, oldvalue) => {
-            if (newvalue == true) {
-                // console.log("进来1");
-                disableBodyScroll()
-            } else {
-                // console.log("进来2");
-                enableBodyScroll()
+        // 这个是用户当点击回复按钮的时候就设置获取焦点事件并且需要清空掉input输入框中的内容
+        let inputs = ref(null)
+        // tyep 是判断用户是否是评论还是回复
+        let type = ref("a")
+        // 这个是设置是否获取焦点事件
+        let fouceFn = () => {
+            type.value = "a"
+        }
+
+        let sendCommentOrReply = () => {
+            // 这里先判断是是否提交的数据是否为空
+            if (type.value != "b" && CommenTvalue.value != "" && CatId != "" && commenter != "") {
+                console.log("这里是评论模块", type.value);
+                // 这里发送请求获取数据 分别传递评论内容,评论作者id 和帖子id
+                PushCommentData({ content: CommenTvalue.value, commenter, CatId }).then(({ result: { data } }) => {
+                    state.commit('detail/IncreaseComment', data)
+                    return MessageJs({ text: "评论发布成功", type: "success" })
+                }).catch(e => {
+                    console.log(e);
+                    return MessageJs({ text: "评论发布失败", type: "error" })
+                })
+            } else if (type.value != "a") {
+                alert("这里是回复");
+                // 这里需要进行发送回复请求需要提供
+                // 回复的内容
+                // 回复者的id
+                // 回复的帖子id
+                PushReply({ CommenTvalue: CommenTvalue.value, replyVal: replyVal.value, commenter }).then(value => {
+                    console.log(value);
+                })
+
             }
-        }, {
-            immediate: true
-        })
+
+        }
 
 
 
+        // 这个是回复的id
+        let replyVal = ref('')
+
+        // 点赞与回复 模块
+        // 当点击的时候我们先会去vuex中进行查找如果有那么就取消如果没有那么就添加
+        let addUpFN = (e) => {
+            console.log()
+            // 等于a表示是的是点赞的
+            if (e.target.getAttribute('alt') == 'a') {
+                let addupId = e.target.getAttribute('addup')// 获取需要点赞的评论id
+                PushAddUp({ addupId, commenter }).then(({ result }) => {
+                    // 这里是点赞模块
+                    // 当addup中有数据的时候就会删除否则就会被删除
+                    state.commit('detail/AddCommentData', { addupId, commenter })
+                }).catch(err => {
+                    return MessageJs({ text: "点赞失败哦~", type: "error" })
+                })
+                // 这里表示是回复的情况
+            } else if (e.target.getAttribute('alt') == 'b') {
+                replyVal.value = e.target.getAttribute('addup')// 获取需要回复的的帖子id 并设置用
+                // 设置input获取焦点
+                type.value = "b"
+                inputs.value.focus()
+                // 清空输入框中的内容
+                CommenTvalue.value = ""
+            }
+
+        }
 
 
+        return { CommenTvalue, submitComment, inputs, type, CommentDat, timeFormat, fouceFn, addUpFN, commenter, cloneMask, inputs, sendCommentOrReply }
 
 
     }
@@ -143,6 +236,22 @@ export default {
     bottom: 0px;
     z-index: 1000;
 
+}
+
+.myimg {
+    filter: brightness(75%) hue-rotate(30deg);
+}
+
+.dz-img {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 12px;
+    left: 10px;
+    width: 12px;
+    height: 12px;
+    background-color: @primary-color;
+    border-radius: 100px;
 }
 
 .detail-comment-content {
@@ -169,7 +278,7 @@ export default {
         align-items: center;
         box-shadow: @default-showdow;
         background: @white-color;
-
+        z-index: 1000000;
 
 
 
@@ -201,12 +310,14 @@ export default {
         // background: red;
         display: flex;
         align-items: center;
+        flex-direction: column;
 
 
         ul {
             width: 345px;
             height: 430px;
-            overflow-y: auto;
+            overflow: auto;
+            border-radius: 14px;
 
             .center-item {
                 width: 100%;
@@ -230,7 +341,6 @@ export default {
                             border-radius: 100px;
                             width: 36px;
                             height: 36px;
-
 
                             img {
                                 object-fit: cover;
@@ -264,7 +374,7 @@ export default {
 
                 // 评论模块
                 .detail-pl-title-content {
-                    width: 345px;
+                    width: 100%;
                     height: auto;
 
                     // 评论模块
@@ -291,12 +401,15 @@ export default {
 
                         span {
                             display: flex;
+                            position: relative;
+
                         }
 
                         img {
                             width: 14px;
                             height: 15px;
                         }
+
 
                         p {
                             font-size: @heading3-font-size;
@@ -388,10 +501,12 @@ export default {
 
 
                 }
-
-
-
             }
+
+            .center-item:nth-child(1) {
+                margin-top: 20px;
+            }
+
         }
     }
 

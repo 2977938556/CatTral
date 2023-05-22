@@ -1,7 +1,7 @@
 <template>
     <div class="endof" :class="{ smia: smail == true }" ref="container">
         <p class="loding" v-if="loading"></p>
-        <p class="finished" v-if="finished">~没有更多内容了哦~~</p>
+        <p class="finished" v-if="finished">{{ message }}</p>
     </div>
 </template>
 
@@ -27,6 +27,10 @@ export default {
         smail: {
             type: Boolean,
             default: false
+        },
+        message: {
+            type: String,
+            default: "~没有更多内容了哦~"
         }
     },
     setup(props, { emit }) {

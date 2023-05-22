@@ -14,6 +14,7 @@
 
             <!-- 渲染评论区内容 -->
             <div class="detail-comment-center">
+                <!-- 这个主评论区 -->
                 <ul>
                     <li class="center-item">
                         <div class="detail-pl-title-user">
@@ -47,12 +48,13 @@
                             </div>
                         </div>
                     </li>
-
                 </ul>
 
+
+                <!-- 这个是回复评论区 -->
                 <div class="detail-comment-hf">
                     <ul>
-                        <li v-for="item in 6" :key="item" class="center-item">
+                        <li v-for="item in 2" :key="item" class="center-item">
                             <div class="detail-pl-title-user">
                                 <a href="javascript:;">
                                     <span>
@@ -153,6 +155,7 @@ export default {
                     width: 100%;
                     height: 36px;
                     overflow: hidden;
+                    
 
                     a {
                         display: flex;

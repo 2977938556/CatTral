@@ -25,6 +25,10 @@ import CatDetail from '@/views/cat-details/index.vue'
 import CommentDetail from '@/views/cat-details/subset/cat-commentDeatil-page.vue'
 import CatAppluyFor from '@/views/cat-details/subset/cat-applyfor-page.vue'
 
+
+// 404错误对象
+import CatError from '@/views/error/index.vue'
+
 const routes = [
   // 首页模块功能路由
   { path: "/", redirect: '/home', },
@@ -56,7 +60,10 @@ const routes = [
 
   // 登录与注册
   { path: '/login', component: CatLogin },
-  { path: '/register', component: CatRegister }
+  { path: '/register', component: CatRegister },
+
+
+  { path: '/error', component: CatError },
 
 
 ]
