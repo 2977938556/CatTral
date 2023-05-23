@@ -112,3 +112,19 @@ export const PushReply = (body) => {
 
 
 
+
+/**
+ * @param {string} id 评论id
+ * @returns {promsie} replier
+ * 获取评论模块
+ */
+export const CommentDetail = (id) => {
+    return request(`/detail/commentdetail?id=${id}`, 'get')
+}
+
+
+
+
+
+
+

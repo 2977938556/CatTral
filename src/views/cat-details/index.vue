@@ -96,13 +96,13 @@
                 <div class="detail-pinglun" @click="openComment">
                     <div class="detail-pinglun-center">
                         <a href="javascript:;">
-                            <span class="pl-count">99</span>
+                            <span class="pl-count">{{ commentData?.length }}</span>
                             <div class="pinglun-left">
                                 <div class="pinglun-title">
                                     <h1>猫友评论:</h1>
                                 </div>
                                 <div class="pinglun-content">
-                                    <p>这只猫猫好可爱哇，但是我家里友一只奶牛猫了，哎，父母也不会同意再养一只了，希望他可以找一个好人家，呜呜呜</p>
+                                    <p>{{ commentData[0]?.content || "暂无评论哦~" }}</p>
                                 </div>
                             </div>
                             <div class="pinglun-right">
@@ -132,7 +132,7 @@
         <CatDetailLoding v-else />
 
         <!-- 评论组件 -->
-        <CatComment v-if="showComment" :showComment="showComment" :DetailData="DetailData" />
+        <CatComment v-if="showComment" :DetailData="DetailData" />
 
         <!-- 全屏图片组件 -->
         <CatFullImg v-if="openFullImg" @cancel="cancel" :openImg="openImg" />
@@ -180,7 +180,6 @@ export default {
         // 02：关闭全屏预览图片
         let cancel = () => {
             openFullImg.value = !openFullImg.value
-            console.log("触发了");
         }
 
 
@@ -197,6 +196,10 @@ export default {
             }
         }
 
+
+
+        // 获取评论的数据
+        let commentData = ref([])
 
 
         // 通过routqe中获取parmas的参数 id获取详情数据
@@ -224,8 +227,12 @@ export default {
         let GetGetDEtailCat = async () => {
             // 获取帖子的详情数据
             GetDEtailCat(GoodsId.value).then(({ result }) => {
-                DetailData.value = result.data
+                DetailData.value = result.data.DetailData
+                commentData.value = result.data.commentData
+                // 这里我们需要将帖子的数据存入vuex中
+                store.commit('detail/SetDetailData', result.data.DetailData)
             }).catch(({ response: { data } }) => {
+
                 // 这里是没有数据的情况下。我们跳转到404页面上
                 router.push('/error')
                 // return MessageJs({ text: `${data.message}`, type: 'error' })
@@ -303,7 +310,9 @@ export default {
         }
 
 
-        return { showComment, timeFormat, BriefIntVaildFn, GoodsId, BriefIntVaild, DetailData, openComment, opneMax, Processingregion, RemmendData, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
+
+
+        return { showComment, timeFormat, commentData, BriefIntVaildFn, GoodsId, BriefIntVaild, DetailData, openComment, opneMax, Processingregion, RemmendData, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
     }
 }
 

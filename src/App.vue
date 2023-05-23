@@ -50,6 +50,7 @@ body {
 }
 
 .message-app {
+  background: red;
   width: 100%;
   height: auto;
   position: fixed;

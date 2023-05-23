@@ -6,7 +6,7 @@
         <!-- 评论的数据 -->
         <div class="detail-comment-content">
             <div class="input">
-                <input ref="inputs" v-model="CommenTvalue" type="text" @blur="fouceFn" placeholder="请输入您的友好评论"
+                <input ref="inputs" v-model="CommenTvalue" type="text" @blur="fouceFn" :placeholder="placeholder"
                     @keydown.enter="sendCommentOrReply">
                 <!-- <button @click="submitComment">评论</button> -->
             </div>
@@ -21,10 +21,8 @@
                                         <img :src="item.commenter.bgimgUrl" alt="">
                                     </span>
                                     <span>
-                                        {{ type }}
                                         <h4>{{ item.commenter.username }}</h4>
                                         <p>{{ timeFormat(item.createTime) }}</p>
-
                                     </span>
                                 </a>
                             </div>
@@ -50,19 +48,21 @@
                                 </div>
 
                                 <!-- 回复详情 -->
-                                <div class="detail-pl-hf">
-                                    <ul v-if="item.replies && item.replies.length != 0">
+                                <div class="detail-pl-hf" v-if="item.replies.length != 0">
+                                    <ul>
                                         <!-- 这里需要进行判断是否有回复的数据 -->
-                                        <template v-for=" items  in  item.replies" :key="item">
-                                            <li>
-                                                <h5>{{ items.replier.username }}</h5>
-                                                <span>{{ items.content }}</span>
-                                            </li>
+                                        <template v-for=" (items, index)  in  item.replies" :key="item">
+                                            <template v-if="index < 3">
+                                                <li>
+                                                    <h5>{{ items.replier.username }}</h5>
+                                                    <span>{{ items.content }}</span>
+                                                </li>
+                                            </template>
 
                                         </template>
                                         <p>
-                                            <router-link :to="`/comment/detail/${item}`">
-                                                共五条评论 >
+                                            <router-link :to="`/comment/detail/${item._id}`">
+                                                共{{ item.replies.length }}条评价 >
                                             </router-link>
                                         </p>
                                     </ul>
@@ -87,17 +87,16 @@ import { PushCommentData, GetCommentData, PushAddUp, PushReply } from '@/api/det
 import { useRoute, useRouter, } from 'vue-router'
 import { useStore } from 'vuex'
 import { timeFormat } from '@/utils/timeFilter.js'
+import CatPromptJS from '@/components/libray/CatPrompt.js'
 
-import router from '../../router';
-import less from 'less';
 export default {
     name: 'CatComment',
     props: {
         // // 这个是控制是否显示评论的
-        showComment: {
-            type: Boolean,
-            default: true,
-        },
+        // showComment: {
+        //     type: Boolean,
+        //     default: true,
+        // },
         comment: {
             type: Array,
             default: []
@@ -106,93 +105,93 @@ export default {
             type: [Array, Object],
         }
     },
-    setup(props) {
+    setup(props, { emit }) {
         let route = useRoute()
         let state = useStore()
 
-        // 这个是关闭评论模块
+
+        // 通过vuex进行数据的托管这个是关闭评论模块
         let cloneMask = () => {
             state.commit('detail/SetShowComment')
         }
 
+        // 提示语
+        let placeholder = ref("请输入你的友好评论")
+
         // 用户保存需要评论的id
         let CommenTvalue = ref('');// 评论内容
-        let CatId = props.DetailData._id// 帖子id
-        let commenter = JSON.parse(localStorage.getItem('user-store')).user.profile._id//当前登录的用户id
+        let CatId = state.state.detail.DetailData._id // 帖子id
+        let commenter = JSON.parse(localStorage.getItem('user-store')).user.profile._id || state.state.user.profile._id //当前登录的用户id
 
 
 
-        // 获取评论的数据
-        let getCommitFn = () => {
-            GetCommentData(CatId).then(value => {
-                //这里我们使用vuex进行管理
-                state.commit('detail/SetCommentDat', value.result.data)
-            }).catch(err => {
-                state.commit('detail/SetCommentDat', [])
-            })
-        }
-        getCommitFn()
+
+        // 这里是发送数据获取当前评论的数据
+        GetCommentData(CatId).then(value => {
+            //这里我们使用vuex进行管理
+            state.commit('detail/SetCommentDat', value.result.data)
+        }).catch(err => {
+            state.commit('detail/SetCommentDat', [])
+        })
 
         // 这个是从vuex中获取评论的数据
         let CommentDat = computed(() => state.state.detail.CommentDat)
 
 
-        // 发布评论
-        let submitComment = () => {
-
-        }
 
 
-        // 获取
-        //  01 鼠标单击回复的时候就将type设置为false
-        //  02 input失去焦点的时候将type设置为true
-        //  03 点击发送评论按钮的时候也是需要设置type 为true
-
-        // 这个是用户当点击回复按钮的时候就设置获取焦点事件并且需要清空掉input输入框中的内容
         let inputs = ref(null)
         // tyep 是判断用户是否是评论还是回复
         let type = ref("a")
-        // 这个是设置是否获取焦点事件
+        // 这个是失去焦点那么就设置状态为“a”  并设置input的提示文本为
         let fouceFn = () => {
             type.value = "a"
+            placeholder.value = "请输入你的友好评论"
         }
 
+        // 发布评论模块和回复模块
         let sendCommentOrReply = () => {
             // 这里先判断是是否提交的数据是否为空
-            if (type.value != "b" && CommenTvalue.value != "" && CatId != "" && commenter != "") {
-                console.log("这里是评论模块", type.value);
-                // 这里发送请求获取数据 分别传递评论内容,评论作者id 和帖子id
-                PushCommentData({ content: CommenTvalue.value, commenter, CatId }).then(({ result: { data } }) => {
-                    state.commit('detail/IncreaseComment', data)
-                    return MessageJs({ text: "评论发布成功", type: "success" })
-                }).catch(e => {
-                    console.log(e);
-                    return MessageJs({ text: "评论发布失败", type: "error" })
-                })
-            } else if (type.value != "a") {
-                alert("这里是回复");
-                // 这里需要进行发送回复请求需要提供
-                // 回复的内容
-                // 回复者的id
-                // 回复的帖子id
-                PushReply({ CommenTvalue: CommenTvalue.value, replyVal: replyVal.value, commenter }).then(value => {
-                    console.log(value);
-                })
+            if (CommenTvalue.value != "") {
+                // 判断是否为a如果为a那么就是评论
 
+                // 以下主要的逻辑就是使用vuex进行数据的托管
+                // 01 当发送当评论的请求成功的话那么就在vuex中添加进入
+                if (type.value != "b" && CatId != "" && commenter != "") {
+                    // 这里发送请求获取数据 分别传递评论内容,评论作者id 和帖子id
+                    PushCommentData({ content: CommenTvalue.value, commenter, CatId }).then(({ result: { data } }) => {
+                        state.commit('detail/IncreaseComment', data)
+                        // 清空输入框中的内容
+                        CommenTvalue.value = ""
+                        return CatPromptJS({ text: "评论成功", type: "success", timeout: 1000 })
+                    }).catch(e => {
+                        return CatPromptJS({ text: "评论失败哦~", type: "error", timeout: 1000 })
+                    })
+                } else if (type.value != "a" && CommenTvalue.value != "") {
+                    // 这里的逻辑和上面一致
+                    PushReply({ CommenTvalue: CommenTvalue.value, replyVal: replyVal.value, commenter }).then(({ result: { data } }) => {
+                        state.commit('detail/SetReplies', { refId: replyVal.value, playload: data })
+                        // 清空输入框中的内容
+                        CommenTvalue.value = ""
+                        return CatPromptJS({ text: "回复成功啦", type: "success", timeout: 1000 })
+                    }).catch(err => {
+                        return CatPromptJS({ text: "回复失败了哦！~", type: "error", timeout: 1000 })
+                    })
+
+                }
+            } else {
+                return CatPromptJS({ text: "回复内容不能为空", type: "error", timeout: 1000 })
             }
 
         }
-
-
 
         // 这个是回复的id
         let replyVal = ref('')
 
         // 点赞与回复 模块
-        // 当点击的时候我们先会去vuex中进行查找如果有那么就取消如果没有那么就添加
         let addUpFN = (e) => {
-            console.log()
             // 等于a表示是的是点赞的
+            // 当点击点赞的时候服务端会进行查找如果有那么就取消如果没有那么就添加
             if (e.target.getAttribute('alt') == 'a') {
                 let addupId = e.target.getAttribute('addup')// 获取需要点赞的评论id
                 PushAddUp({ addupId, commenter }).then(({ result }) => {
@@ -200,27 +199,26 @@ export default {
                     // 当addup中有数据的时候就会删除否则就会被删除
                     state.commit('detail/AddCommentData', { addupId, commenter })
                 }).catch(err => {
-                    return MessageJs({ text: "点赞失败哦~", type: "error" })
+                    return CatPromptJS({ text: "点赞失败哦", type: "error", timeout: 1000 })
                 })
                 // 这里表示是回复的情况
             } else if (e.target.getAttribute('alt') == 'b') {
-                replyVal.value = e.target.getAttribute('addup')// 获取需要回复的的帖子id 并设置用
-                // 设置input获取焦点
+                replyVal.value = e.target.getAttribute('addup')// 获取需要回复的的帖子id
+                // 设置input的提示语为回复
+                placeholder.value = "回复："
+                // 设置当前的类型会b作为回复的情况
                 type.value = "b"
+                // 设置input获取焦点
                 inputs.value.focus()
                 // 清空输入框中的内容
                 CommenTvalue.value = ""
             }
-
         }
 
 
-        return { CommenTvalue, submitComment, inputs, type, CommentDat, timeFormat, fouceFn, addUpFN, commenter, cloneMask, inputs, sendCommentOrReply }
-
+        return { CommenTvalue, placeholder, inputs, CatId, type, CommentDat, timeFormat, fouceFn, addUpFN, commenter, cloneMask, inputs, sendCommentOrReply }
 
     }
-
-
 
 }
 </script>
@@ -283,7 +281,8 @@ export default {
 
 
         input {
-            width: 279px;
+            width: 100%;
+            margin: 20px;
             height: 42px;
             opacity: 1;
             background: @background-color;

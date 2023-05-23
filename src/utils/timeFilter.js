@@ -34,7 +34,6 @@ export const Processingregion = (city, run = 2) => {
     if (run == 1) {
         return city.provinceName
     }
-
     if (run == 2) {
         return city.cityName
     }

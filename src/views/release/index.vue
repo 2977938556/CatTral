@@ -260,7 +260,9 @@ export default {
                 try {
                     // 转换好的图片数据
                     let FormDataList = await Promise.all(ConvertFile(formData))
-                    let UserDat = store.state.user.profile
+                    // let UserDat = store.state.user.profile
+                    let UserDat = JSON.parse(localStorage.getItem('user-store')).user.profile
+                    console.log(UserDat);
                     // 验证用户
                     RoleFm(UserDat)
                     // 发请求 
@@ -282,10 +284,12 @@ export default {
                         DefaultData()
 
                     }).catch(err => {
+                        console.log(err)
                         loading.value = false
                         return MessageJs({ text: `${err.response.data.message}`, type: "error" })
                     })
                 } catch (error) {
+                    console.log(error)
                     return MessageJs({ text: "上传失败请稍后重试哦~", type: "error" })
                 }
             } else {

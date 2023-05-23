@@ -38,7 +38,10 @@ import CatRegisterLoding from './cat-register-loding.vue'
 import CatFullImg from './cat-full-img.vue'
 // 详情页面的加载骨架
 import CatDetailLoding from './cat-detail-loding.vue'
-
+// 全局小提示组件
+import CatPrompt from './cat-prompt.vue'
+// 全局小提示组件 js版本
+import CatPromptJS from './CatPrompt.js'
 
 export default {
     install(app) {
@@ -62,5 +65,7 @@ export default {
         app.component(CatRegisterLoding.name, CatRegisterLoding)
         app.component(CatFullImg.name, CatFullImg)
         app.component(CatDetailLoding.name, CatDetailLoding)
+        app.component(CatPrompt.name, CatPrompt)
+        app.config.globalProperties.$CatPromptJS = CatPromptJS // 小提示组件挂载全局js版本
     }
 }
