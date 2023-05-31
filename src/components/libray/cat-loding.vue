@@ -39,7 +39,7 @@ export default {
             if (isIntersecting == true && props.loading == false && props.finished == false) {
                 emit("infinite");
             }
-        }, { threshold: 0.1 })
+        }, { threshold: 0.9 })
 
         return { container }
     }

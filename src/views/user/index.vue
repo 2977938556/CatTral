@@ -7,22 +7,23 @@
         <div class="user-title-content">
             <div class="user-title-content">
                 <div class="user-center">
-                    <!-- 用户头像 -->
-                    <div class="user-img">
-                        <span>
-                            <img :src="UserData.bgimgUrl" alt="头像">
-                        </span>
-                    </div>
-
-                    <!-- 用户信息 -->
-                    <div class="user-infor">
-                        <div class="infor-box">
-                            <p class="p1">{{ UserData.username }}</p>
-                            <p class="p2">{{ UserData.slogin }}</p><br>
-                            <p class="p3">{{ lable }}</p>
+                    <router-link to="/user/setuser">
+                        <!-- 用户头像 -->
+                        <div class="user-img">
+                            <span>
+                                <img :src="UserData.bgimgUrl" alt="头像">
+                            </span>
                         </div>
-                    </div>
 
+                        <!-- 用户信息 -->
+                        <div class="user-infor">
+                            <div class="infor-box">
+                                <p class="p1">{{ UserData.username }}</p>
+                                <p class="p2">{{ UserData.slogin }}</p><br>
+                                <p class="p3">{{ lable }}</p>
+                            </div>
+                        </div>
+                    </router-link>
                     <!-- 发布 -->
                     <div class="user-submit">
                         <span @click="goBack">发布</span>
@@ -136,10 +137,6 @@
                                 </div>
                             </div>
 
-
-
-
-
                         </div>
                         <!-- 功能3-->
                         <div class="user-fun-c">
@@ -186,6 +183,7 @@ export default {
             CatConfire({ title: "系统提示", text: "是否退出登录" }).then(value => {
                 store.commit('user/SetUser', {})
                 store.commit('home/SetcityAddrs', {})
+                store.commit('home/DeleteGoodsitem', {})
                 // 这里可以优化一下 弹窗确认
                 MessageJs({ text: '退出登录成功', type: 'success', timeout: 1000 })
                 router.push('/login')
@@ -265,67 +263,74 @@ export default {
                     // border: 1px solid rgb(0, 4, 255);
                 }
 
-                // 用户头像
-                .user-img {
-                    width: 100px;
-                    height: 102px;
+                a {
                     display: flex;
-                    // justify-content: center;
-                    align-items: center;
+                    justify-content: space-between;
 
-                    span {
-                        display: block;
-                        width: 92px;
-                        height: 92px;
-                        border-radius: 100px;
-                        border: 5px solid @white-color;
-                        // background: red;
-                        overflow: hidden;
+                    // 用户头像
+                    .user-img {
+                        width: 100px;
+                        height: 102px;
+                        display: flex;
+                        // justify-content: center;
+                        align-items: center;
 
-                        img {
-                            object-fit: cover;
+                        span {
+                            display: block;
                             width: 92px;
                             height: 92px;
+                            border-radius: 100px;
+                            border: 5px solid @white-color;
+                            // background: red;
+                            overflow: hidden;
+
+                            img {
+                                object-fit: cover;
+                                width: 92px;
+                                height: 92px;
+                            }
                         }
                     }
-                }
 
-                // 用户信息
-                .user-infor {
-                    width: 142px;
-                    height: 102px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    // background: pink;
-
-                    .infor-box {
+                    // 用户信息
+                    .user-infor {
                         width: 142px;
-                        height: 50px;
-                        // background: red;
+                        height: 102px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        // background: pink;
+
+                        .infor-box {
+                            width: 142px;
+                            height: 50px;
+                            // background: red;
 
 
-                        .p1 {
-                            font-size: 18px;
-                            font-weight: 900;
-                            color: @white-color;
+                            .p1 {
+                                font-size: 18px;
+                                font-weight: 900;
+                                color: @white-color;
 
+                            }
+
+                            .p2 {
+                                font-size: 12px;
+                                font-weight: 900;
+                                color: @white-color;
+                            }
+
+                            .p3 {
+                                font-size: 8px;
+                                // font-weight: 900;
+                                color: @white-color;
+                            }
                         }
 
-                        .p2 {
-                            font-size: 12px;
-                            font-weight: 900;
-                            color: @white-color;
-                        }
-
-                        .p3 {
-                            font-size: 8px;
-                            // font-weight: 900;
-                            color: @white-color;
-                        }
                     }
-
                 }
+
+
 
                 // 提交按钮
                 .user-submit {

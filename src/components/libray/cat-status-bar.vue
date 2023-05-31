@@ -48,7 +48,7 @@ export default {
 }
 
 .borders {
-    // border-bottom: 1px solid @background-color;
+    border-bottom: 1px solid @background-color;
 }
 
 .guding {

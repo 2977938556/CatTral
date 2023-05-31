@@ -19,6 +19,7 @@ import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'
 
 // 个人中心的功能模块
 import History from '@/views/user/subset/cat-history-page.vue'
+import SetUser from '@/views/user/subset/cat-setuser-page.vue'
 
 // 流浪猫详情组件
 import CatDetail from '@/views/cat-details/index.vue'
@@ -48,13 +49,14 @@ const routes = [
   // 详情模块
   { path: '/catdetail/:id', component: CatDetail },//流浪猫详情组件
   { path: '/comment/detail/:id', component: CommentDetail },//流浪猫评论详情组件
-  { path: '/comment/applyfor', component: CatAppluyFor },// 申请组件
+  { path: '/comment/applyfor/:id', component: CatAppluyFor },// 申请组件
 
 
 
   // 我的模块功能
   { path: "/user", component: User },
   { path: '/user/history', component: History },// 历史记录
+  { path: '/user/setuser', component: SetUser },// 修改个人用户数据的模块
 
 
 

@@ -18,8 +18,12 @@
         <template #left>
             <p @click="showfalge = true">
                 <img id="city" class="addrs-img" src="../../assets/image/cat-position.png" alt="">
-                <span v-if="cityAddrs?.changeResult?.provinceName || cityAddrs == null">{{
+                <!-- <span v-if="cityAddrs?.changeResult?.provinceName || cityAddrs == null">{{
                     cityAddrs?.changeResult?.provinceName }}</span>
+                <span v-else>全国</span> -->
+
+                <span v-if="cityAddrs?.changeResult?.provinceName || cityAddrs == null || cityAddrs == undefined">{{
+                    cityAddrs?.changeResult?.provinceName || "全国" }}</span>
                 <span v-else>全国</span>
             </p>
         </template>
@@ -184,7 +188,7 @@ export default {
                     // 加载结束后将loding状态失效
                     loading.value = false
                 } else if (result.data && result.data.length === 0) {
-                    // 加载失败的话显示没有数据了就显示提示文本,关闭loding
+                    // 加载失败的话显示没有数据了就显示提示文本,关闭loding 
                     finished.value = true
                     loading.value = false
 
@@ -193,6 +197,7 @@ export default {
             }).catch(err => {
                 finished.value = false
                 loading.value = false
+                console.log(err);
                 MessageJs({ text: "获取数据失败请重试", type: 'error' })
             })
         }
@@ -206,13 +211,10 @@ export default {
             CartConfig.page = 1;
 
             if (newVal == "A") {
-                console.log("进来了A");
                 getRecommend(CartConfig)
             } else if (newVal == "B") {
-                console.log("进来了B");
                 getRecommend(CartConfig)
             } else if (newVal == "C") {
-                console.log("进来了C");
                 getRecommend(CartConfig)
             }
         })

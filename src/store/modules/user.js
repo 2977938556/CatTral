@@ -3,7 +3,7 @@ export default {
     state: () => {
         return {
             // 用户信息
-            profile: {
+            profile: JSON.parse(localStorage.getItem('user-store'))?.user.profile || {
                 _id: "",
                 username: "",
                 slogin: "",
@@ -12,12 +12,15 @@ export default {
                 created_at: "",
                 role: "",
                 token: "",
+                configuration_information: ""
             }
         }
     },
     mutations: {
         // 修改用户数据
         SetUser(state, payload) {
+            // 这里直接设置数据
+            // state.profile = { ...state.profile, ...payload }
             if (Object.values(payload).length > 0) {
                 // 这里是修改用户，由于我偷懒不想结构出数据所以我就采用循环判断的方式
                 for (let [key, value] of Object.entries(payload)) {
@@ -35,9 +38,10 @@ export default {
                     created_at: "",
                     role: "",
                     token: "",
+                    configuration_information: ""
                 }
-            }
 
+            }
         }
     },
     actions: {
@@ -47,5 +51,3 @@ export default {
 
     }
 }
-
-

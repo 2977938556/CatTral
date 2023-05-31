@@ -10,7 +10,7 @@
                 <p>启示详情</p>
             </template>
             <template #right>
-                <span class="btn" @click="$router.push('/comment/applyfor')">申请领养</span>
+                <CatApply :DetailData="DetailData" />
             </template>
         </CartStatusBav>
 
@@ -24,15 +24,23 @@
                     <div class="detail-left">
                         <a href="javascript:;">
                             <div class="detail-left-img">
-                                <img :src="DetailData.user_id.bgimgUrl" alt="">
+                                <img :src="DetailData.user_id?.bgimgUrl" alt="">
                             </div>
                             <div class="detail-left-text">
-                                <p>{{ DetailData.user_id.username }}</p>
-                                <span>{{ DetailData.user_id.slogin }}</span>
+                                <p>{{ DetailData.user_id?.username }}</p>
+                                <span>{{ DetailData.user_id?.slogin }}</span>
+                            </div>
+                            <div class="gz">
+
+                                <span @click="pushFollowFn(DetailData.user_id._id)"
+                                    :class="[{ active: FollowData?.findIndex(itemss => itemss.follow_id == DetailData?.user_id._id) < 0 ? false : true }]">
+                                    {{ FollowData?.findIndex(itemssa => itemssa.follow_id == DetailData.user_id._id)
+                                        < 0 ? '关注' : '取关' }} </span>
                             </div>
                         </a>
                     </div>
                     <div class="detail-right">
+
                         <!--   -->
                         <div class="sc" @click="CollectFn">
                             <!-- 收藏了 -->
@@ -45,8 +53,9 @@
                         <div class="sx">
                             <img src="../../assets/image/cat-details-message-no.png" v-if="false">
                             <img src="../../assets/image/cat-details-message.png" alt="">
-                            <span>私信</span>
+                            <span @click="PrivateChatModule">私信</span>
                         </div>
+                        <!-- 当点击的时候就需要设置判断用户是否设置了用户可以私聊的功能 -->
                     </div>
                 </div>
 
@@ -146,17 +155,16 @@ import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { timeFormat } from '@/utils/timeFilter.js'
-import { GetDEtailCat, GetCollect, GetcollectObje, GetRemmed } from '@/api/detail.js'
+import { GetDEtailCat, GetCollect, GetcollectObje, GetRemmed, GetFollow, PushFollow } from '@/api/detail.js'
 import MessageJs from '@/components/libray/CarMessage.js'
 import { Processingregion } from '@/utils/timeFilter.js'
+import CatPromptJS from '@/components/libray/CatPrompt.js'
 import router from '../../router'
 
 
 export default {
     name: "CatDetail",
     setup() {
-
-        // let showComment = ref(false)
 
         let route = useRoute();
         let store = useStore()
@@ -221,9 +229,11 @@ export default {
         let RemmendData = ref([])
 
 
+        // 04_4 保存用户的关注数据
+        let FollowData = ref([])
 
 
-        // 获取数据
+        // 获取帖子的数据
         let GetGetDEtailCat = async () => {
             // 获取帖子的详情数据
             GetDEtailCat(GoodsId.value).then(({ result }) => {
@@ -232,10 +242,8 @@ export default {
                 // 这里我们需要将帖子的数据存入vuex中
                 store.commit('detail/SetDetailData', result.data.DetailData)
             }).catch(({ response: { data } }) => {
-
                 // 这里是没有数据的情况下。我们跳转到404页面上
                 router.push('/error')
-                // return MessageJs({ text: `${data.message}`, type: 'error' })
             })
 
 
@@ -246,17 +254,20 @@ export default {
             // 获取用户的推荐数据
             let remmedData = await GetRemmed()
             RemmendData.value = remmedData.result.data
+
+
+            // 获取用户关注的数据
+            let { result: { data: { follow } } } = await GetFollow()
+            FollowData.value = follow
+
+
         }
-
         GetGetDEtailCat()
-
-
 
 
 
         // 设置节流阀
         let Debouncing = null
-
         // 点击收藏的时候就发送请求将收藏的数据添加进去
         let CollectFn = () => {
             if (!Debouncing) {
@@ -265,7 +276,6 @@ export default {
                     // 发送请求
                     GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId.value, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
                         // 这里由于我直接修改了储存收藏的数据所以会自动更新
-                        console.log(result.data);
                         collectData.value = result.data
                         clearInterval(Debouncing)
                         Debouncing = null
@@ -290,7 +300,6 @@ export default {
             } else if (index >= 0) {
                 collectFlage.value = true
             }
-
         }, { immediate: true })
 
 
@@ -304,15 +313,47 @@ export default {
         })
 
 
-        // 这个是开启评论的
+        // 这个是开启与关闭评论模块
         let openComment = () => {
             store.commit('detail/SetShowComment')
         }
 
 
+        // 关注
+        let pushFollowFn = (id) => {
+            try {
+                PushFollow({ user_id: userData._id, follow_id: id }).then((result) => {
+                    console.log(result);
+                    if (!result.result.data) {
+                        console.log(result.result.data);
+                        return CatPromptJS({ text: `${result.message}`, type: "error" })
+                    }
+
+                    FollowData.value = result?.result?.data?.follow
+                    CatPromptJS({ text: `${result.message}`, type: "success" })
+                })
+
+            } catch (err) {
+                CatPromptJS({ text: "操作失败请重试", type: "error" })
+            }
+        }
 
 
-        return { showComment, timeFormat, commentData, BriefIntVaildFn, GoodsId, BriefIntVaild, DetailData, openComment, opneMax, Processingregion, RemmendData, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
+        // 这里需要设置用户是否开启了私聊模式
+        let PrivateChatModule = () => {
+            // console.log();
+            if (userData.configuration_information.private_letter) {
+                CatPromptJS({ text: "可以私聊", type: "success" })
+                // 这里就是需要跳转到用户与该用户私聊的窗口中了，
+                // 我的想法大概是当用户点击的时候那么就设置在message数据库中基于当前的用用户保存
+                // 当前私聊的用户和需要回复的用户并且设置， 
+                // 当回复的用户发送第一条信息的时候那么就需要设置一下在当前的数据中
+            } else {
+                CatPromptJS({ text: "用户已禁止私聊了", type: "error" })
+            }
+        }
+
+        return { showComment, timeFormat, commentData, BriefIntVaildFn, PrivateChatModule, GoodsId, BriefIntVaild, DetailData, FollowData, openComment, pushFollowFn, opneMax, RemmendData, Processingregion, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
     }
 }
 
@@ -325,25 +366,6 @@ export default {
     transition: all 0.5s ease-in;
 
 
-    // 按钮样式
-    .btn {
-        display: block;
-        width: 62px;
-        height: 26px;
-        background: @primary-color;
-        text-align: center;
-        line-height: 26px;
-        color: @white-color;
-        /** 文本1 */
-        font-size: @heading3-font-size;
-        font-weight: 500;
-        border-radius: 50px;
-
-        &:hover {
-            background: @transition-color;
-            font-weight: 900;
-        }
-    }
 
     // 内容区域
     .details-content {
@@ -370,9 +392,8 @@ export default {
 
                 // 左边内容
                 .detail-left {
-                    flex: 1;
+                    flex: 0.8;
                     height: 100%;
-
 
 
                     a {
@@ -421,7 +442,26 @@ export default {
 
                         }
 
+                        .gz {
+                            flex: 0.8;
 
+                            span {
+                                display: block;
+                                width: 46px;
+                                height: 20px;
+                                border-radius: 16px;
+                                background: @comment-color;
+                                color: @white-color;
+                                text-align: center;
+                                line-height: 20px;
+
+                                &.active {
+                                    background: @primary-color;
+                                    color: @white-color;
+                                }
+                            }
+
+                        }
 
                     }
 
@@ -432,10 +472,11 @@ export default {
 
                 // 右边内容
                 .detail-right {
-                    flex: 1;
+                    flex: 0.6;
                     height: 100%;
                     display: flex;
                     align-items: center;
+                    justify-content: center;
 
                     img {
                         object-fit: cover;
@@ -449,6 +490,10 @@ export default {
                         color: @heading-color;
 
                     }
+
+
+
+
 
                     .sc {
                         flex: 1;

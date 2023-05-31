@@ -50,7 +50,7 @@ export default {
     width: 110px;
     height: 40px;
     box-shadow: @default-showdow;
-    z-index: 9999;
+    z-index: 10000000000;
     text-align: center;
     font-size: @heading2-font-size;
     font-weight: 700;

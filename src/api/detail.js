@@ -125,6 +125,33 @@ export const CommentDetail = (id) => {
 
 
 
+/**
+ * @returns {promsie} replier
+ * 获取评论模块
+ */
+export const GetFollow = () => {
+    return request(`/detail/follows`, 'get')
+}
+
+
+
+
+
+/**
+ * @returns {promsie} replier
+ * 获取评论模块
+ */
+export const PushFollow = (data) => {
+    return request(`/detail/follows`, 'post', data)
+}
+
+
+
+
+
+
+
+
 
 
 

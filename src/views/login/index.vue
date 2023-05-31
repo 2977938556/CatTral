@@ -122,29 +122,15 @@ export default {
                         router.push('/')
                     }
                 } catch (error) {
-                    let resultErr = error.response.data;
+                    let resultErr = error?.response?.data;
                     if (resultErr.code === 400 || resultErr.code === 500) {
                         MessageJs({ text: `${resultErr.message}`, type: 'error' })
                     }
                 }
-
-
-
             }
-
-
-
-
         }
 
-
-
-
-
         return { FromDat, FromErr, submitLogin }
-
-
-
     }
 }
 </script>
