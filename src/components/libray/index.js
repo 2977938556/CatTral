@@ -44,6 +44,10 @@ import CatPrompt from './cat-prompt.vue'
 import CatPromptJS from './CatPrompt.js'
 // 申请按钮
 import CatApply from './cat-apply.vue'
+// 用户信息模块
+import CarUserInfo from './cat-user-info.vue'
+// 用户提交的按钮
+import CatSubmit from './cat-submit.vue'
 
 export default {
     install(app) {
@@ -70,6 +74,8 @@ export default {
         app.component(CatPrompt.name, CatPrompt)
         app.config.globalProperties.$CatPromptJS = CatPromptJS // 小提示组件挂载全局js版本
         app.component(CatApply.name, CatApply)
+        app.component(CarUserInfo.name, CarUserInfo)
+        app.component(CatSubmit.name, CatSubmit)
 
 
     }

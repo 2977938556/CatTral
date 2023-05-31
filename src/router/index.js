@@ -11,7 +11,11 @@ import Release from '@/views/release/index.vue'// 发布页面
 
 
 // 四个首页子模块
-import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'
+import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'// 猫迹故事
+import CatStoryFromPage from '@/views/home/subset/cat-story-from-page.vue'// 故事分享
+
+
+
 import CatMjsdPage from '@/views/home/subset/cat-mjsd-page.vue'
 import CatMjznPage from '@/views/home/subset/cat-mjzn-page.vue'
 import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'
@@ -34,7 +38,12 @@ const routes = [
   // 首页模块功能路由
   { path: "/", redirect: '/home', },
   { path: "/home", component: Home }, // 开启路由缓存 },// 首页,
+
   { path: '/home/mjgs', component: CatMjgsPage },//猫迹故事
+  { path: '/home/mjgs/storyfrom', component: CatStoryFromPage },
+
+
+
   { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
   { path: '/home/mjzn', component: CatMjznPage },// 猫迹指南
   { path: '/home/mjhd', component: CatMjhdPage },// 猫迹活动
