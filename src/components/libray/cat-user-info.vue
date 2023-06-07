@@ -17,10 +17,12 @@
                 <div class="top">
                     <slot name="top">
                         <!-- <p>测试</p> -->
+                        {{ PageView }}
                     </slot>
                 </div>
                 <div class="bottom">
                     <slot name="bottom">
+                        {{ Submittime }}
                         <!-- <p>测试</p> -->
                     </slot>
                 </div>
@@ -33,6 +35,17 @@
 <script>
 export default {
     name: "CarUserInfo",
+    props: {
+        // 浏览量模块
+        PageView: {
+            type: String,
+            default: ""
+        },
+        Submittime: {
+            type: String,
+            default: ""
+        }
+    }
 
 }
 

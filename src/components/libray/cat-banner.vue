@@ -135,15 +135,16 @@ export default {
     .banner-box {
         width: 345px;
         height: 160px;
-        border-radius: 20px;
+        border-radius: 10px;
+        background: #e0e0e0;
+
 
         .item-banner {
             width: 345px;
             height: 160px;
-            border-radius: 20px;
+            border-radius: 10px;
             position: absolute;
             transition: all 0.5s;
-            opacity: 0;
             overflow: hidden;
 
             a {

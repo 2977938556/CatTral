@@ -28,7 +28,7 @@
                         <p>浏览109</p>
                     </template>
                 </CarUserInfo>
-                <router-link to="path">
+                <router-link to="/home/mjgs/detai/1">
                     <!-- 中间的数据 -->
                     <div class="mjgz-center-item-center">
                         <p>这是疫情前的冬天，被同学们喂的圆滚滚的一只长得嗷呜嗷呜，但叫起来哼哼唧唧的橘猫，是个弟弟～情期间被饿瘦了！但是依旧帅气

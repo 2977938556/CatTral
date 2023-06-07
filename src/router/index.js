@@ -10,15 +10,19 @@ import CatRegister from '@/views/register/index.vue'// 注册
 import Release from '@/views/release/index.vue'// 发布页面
 
 
-// 四个首页子模块
+// 首页功能模块
 import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'// 猫迹故事
 import CatStoryFromPage from '@/views/home/subset/cat-story-from-page.vue'// 故事分享
-
+import CatMjsdDetail from '@/views/home/subset/cat-mjgs-detail.vue'// 详情页面
 
 
 import CatMjsdPage from '@/views/home/subset/cat-mjsd-page.vue'
 import CatMjznPage from '@/views/home/subset/cat-mjzn-page.vue'
-import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'
+
+
+
+import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'// 活动列表页面
+import CarMjhdDetail from '@/views/home/subset/cat-mjhd-detail-page.vue'// 活动详情页面
 
 
 // 个人中心的功能模块
@@ -40,13 +44,19 @@ const routes = [
   { path: "/home", component: Home }, // 开启路由缓存 },// 首页,
 
   { path: '/home/mjgs', component: CatMjgsPage },//猫迹故事
-  { path: '/home/mjgs/storyfrom', component: CatStoryFromPage },
-
-
-
+  { path: '/home/mjgs/storyfrom', component: CatStoryFromPage },// 发布模块
+  { path: "/home/mjgs/detai/:id", component: CatMjsdDetail },// 帖子详情模块
   { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
   { path: '/home/mjzn', component: CatMjznPage },// 猫迹指南
+
   { path: '/home/mjhd', component: CatMjhdPage },// 猫迹活动
+  { path: '/home/mjhd/:id', component: CarMjhdDetail },// 猫迹活动
+
+
+
+
+
+
   { path: '/user/release', component: Release },// 发布帖子
 
   // 消息模块
