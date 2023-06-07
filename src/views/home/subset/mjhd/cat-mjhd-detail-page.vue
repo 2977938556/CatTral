@@ -13,7 +13,7 @@
             </template>
 
             <template #right>
-                <span>申请</span>
+                <span class="shengq" @click="Appfor">申请</span>
             </template>
         </CartStatusBav>
 
@@ -21,8 +21,6 @@
         <!-- 内容区域 -->
         <div class="mjhd">
             <div class="mjhd-center">
-
-
                 <!--活动卡片区域 -->
                 <ul>
                     <li class="mjhd-item">
@@ -32,10 +30,6 @@
                                 <span class="mjsd-item-tag">活动报名中</span>
                                 <img src="https://img.js.design/assets/smartFill/img195164da6ef470.jpg" alt="">
                             </div>
-
-
-
-
 
 
                             <!-- 底部内容区域 -->
@@ -67,14 +61,9 @@
                             </div>
                         </router-link>
                     </li>
-
-
                     <!-- 提示用户 -->
                     <CatLoding :finished="true" :smail="true" />
                 </ul>
-
-
-
             </div>
         </div>
 
@@ -85,8 +74,28 @@
 
 
 <script>
+import { useRouter } from 'vue-router'
 export default {
     name: "CatMjhdPage",
+
+    setup() {
+        let router = useRouter()
+
+        // 点击申请的时候需要判断当前是否可以进行报名（活动是否有效，用户是否被封禁）
+        let Appfor = () => {
+            router.push('/home/mjhd/appfor/1312423')
+        }
+
+
+
+        return { Appfor }
+
+
+
+    }
+
+
+
 
 }
 
@@ -95,11 +104,28 @@ export default {
 </script>
 
 <style scoped lang="less">
+// 申请按钮
+.shengq {
+    display: block;
+    width: 48px;
+    height: 20px;
+    background: rgba(255, 124, 0, 1);
+
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0px;
+    line-height: 20px;
+    color: rgba(255, 255, 255, 1);
+    text-align: center;
+    border-radius: 10px;
+}
+
+
+
 .mjhd {
     width: 100%;
     height: 100%;
     min-height: 400px;
-    border: 1px solid red;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -114,21 +140,16 @@ export default {
         ul {
             width: 345px;
             height: 100%;
-
-
-
             // 单个活动模块
 
             .mjhd-item {
                 width: 100%;
                 height: auto;
                 border-radius: 10px;
-                background: @white-color ;
+                background: @white-color;
                 box-shadow: 4px 0px 25px 0px rgba(0, 0, 0, 0.05);
                 margin-top: 20px;
-
-                border: 1px solid blue;
-
+                overflow: hidden;
                 a {
 
                     // 顶部图片区域
@@ -142,12 +163,12 @@ export default {
                             width: 100px;
                             height: 30px;
                             background: @primary-color;
-                            color: @white-color;
                             font-size: 12px;
                             font-weight: 500;
                             text-align: center;
                             line-height: 30px;
                             position: absolute;
+                            color: @white-color;
                             border-radius: 0px 0px 190px 0px;
                         }
 
@@ -196,9 +217,18 @@ export default {
                         .mjhd-item-bottom-center {
                             width: 345px;
                             height: auto;
+                            padding-bottom: 40px;
+                            border-bottom: 1px solid @background-color;
 
                             p {
                                 padding: 10px;
+                                font-size: @heading2-font-size;
+                                font-weight: 700;
+                                letter-spacing: 0px;
+                                line-height: 20.27px;
+                                color: rgba(38, 38, 38, 1);
+                                text-align: left;
+                                vertical-align: top;
                             }
                         }
 
@@ -211,11 +241,11 @@ export default {
 
 
                             .top {
-                                height: 60px;
+                                // background: red;
+                                padding: 15px;
 
                                 p {
-                                    padding-left: 10px;
-                                    line-height: 60px;
+                                    // padding-left: 10px;
                                     font-weight: 800;
                                 }
 
@@ -223,16 +253,16 @@ export default {
 
                             .bottom {
                                 display: flex;
-                                height: 60px;
+                                // height: 60px;
+                                min-height: 60px;
                                 align-items: center;
                                 justify-content: space-between;
-                                padding: 10px;
+                                padding: 15px;
+
 
                                 p {
                                     font-size: 12px;
                                     font-weight: 500;
-                                    letter-spacing: 0px;
-                                    line-height: 17.38px;
                                     color: @body-color;
                                     vertical-align: top;
                                 }

@@ -12,22 +12,25 @@ import Release from '@/views/release/index.vue'// 发布页面
 
 // 首页功能模块
 import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'// 猫迹故事
-import CatStoryFromPage from '@/views/home/subset/cat-story-from-page.vue'// 故事分享
-import CatMjsdDetail from '@/views/home/subset/cat-mjgs-detail.vue'// 详情页面
+import CatStoryFromPage from '@/views/home/subset/mjgs/cat-story-from-page.vue'// 故事分享
+import CatMjsdDetail from '@/views/home/subset/mjgs/cat-mjgs-detail.vue'// 详情页面
 
 
-import CatMjsdPage from '@/views/home/subset/cat-mjsd-page.vue'
-import CatMjznPage from '@/views/home/subset/cat-mjzn-page.vue'
+import CatMjsdPage from '@/views/home/subset/cat-mjsd-page.vue'// 猫迹商店
 
 
 
-import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'// 活动列表页面
-import CarMjhdDetail from '@/views/home/subset/cat-mjhd-detail-page.vue'// 活动详情页面
+import CatMjznPage from '@/views/home/subset/cat-mjzn-page.vue'// 猫迹指南
+import CatMjznDetail from '@/views/home/subset/mjzn/cat-mjzn-detail.vue'// 猫迹指南
 
+import CatMjhdPage from '@/views/home/subset/cat-mjhd-page.vue'// 猫迹活动
+import CarMjhdDetail from '@/views/home/subset/mjhd/cat-mjhd-detail-page.vue'// 活动详情页面
+import CatMjhdAppfor from '@/views/home/subset/mjhd/cat-mjhd-applyfor-page.vue'// 报名页面
+import CatParticipate from '@/views/home/subset/mjhd/cat-mjhd-participate-page.vue'// 我参与的活动
 
 // 个人中心的功能模块
-import History from '@/views/user/subset/cat-history-page.vue'
-import SetUser from '@/views/user/subset/cat-setuser-page.vue'
+import History from '@/views/user/subset/cat-history-page.vue'// 历史记录
+import SetUser from '@/views/user/subset/cat-setuser-page.vue'// 设置用户名称
 
 // 流浪猫详情组件
 import CatDetail from '@/views/cat-details/index.vue'
@@ -47,10 +50,20 @@ const routes = [
   { path: '/home/mjgs/storyfrom', component: CatStoryFromPage },// 发布模块
   { path: "/home/mjgs/detai/:id", component: CatMjsdDetail },// 帖子详情模块
   { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
+
+
   { path: '/home/mjzn', component: CatMjznPage },// 猫迹指南
+  { path: '/home/mjzn/:id', component: CatMjznDetail },// 猫迹指南详情
+
+
+
+
 
   { path: '/home/mjhd', component: CatMjhdPage },// 猫迹活动
-  { path: '/home/mjhd/:id', component: CarMjhdDetail },// 猫迹活动
+  { path: '/home/mjhd/:id', component: CarMjhdDetail },// 猫迹活动详情页面
+  { path: '/home/mjhd/appfor/:id', component: CatMjhdAppfor },//报名活动
+  { path: '/home/mjhd/participate', component: CatParticipate },//报名活动
+
 
 
 

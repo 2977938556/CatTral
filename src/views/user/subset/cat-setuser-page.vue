@@ -90,6 +90,7 @@ export default {
         let userDat = JSON.parse(localStorage.getItem('user-store')).user.profile
         SubmitData.username = userDat.username
         SubmitData.slogin = userDat.slogin
+        SubmitData.imgUrl =  userDat.bgimgUrl
 
 
 
@@ -135,7 +136,7 @@ export default {
         // 这里是删除掉图片的情况下需要点击图片的时候就将图片删除
         let DelateImg = () => {
             SubmitData.imgUrl = ''
-            SubmitData.imgBase64 = ''
+            SubmitData.imgBase64 = null
             SubmitData.imgtype = ''
 
             //  提示用户是否被删删除掉图片的数据并且将

@@ -5,11 +5,7 @@
         </div>
         <!-- 评论的数据 -->
         <div class="detail-comment-content">
-            <div class="input">
-                <input ref="inputs" v-model="CommenTvalue" type="text" @blur="fouceFn" :placeholder="placeholder"
-                    @keydown.enter="sendCommentOrReply">
-                <!-- <button @click="submitComment">评论</button> -->
-            </div>
+
             <!-- 渲染评论区内容 -->
             <div class="detail-comment-center" @click="addUpFN">
                 <ul>
@@ -73,7 +69,15 @@
                     <!-- loding加载效果 -->
                     <CatLoding :loading="false" :finished="true" :smail="true" message="没有更多评论哦，快点发布一条评论吧" />
                 </ul>
+                <div class="input">
+                    <input ref="inputs" v-model="CommenTvalue" type="text" @blur="fouceFn" :placeholder="placeholder"
+                        @keydown.enter="sendCommentOrReply">
+                    <!-- <button @click="submitComment">评论</button> -->
+                </div>
+
             </div>
+
+
         </div>
 
     </div>
@@ -128,6 +132,8 @@ export default {
 
         // 这里是发送数据获取当前评论的数据
         GetCommentData(CatId).then(value => {
+            console.log("获取到的数据", value.result.data);
+
             //这里我们使用vuex进行管理
             state.commit('detail/SetCommentDat', value.result.data)
         }).catch(err => {

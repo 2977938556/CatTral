@@ -48,6 +48,8 @@ import CatApply from './cat-apply.vue'
 import CarUserInfo from './cat-user-info.vue'
 // 用户提交的按钮
 import CatSubmit from './cat-submit.vue'
+// 评论模块
+import CarCommentCommponent from './cat-comment-component.vue'
 
 export default {
     install(app) {
@@ -76,6 +78,7 @@ export default {
         app.component(CatApply.name, CatApply)
         app.component(CarUserInfo.name, CarUserInfo)
         app.component(CatSubmit.name, CatSubmit)
+        app.component(CarCommentCommponent.name, CarCommentCommponent)
 
 
     }

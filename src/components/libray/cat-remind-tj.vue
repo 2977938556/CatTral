@@ -43,10 +43,9 @@ export default {
     justify-content: space-between;
 
     .recen-good-center {
-        width: auto;
+        flex: 1;
         height: 22px;
-        // margin: 0 auto;
-
+        margin: 0 auto;
         img {
             width: 14px;
             height: 13px;
@@ -63,10 +62,13 @@ export default {
     }
 
     .recen-good-count {
+        flex: 0.2;
+        line-height: 22px;
         font-size: @heading3-font-size;
         font-weight: 700;
         color: @secondary-text-color;
-        padding-left: 4px;
+        // padding-left: 4px;
+
     }
 }
 </style>

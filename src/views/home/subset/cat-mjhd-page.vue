@@ -13,7 +13,7 @@
             </template>
 
             <template #right>
-                <router-link to="#">我参与的</router-link>
+                <router-link to="/home/mjhd/participate">我参与的</router-link>
             </template>
         </CartStatusBav>
 
@@ -102,10 +102,9 @@ export default {
                 height: 298px;
                 border-radius: 10px;
                 overflow: hidden;
-                background: @white-color ;
+                background: @white-color;
                 box-shadow: 4px 0px 25px 0px rgba(0, 0, 0, 0.05);
                 margin-top: 20px;
-
 
                 a {
 

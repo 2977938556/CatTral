@@ -2,7 +2,7 @@
     <!-- 用户头部的数据 -->
     <div class="mjgz-center-item-top">
         <!-- 用户模块的数据 头像标题等 -->
-        <div class="mjgz-center-item-user">
+        <div :class="{ 'mjgz-center-item-user': true, 'small': type }">
             <div class="mjgz-center-item-user-left">
                 <div class="img">
                     <span><img src="https://img.js.design/assets/smartFill/img205164da6ef470.jpg" alt=""></span>
@@ -44,6 +44,10 @@ export default {
         Submittime: {
             type: String,
             default: ""
+        },
+        type: {
+            default: false,
+            type: Boolean,
         }
     }
 
@@ -54,6 +58,10 @@ export default {
 
 
 <style lang="less" scoped>
+.small {
+    width: 345px !important;
+}
+
 // 用户数据
 .mjgz-center-item-top {
     width: 100%;
@@ -65,19 +73,16 @@ export default {
     .mjgz-center-item-user {
         width: 322px;
         height: 38px;
-        // background: blue;
         display: flex;
 
         .mjgz-center-item-user-left {
             flex: 1.4;
-            // background: blue;
             display: flex;
             justify-content: center;
             align-items: center;
 
             .img {
                 flex: 0.7;
-                // background: rgb(126, 101, 55);
 
                 span {
                     display: block;

@@ -8,7 +8,7 @@
         </template>
         <!-- 中间内容插槽 -->
         <template #center>
-            <p>猫迹商店</p>
+            <p>猫迹故事</p>
         </template>
 
         <template #right>
