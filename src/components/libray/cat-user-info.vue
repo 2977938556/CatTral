@@ -5,11 +5,11 @@
         <div :class="{ 'mjgz-center-item-user': true, 'small': type }">
             <div class="mjgz-center-item-user-left">
                 <div class="img">
-                    <span><img src="https://img.js.design/assets/smartFill/img205164da6ef470.jpg" alt=""></span>
+                    <span><img :src="data.bgimgUrl" alt=""></span>
                 </div>
                 <div class="text">
-                    <h1>FeiMao@110</h1>
-                    <h3>我有一只可爱的奶牛猫</h3>
+                    <h1>{{ data.username }}</h1>
+                    <h3>{{ data.slogin }}</h3>
                 </div>
             </div>
 
@@ -45,9 +45,14 @@ export default {
             type: String,
             default: ""
         },
+        data: {
+            type: Object,
+            default: {},
+        },
         type: {
             default: false,
             type: Boolean,
+
         }
     }
 

@@ -21,6 +21,7 @@ export default {
         SetGoodsitem(state, payload) {
             payload.map(item => {
                 let index = state.goodsitem.findIndex(items => items?._id === item?._id)
+                console.log(index);
                 if (index < 0) {
                     state.goodsitem.push(item)
                 }

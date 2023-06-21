@@ -32,7 +32,6 @@ export default {
     .bottomm {
         width: auto;
         height: 36px;
-        background: red;
         display: flex;
         justify-content: center;
 

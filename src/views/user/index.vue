@@ -183,7 +183,7 @@ export default {
             CatConfire({ title: "系统提示", text: "是否退出登录" }).then(value => {
                 store.commit('user/SetUser', {})
                 store.commit('home/SetcityAddrs', {})
-                store.commit('home/DeleteGoodsitem', {})
+                store.commit('home/DeleteGoodsitem', [])
                 // 这里可以优化一下 弹窗确认
                 MessageJs({ text: '退出登录成功', type: 'success', timeout: 1000 })
                 router.push('/login')

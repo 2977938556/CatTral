@@ -47,7 +47,7 @@ export default {
 }
 
 .message {
-    width: 110px;
+    min-width: 150px;
     height: 40px;
     box-shadow: @default-showdow;
     z-index: 10000000000;

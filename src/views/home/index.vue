@@ -187,6 +187,7 @@ export default {
 
                     // 加载结束后将loding状态失效
                     loading.value = false
+                    finished.value = false
                 } else if (result.data && result.data.length === 0) {
                     // 加载失败的话显示没有数据了就显示提示文本,关闭loding 
                     finished.value = true

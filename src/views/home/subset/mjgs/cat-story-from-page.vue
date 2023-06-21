@@ -57,6 +57,8 @@ import { reactive, ref } from 'vue'
 import CatPromptJS from '@/components/libray/CatPrompt.js'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { PushStoryData } from '@/api/story.js'
+
 
 
 
@@ -69,7 +71,7 @@ export default {
 
         // 需要提交的数据
         let SubmitData = reactive({
-            story: "", // 用户的标语
+            story: "真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫", // 用户的标语
             maxSize: 1024 * 1024 * 2, // 2M
             imgBase64: null,
             imgtype: '',
@@ -122,26 +124,28 @@ export default {
             SubmitData.imgUrl = ''
             SubmitData.imgBase64 = ''
             SubmitData.imgtype = ''
-
             //  提示用户是否被删删除掉图片的数据并且将
-            return CatPromptJS({ text: '删除成功数据请重新选择数据', type: 'success', timeout: "1000" })
+            return CatPromptJS({ text: '删除图片成功', type: 'success', timeout: "1000" })
         }
-
 
 
         // 提交数据
         let SubmitDaa = async () => {
             // 判断是否为空
-            if (SubmitData.story == "") {
-                return CatPromptJS({ text: '还有参数未填写', type: 'error' })
+            if (SubmitData.story == "" || SubmitData.imgBase64 == null) {
+                return CatPromptJS({ text: '请填写与上传完整请填写与上传完整请填写与上传完整', type: 'error' })
             }
 
 
-            console.log(SubmitData);
-
+            // 这里发送请求回去将参数传递回去
+            PushStoryData({ imgBase: SubmitData.imgBase64, content: SubmitData.story, imgtype: SubmitData.imgtype, title: "" }).then(({ result }) => {
+                CatPromptJS({ text: "正在审核", type: 'success' })
+                return router.go(-1)
+            }).catch(({ response }) => {
+                router.go(-1)
+                return CatPromptJS({ text: response?.data.message, type: 'error' })
+            })
         }
-
-
 
 
         return { GetFileFn, SubmitData, DelateImg, SubmitDaa }
