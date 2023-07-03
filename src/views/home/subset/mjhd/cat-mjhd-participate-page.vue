@@ -17,46 +17,100 @@
             </template>
         </CartStatusBav>
 
-
         <!-- 内容区域 -->
         <div class="participate-center">
             <!-- 01 缩略版的活动 -->
-            <div class="mjhdappfor-activity" v-for="item in 5">
-                <a href="#">
-                    <div class="mjhdappfor-activity-box">
-                        <div class="left">
-                            <span class="tag no">活动已经结束了</span>
-                            <img src="https://img.js.design/assets/smartFill/img195164da6ef470.jpg" alt="">
-                        </div>
-                        <div class="right">
-                            <div class="top">
-                                <p>关爱流浪猫，温暖在行动——平安普惠联合江东社区开展公益活动</p>
+            <template v-if="PushActivityList">
+                <div class="mjhdappfor-activity" v-for="item in PushActivityList">
+                    <router-link :to="`/home/mjhd/${item.act_id._id}`">
+                        <div class="mjhdappfor-activity-box">
+                            <div class="left">
+                                <span class="tag no" style="background: rgba(241, 110, 35, 0.411);"
+                                    v-if="item.act_id.to_examine === 'progress'">活动报名中</span>
+                                <span class="tag no" style="background: rgb(148, 148, 148);"
+                                    v-if="item.act_id.to_examine === 'end'">活动结束了</span>
+                                <span class="tag no" style="background: rgb(88, 88, 88);"
+                                    v-if="item.act_id.to_examine === 'cancellation'">活动已经取消了</span>
+                                <img v-for="(mitem, index) in item.act_id.imageUrl" :key="index" :src="mitem" alt="">
                             </div>
-                            <div class="bottom">
-                                <p>活动地点：赣州</p>
-                                <p>报名时间:2023.5.20-5.30</p>
+                            <div class="right">
+                                <!-- 明天优化一下我参与的还有完成猫迹故事使用七牛云 -->
+                                <div class="top">
+                                    <p>{{ item.act_id.title }}</p>
+                                </div>
+                                <div class="bottom">
+                                    <p>地点：{{ item.act_id.adds }}</p>
+                                    <p>{{ `${FromTimeArrat(item.act_id.time[0])}-${FromTimeArrat(item.act_id.time[1])}` }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </router-link>
+                </div>
+            </template>
+
+            <!-- 这里设置一个加载数据的loding的数据结构 -->
+            <div class="loadings" v-else>
+                <CatLodingItem width="375" height="60" v-for="item in 15"></CatLodingItem>
             </div>
 
-            <!-- 这里可以设置一个加载数据 -->
-            <CatLoding :finished="true" :smail="true" />
+
         </div>
+
 
     </div>
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { GetMjhdSubmit } from '@/api/home.js'
+import CatPromptJS from '@/components/libray/CatPrompt.js'
+import { ref, watch } from 'vue'
+import { FromTimeArrat } from '@/utils/timeFilter.js'
+
+
 export default {
-    name: "CatParticipate"
+    name: "CatParticipate",
+    setup() {
+        let store = useStore()
+        let _id = store.state.user.profile._id
+
+        let PushActivityList = ref(null)
+        try {
+            // 这里是获取数据列表
+            watch(_id, async (newVal, olVal) => {
+                let { result: { data: { activities } } } = await GetMjhdSubmit(_id)
+
+                PushActivityList.value = activities
+            }, { immediate: true })
+        } catch (err) {
+            return CatPromptJS({ text: "获取数据失败请重试", type: "error" })
+        }
+
+
+
+        return { PushActivityList, FromTimeArrat }
+    }
 }
 
 
 </script>
 
 <style lang="less" scoped>
+.loadings {
+    width: 375px;
+    height: 100%;
+    // border: 1px solid red;
+    height: 100%;
+    
+    // justify-content: space-between;
+    .shang{
+        margin-top: 10px;
+        margin: 10px auto;
+    }
+
+}
+
 .participate {
     width: 100%;
     height: 100%;

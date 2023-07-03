@@ -322,9 +322,7 @@ export default {
                         let time = setTimeout(() => {
                             router.push('/login')
                             clearTimeout(time)
-                        }, 3000);
-
-
+                        }, 100);
                     }
 
                 }).catch(err => {
@@ -360,7 +358,7 @@ export default {
 }
 
 .err {
-    coloe: red !important;
+    color: red !important;
 }
 
 .login {

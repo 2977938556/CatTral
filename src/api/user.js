@@ -8,3 +8,9 @@ export let PushModifyUsers = (data) => {
 }
 
 
+// 获取用户的数据
+export let GetUserData = (id) => {
+    return request(`/user/userData?_id=${id}`, 'get')
+}
+
+

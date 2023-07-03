@@ -12,8 +12,10 @@
                 </a>
             </div>
             <div class="banner-item-checkout">
-                <span @click="slelceBanner(index)" :class="{ active: selectIndex == index }"
-                    v-for="(item, index) in items.length" :key="index"></span>
+                <template v-if="items.length <= 0">
+                    <span @click="slelceBanner(index)" :class="{ active: selectIndex == index }"
+                        v-for="(item, index) in items.length" :key="index"></span>
+                </template>
             </div>
         </div>
     </div>

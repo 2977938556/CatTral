@@ -1,72 +1,58 @@
-<!-- <template>
-    <div class="mjsd">
-        <h1>猫迹商店</h1>
-    </div>
-</template>
-
-<script>
-export default {
-    name: "CarMjsdPage",
-    setup() {
-
-    }
-
-}
-</script> -->
-
-
-
 <template>
     <div class="mjsd">
-        <input type="file" ref="files">
-        <button @click="upload">上传</button>
+        <label>
+            上传图片
+            <input @change="filechange" type="file">
+        </label>
     </div>
 </template>
 
 <script>
-import { ref } from 'vue'
-import { PushUerImg } from '@/api/upload.js'
+
+import axios from 'axios'
 export default {
-    name: "CarMjsdPage",
+    name: "CatMjsd",
     setup() {
-        let files = ref(null)
+        let ConvertFile = (file) => {
+            return new Promise((reolve, reject) => {
+                const reader = new FileReader()
+                reader.onload = (event) => {
+                    let resulss = event.target.result // 将base64字符串保存到数组中
+                    reolve(resulss)
+                }
+                reader.onerror = function (event) {
+                    reject(new Error("图片转换失败"))
+                }
+                reader.readAsDataURL(file)
+            })
+        }
+        let filechange = (e) => {
 
-        let upload = () => {
-            let filsa = files.value.files[0]
-            if (!files.value.files.length) {
-                alert("请选择图片")
-            } else {
-                const formData = new FormData();
-                formData.append('file', filsa);
-                // 发送请求获取数据
-                // PushUerImg(formData).then(value=>{
-                //     console.log(value);
-                // })
-
-
-                fetch('http://172.16.79.14:3000/api/user/upload', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    },
-                    body: formData
-                }).then(response => {
-                    console.log(response);
-                }).catch(error => {
-                    console.error(error);
-                });
+            ConvertFile(e.target.files[0]).then(value => {
+                axios.post('http://172.16.69.58:3000/api/upload/img', {
+                    base64: value
+                }).then(value => {
+                    console.log(value);
+                })
 
 
+            }).catch(Err => {
+                console.log("错误");
+            })
 
-            }
+
+
+
         }
 
 
-        return { upload, files }
+
+        return { filechange }
+
 
     }
-
 }
+
+
+
 </script>
-
-

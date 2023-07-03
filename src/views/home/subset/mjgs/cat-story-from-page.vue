@@ -60,7 +60,7 @@ import { useRouter } from 'vue-router'
 import { PushStoryData } from '@/api/story.js'
 
 
-
+import { OutUserFn } from '@/utils/outUser.js'
 
 export default {
     name: "CatStoryPage",
@@ -73,33 +73,33 @@ export default {
         let SubmitData = reactive({
             story: "真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫真是一只可爱的猫猫哇好可爱的猫猫", // 用户的标语
             maxSize: 1024 * 1024 * 2, // 2M
-            imgBase64: null,
-            imgtype: '',
-            imgUrl: ''
+            imgUrl: '',
+            name: '',
+            size: '',
+            base64: null,
         })
 
-
-        // 转换成base84 这里使用的是promise封装的一个
         let ConvertFile = (file) => {
-            return new Promise((reolve, reject) => {
-                const reader = new FileReader()
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
                 reader.onload = (event) => {
-                    let resulss = event.target.result // 将base64字符串保存到数组中
-                    reolve(resulss)
-                }
+                    let result = event.target.result; // 将base64字符串保存到数组中
+                    let fileName = file.name;
+                    let fileSize = file.size;
+                    resolve({ size: fileSize, name: fileName, base64: result });
+                };
                 reader.onerror = function (event) {
-                    reject(new Error("图片转换失败"))
-                }
-                reader.readAsDataURL(file)
-            })
-        }
+                    reject(new Error("图片转换失败"));
+                };
+                reader.readAsDataURL(file);
+            });
+        };
 
 
         // 监听图片的模块
         let GetFileFn = (event) => {
             // 先判断是否是超出了大小
             let file = event.target.files[0]
-
 
             // 这里是限制大小的情况
             if (file.size > SubmitData.maxSize) {
@@ -108,49 +108,62 @@ export default {
 
             // 这里必须要转换成功的情况下才能显示图片
             ConvertFile(file).then(value => {
-                // 图片转换成功
-                SubmitData.imgUrl = URL.createObjectURL(file);// 这里将图片转换成一个链接给页面上使用
-                SubmitData.imgBase64 = value // 将base64字符串保存到数组中
-                SubmitData.imgtype = file.name
-
+                console.log(value);
+                SubmitData.name = value.name
+                SubmitData.size = value.size
+                SubmitData.base64 = value.base64
+                SubmitData.imgUrl = value.base64
             }).catch(err => {
+                console.log(err);
                 return CatPromptJS({ text: '图片上传失败', type: 'error' })
             })
         }
 
-
         // 这里是删除掉图片的情况下需要点击图片的时候就将图片删除
         let DelateImg = () => {
+            SubmitData.name = ''
+            SubmitData.base64 = ''
+            SubmitData.size = ''
             SubmitData.imgUrl = ''
-            SubmitData.imgBase64 = ''
-            SubmitData.imgtype = ''
             //  提示用户是否被删删除掉图片的数据并且将
-            return CatPromptJS({ text: '删除图片成功', type: 'success', timeout: "1000" })
+            // return CatPromptJS({ text: '删除图片成功', type: 'success', timeout: "1000" })
         }
 
 
         // 提交数据
         let SubmitDaa = async () => {
             // 判断是否为空
-            if (SubmitData.story == "" || SubmitData.imgBase64 == null) {
+            if (SubmitData.story == "" || SubmitData.base64 == null) {
                 return CatPromptJS({ text: '请填写与上传完整请填写与上传完整请填写与上传完整', type: 'error' })
             }
 
 
+            // 这里整理数据
+            let FormDataList = [
+                {
+                    name: SubmitData.name,
+                    base64: SubmitData.base64,
+                    size: SubmitData.size,
+                }
+            ]
+
+            // input
+            let inputData = {
+                content: SubmitData.story,
+            }
+
             // 这里发送请求回去将参数传递回去
-            PushStoryData({ imgBase: SubmitData.imgBase64, content: SubmitData.story, imgtype: SubmitData.imgtype, title: "" }).then(({ result }) => {
+            PushStoryData({ FormDataList, inputData }).then(({ result }) => {
                 CatPromptJS({ text: "正在审核", type: 'success' })
-                return router.go(-1)
-            }).catch(({ response }) => {
-                router.go(-1)
-                return CatPromptJS({ text: response?.data.message, type: 'error' })
+                DelateImg()
+                SubmitData.story = ''
+
+            }).catch(({ response: { data: { result } } }) => {
+                CatPromptJS({ text: result.message || "发布失败", type: 'error' })
             })
         }
-
-
-        return { GetFileFn, SubmitData, DelateImg, SubmitDaa }
+        return { GetFileFn, SubmitData, SubmitDaa, DelateImg }
     }
-
 }
 </script>
 

@@ -8,7 +8,6 @@ export const timeFormat = (time) => {
     var day = date.getDate();
 
 
-
     // 获取当年的年份数据
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -43,4 +42,34 @@ export const Processingregion = (city, run = 2) => {
 
 
     return "地区"
+}
+
+
+
+// 处理报名日期
+export let FromTimeArrat = (value) => {
+    if (!value) return "暂无时间";
+
+    // 这里是获取当前的数据
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1);
+    const day = String(date.getDate());
+    const hour = String(date.getHours());
+    const minute = String(date.getMinutes());
+    const second = String(date.getSeconds());
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    let formattedDate = ""
+
+
+    // 这里的逻辑大致就是如果不等于当前的年份那么就添加年份上去否则就不需要
+    if (currentYear !== year) {
+        formattedDate = year + '.' + month + '.' + day;
+    } else {
+        formattedDate = month + '.' + day;
+    }
+
+    return formattedDate;
 }

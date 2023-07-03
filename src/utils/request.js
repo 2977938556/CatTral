@@ -12,9 +12,11 @@ import MessageJs from '@/components/libray/CarMessage.js'
 
 // 配置基准地址
 // 这里我把基准地址的配置设置在vite.config.js中
-// export const baseURL = 'http://172.16.79.14:3000/api';
+// export const baseURL = 'http://172.16.69.58:3000/api';
+// export const baseURL = ' http://192.168.43.57:3000/api';
 export const baseURL = ' http://192.168.43.57:3000/api';
-// export const baseURL = ' http://192.168.1.100:3000/api';
+// export const baseURL = ' http://47.115.207.47:8848/api';
+
 const instance = axios.create({
     baseURL,
     timeout: 5000
@@ -33,9 +35,6 @@ instance.interceptors.request.use(config => {
 }, err => {
     return Promise.reject(err)
 })
-
-
-
 
 
 

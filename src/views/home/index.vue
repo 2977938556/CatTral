@@ -192,13 +192,11 @@ export default {
                     // 加载失败的话显示没有数据了就显示提示文本,关闭loding 
                     finished.value = true
                     loading.value = false
-
                 }
                 loading.value = false
             }).catch(err => {
                 finished.value = false
                 loading.value = false
-                console.log(err);
                 MessageJs({ text: "获取数据失败请重试", type: 'error' })
             })
         }
@@ -220,6 +218,11 @@ export default {
             }
         })
 
+
+        // 删除掉猫迹故事的数据
+        // let remoteMjhd = () => {
+        //     store.commit('home/SetMjhdData', [])
+        // }
 
 
         return { items, goodsitem, showfalge, GetcityAddrs, CartConfig, cityAddrs, getRecommend, cancels, confirms, CartConfig, loading, finished }

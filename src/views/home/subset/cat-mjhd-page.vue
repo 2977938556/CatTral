@@ -18,53 +18,143 @@
         </CartStatusBav>
 
 
+
         <!-- 内容区域 -->
-        <div class="mjhd">
-            <div class="mjhd-center">
-
-
+        <div class="mjhds">
+            <div class="mjhd-center" v-if="CatMjhdData.length != 0">
                 <!--活动卡片区域 -->
                 <ul>
-                    <li class="mjhd-item" v-for="item in 5">
-                        <router-link to="/home/mjhd/321u312ui4y">
-                            <!-- 头部活动图片区域 -->
-                            <div class="mjhd-item-top">
-                                <span class="mjsd-item-tag">活动报名中</span>
-                                <img src="https://img.js.design/assets/smartFill/img195164da6ef470.jpg" alt="">
-                            </div>
-
-                            <!-- 底部内容区域 -->
-                            <div class="mjhd-item-bottom">
-                                <div class="mjhd-item-bottom-top">
-                                    <h4>关爱流浪猫，温暖在行动——平安普惠联合江东社区开展公益活动关爱流浪猫，温暖在行动——平安普惠联合江东社区开展公益活动关爱流浪猫，温暖在行动——平安普惠联合江东社区开展公益活动
-                                    </h4>
+                    <li class="mjhd-item" v-for="item in CatMjhdData" :key="item._id">
+                        <template v-if="item.to_examine != 'delete'">
+                            <router-link :to="`/home/mjhd/${item._id}`">
+                                <!-- 头部活动图片区域 -->
+                                <div class="mjhd-item-top">
+                                    <span class="mjsd-item-tag" style="background: #rFF7C00ed;"
+                                        v-if="item.to_examine === 'progress'">活动报名中</span>
+                                    <span class="mjsd-item-tag" style="background: rgb(148, 148, 148);"
+                                        v-if="item.to_examine === 'end'">活动结束了</span>
+                                    <span class=" mjsd-item-tag" style="background: rgb(88, 88, 88);"
+                                        v-if="item.to_examine === 'cancellation'" >活动已经取消了</span>
+                                    <img v-for="(mitem, index) in item.imageUrl" :key="index" :src="mitem" alt="">
                                 </div>
-                                <div class="mjhd-item-bottom-bottom">
-                                    <p>已报名人数:56</p>
-                                    <p>2023.5.20 - 5.30</p>
+                                <!-- 底部内容区域 -->
+                                <div class="mjhd-item-bottom">
+                                    <div class="mjhd-item-bottom-top">
+                                        <h4>{{ item.title }}</h4>
+                                    </div>
+                                    <div class="mjhd-item-bottom-bottom">
+                                        <p>已报名人数:{{ `${item.people}/${item.participant.length}`}}</p>
+                                        <p>{{ `${FromTimeArrat(item.time[0])}-${FromTimeArrat(item.time[1])}` }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </router-link>
+                            </router-link>
+                        </template>
                     </li>
                 </ul>
-
-
-                <!-- 活动无限加载 -->
-                <CatLoding :loading="false" :finished="true" :smail="true"/>
-                
-                
             </div>
         </div>
 
-
+        <!-- 活动无限加载 -->
+        <CatLoding :loading="loading" :finished="finished" @infinite="GetBgDataFn()" />
 
     </div>
 </template>
 
 
 <script>
+import { GetBgData } from '@/api/home.js'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import { FromTimeArrat } from '@/utils/timeFilter.js'
+import MessageJs from '@/components/libray/CarMessage.js'
+import { ignorableWatch } from '@vueuse/core'
 export default {
     name: "CatMjhdPage",
+    setup() {
+        const route = useRoute();
+        const router = useRouter();
+        const store = useStore()
+
+
+        // 这里是初始化数据和初始化是否需要进行请求
+        onMounted(() => {
+            let regular = router.options.history.state.forward
+            if (regular === null) {
+                store.commit('mjhd/SetMjhdData', [])
+                store.commit('mjhd/SetMaxloding', true)
+            }
+        })
+
+
+        let loading = ref(false)// 控制是否在加载  false 代表可以加载
+        let finished = ref(false)// 控制是还有数据 false代表还有数据
+
+        //  这个是获取活动需要提交的数据
+        let CartConfig = reactive({
+            page: 1,//
+            pageSize: 2,
+            total: 0,
+            searchVal: "",
+            type: "whole",
+            typeofs: "mjhd",
+        }) //交接口的参数接口的参数
+
+        let Maxloding = computed(() => store.state.mjhd.Maxloding)
+
+        // 获取数据函数.
+        let GetBgDataFn = () => {
+            if (Maxloding.value) {
+                loading.value = true;
+                GetBgData(CartConfig).then(({ result }) => {
+                    // 将数据给响应性数据的变量
+                    CartConfig.total = result.total
+                    loading.value = false;
+                    if (result.data && result.data.length !== 0) {
+                        // 将数据添加进去
+                        store.commit('mjhd/SetMjhdData', result.data)
+                        // 每次请求之后就将当前页添加1页
+                        CartConfig.page++
+
+                        // 加载结束后将loding状态失效
+                        loading.value = false
+                        finished.value = false
+                    } else if (result.data && result.data.length === 0) {
+                        // 加载失败的话显示没有数据了就显示提示文本,关闭loding 
+                        finished.value = true
+                        loading.value = false
+
+                        // 这里设置状态
+                        store.commit('mjhd/SetMaxloding', false)
+                    }
+                    // loading.value = false
+
+                }).catch(err => {
+                    finished.value = false
+                    loading.value = false
+                    //这里获取数据失败的情况
+                    return MessageJs({
+                        message: "获取数据失败",
+                        type: 'error',
+                    })
+                })
+            } else {
+                finished.value = true
+                loading.value = false
+
+            }
+
+        }
+
+        let CatMjhdData = computed(() => store.state.mjhd.MjhdData)
+
+
+        return { CatMjhdData, loading, CartConfig, Maxloding, finished, GetBgDataFn, FromTimeArrat }
+    }
+
+
+
+
 
 }
 
@@ -73,14 +163,18 @@ export default {
 </script>
 
 <style scoped lang="less">
-.mjhd {
+.catmjhd {
     width: 100%;
     height: 100%;
     min-height: 400px;
-    border: 1px solid red;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+    .mjhds {
+        width: 100%;
+        height: 100%;
+        min-height: 100px;
+        display: flex;
+        justify-content: center;
+    }
 
     .mjhd-center {
         width: 345px;

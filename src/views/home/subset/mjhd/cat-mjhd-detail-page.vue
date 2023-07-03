@@ -23,75 +23,113 @@
             <div class="mjhd-center">
                 <!--活动卡片区域 -->
                 <ul>
-                    <li class="mjhd-item">
-                        <router-link to="/home/mjhd/321u312ui4y">
-                            <!-- 头部活动图片区域 -->
-                            <div class="mjhd-item-top">
-                                <span class="mjsd-item-tag">活动报名中</span>
-                                <img src="https://img.js.design/assets/smartFill/img195164da6ef470.jpg" alt="">
+                    <li class="mjhd-item" v-if="MjHddatail">
+                        <!-- <router-link to="/home/mjhd/321u312ui4y"> -->
+                        <!-- 头部活动图片区域 -->
+                        <div class="mjhd-item-top">
+                            <span class="mjsd-item-tag" style="background: #rFF7C00ed;"
+                                v-if="MjHddatail.to_examine === 'progress'">活动报名中</span>
+                            <span class="mjsd-item-tag" style="background: rgb(148, 148, 148);"
+                                v-if="MjHddatail.to_examine === 'end'">活动结束了</span>
+                            <span class=" mjsd-item-tag" style="background: rgb(88, 88, 88);"
+                                v-if="MjHddatail.to_examine === 'cancellation'">活动已经取消了</span>
+                            <img v-for="(mitem, index) in MjHddatail.imageUrl" :key="index" :src="mitem" alt="">
+                        </div>
+                        <!-- 底部内容区域 -->
+                        <div class="mjhd-item-bottom">
+                            <div class="mjhd-item-bottom-top">
+                                <h4>{{ MjHddatail.title }}</h4>
                             </div>
-
-
-                            <!-- 底部内容区域 -->
-                            <div class="mjhd-item-bottom">
-                                <div class="mjhd-item-bottom-top">
-                                    <h4>关爱流浪猫，温暖在行动——平安普惠联合江东社区开展公益活动关爱流浪猫，温暖在行动——平安普惠联合江东社区开展公益活动关爱流浪猫，温暖在行动——平安普惠联合江东社区开展公益活动
-                                    </h4>
+                            <div class="mjhd-item-bottom-center">
+                                <p>
+                                    {{ MjHddatail.content }}
+                                </p>
+                            </div>
+                            <div class="mjhd-item-bottom-bottom">
+                                <div class="top">
+                                    <p>已经报名:{{ `${MjHddatail.people}/${MjHddatail.participant.length}` }}</p>
                                 </div>
-                                <div class="mjhd-item-bottom-center">
-                                    <p>
-                                        “关爱流浪猫，温暖在行动”是一项由平安普惠联合江东社区开展的公益活动。该活动旨在通过集中精力关注流浪猫的福利和保健，为当地流浪猫群体提供更好的生存环境和健康保障。
-                                        此次活动将涵盖以下几个方面
-                                        捐赠活动：平安普惠将向江东社区捐赠一定数量的猫粮、水杯和其它必需品，供社区志愿者及群众喂养和照料流浪猫。
-                                        爱心义诊：为流浪猫提供必要的医疗和治疗，减轻它们的痛苦和疾病，这项活动将为流浪猫提供免费的医疗和护理服务，包括进行健康检查、体检、打疫苗等服务。
-                                        寻找志愿者：社区将联络志愿者，号召居民参与到该活动中来，他们可以通过喂养流浪猫、关注猫咪卫生、管理流浪猫收容所、寻找家庭领养等方式来参与活动。
-                                        推广活动：平安普惠将会开展一系列的宣传推广活动，包括制作海报、写微博、发朋友圈、发布文章等，以及邀请当地媒体进行报道，鼓励更多的人关注流浪猫这个议题，并参与到这项公益活动中来。
-                                        该项活动旨在通过凝聚社区、组织志愿者和社会共同力量的方式，为当地的流浪猫提供更好的福利和保障，同时也为大家提供了一个关心社区、关爱生命的有益途径。
+                                <div class="bottom">
+                                    <p>地区:{{ MjHddatail.adds }}</p>
+                                    <p>{{ `${FromTimeArrat(MjHddatail.time[0])}-${FromTimeArrat(MjHddatail.time[1])}` }}
                                     </p>
                                 </div>
-                                <div class="mjhd-item-bottom-bottom">
-                                    <div class="top">
-                                        <p>已报名:39</p>
-                                    </div>
-                                    <div class="bottom">
-                                        <p>地区:广州番禺</p>
-                                        <p>2023.5.20 - 5.30</p>
-                                    </div>
-                                </div>
                             </div>
-                        </router-link>
+                        </div>
+                        <!-- </router-link> -->
                     </li>
-                    <!-- 提示用户 -->
-                    <CatLoding :finished="true" :smail="true" />
+
                 </ul>
             </div>
         </div>
-
-
-
     </div>
 </template>
 
 
 <script>
-import { useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { GetMjhdDeatil } from '@/api/home.js'
+import { FromTimeArrat } from '@/utils/timeFilter.js'
+import { RoleFm } from '@/utils/userRole.js'
+import { useStore } from 'vuex'
+import { GetUserData } from '@/api/user.js'
+import CatPromptJS from '@/components/libray/CatPrompt.js'
+
+
 export default {
     name: "CatMjhdPage",
 
     setup() {
         let router = useRouter()
+        let route = useRoute()
+        const store = useStore()
 
-        // 点击申请的时候需要判断当前是否可以进行报名（活动是否有效，用户是否被封禁）
+        let userData = store.state.user.profile
+
+
+        // 判断条件是否封禁是存在当前账户
+        // 判断当前活动是否合法
         let Appfor = () => {
-            router.push('/home/mjhd/appfor/1312423')
+            GetUserData(userData._id).then(({ result: { data } }) => {
+                if (data.role === "ban") {
+                    return CatPromptJS({ text: "当前账户封禁中", type: "error" })
+                } else if (data.role === "delete") {
+                    return CatPromptJS({ text: "当前报名账户不存在", type: "error" })
+                } else {
+                    // 这里需要进行判断活动是否过期了或者判断是否结束了
+                    if (MjHddatail.value.to_examine == "end") {
+                        return CatPromptJS({ text: "活动已经结束了哦", type: "error" })
+                    } else if (MjHddatail.value.to_examine == "cancellation") {
+                        return CatPromptJS({ text: "活动已经取消了哦", type: "error" })
+                    } else if (MjHddatail.value.to_examine == "delete") {
+                        return CatPromptJS({ text: "活动已经被管理员删除", type: "error" })
+                    } else {
+                        // 合法的话那么就跳转页面
+                        router.push(`/home/mjhd/appfor/${MjHddatail.value._id}`)
+                    }
+                }
+            }).catch(err => {
+                return CatPromptJS({ text: "申请失败", type: "error" })
+            })
         }
 
 
-
-        return { Appfor }
-
+        let MjHddatail = ref(null)
 
 
+        // 基于当传递的id进行判断
+        watch(() => route.path, (newVal, olVal) => {
+            GetMjhdDeatil(route.params.id).then(({ result }) => {
+                MjHddatail.value = result.data
+            }).catch(err => {
+                CatPromptJS({ text: "获取当前帖子详情失败", type: "error" })
+                router.push('/error')
+            })
+
+        }, { immediate: true })
+
+        return { Appfor, MjHddatail, FromTimeArrat }
     }
 
 
@@ -129,12 +167,14 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    // background: red;
+    padding-bottom: 10px;
 
     .mjhd-center {
         width: 345px;
         height: 100%;
         min-height: 400px;
-
+        padding-bottom: 20px;
 
         // 卡片区域
         ul {
@@ -150,132 +190,131 @@ export default {
                 box-shadow: 4px 0px 25px 0px rgba(0, 0, 0, 0.05);
                 margin-top: 20px;
                 overflow: hidden;
-                a {
 
-                    // 顶部图片区域
-                    .mjhd-item-top {
+
+                // 顶部图片区域
+                .mjhd-item-top {
+                    width: 345px;
+                    height: 200px;
+                    position: relative;
+
+                    span {
+                        display: block;
+                        width: 100px;
+                        height: 30px;
+                        background: @primary-color;
+                        font-size: 12px;
+                        font-weight: 500;
+                        text-align: center;
+                        line-height: 30px;
+                        position: absolute;
+                        color: @white-color;
+                        border-radius: 0px 0px 190px 0px;
+                    }
+
+                    img {
+                        object-fit: cover;
                         width: 345px;
                         height: 200px;
-                        position: relative;
+                    }
+                }
 
-                        span {
-                            display: block;
-                            width: 100px;
-                            height: 30px;
-                            background: @primary-color;
-                            font-size: 12px;
-                            font-weight: 500;
-                            text-align: center;
-                            line-height: 30px;
-                            position: absolute;
-                            color: @white-color;
-                            border-radius: 0px 0px 190px 0px;
-                        }
 
-                        img {
-                            object-fit: cover;
+                // 底部文字内容
+                .mjhd-item-bottom {
+                    width: 345px;
+                    height: auto;
+
+
+                    // 头部文字内容
+                    .mjhd-item-bottom-top {
+                        width: 345px;
+                        height: 64px;
+
+
+                        h4 {
                             width: 345px;
-                            height: 200px;
+                            height: 54px;
+                            font-size: 16px;
+                            font-weight: 700;
+                            letter-spacing: 0px;
+                            color: @heading-color;
+                            padding: 10px;
+
+                            vertical-align: top;
+                            display: -webkit-box;
+                            -webkit-box-orient: vertical;
+                            -webkit-line-clamp: 2;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+
                         }
                     }
 
 
-                    // 底部文字内容
-                    .mjhd-item-bottom {
+
+                    // 中间活动内容介绍
+                    .mjhd-item-bottom-center {
+                        width: 345px;
+                        height: auto;
+                        padding-bottom: 40px;
+                        border-bottom: 1px solid @background-color;
+
+                        p {
+                            padding: 10px;
+                            font-size: @heading2-font-size;
+                            font-weight: 700;
+                            letter-spacing: 0px;
+                            line-height: 20.27px;
+                            color: rgba(38, 38, 38, 1);
+                            text-align: left;
+                            vertical-align: top;
+                        }
+                    }
+
+
+
+                    // 底部提示文字
+                    .mjhd-item-bottom-bottom {
                         width: 345px;
                         height: auto;
 
 
-                        // 头部文字内容
-                        .mjhd-item-bottom-top {
-                            width: 345px;
-                            height: 64px;
-
-
-                            h4 {
-                                width: 345px;
-                                height: 54px;
-                                font-size: 16px;
-                                font-weight: 700;
-                                letter-spacing: 0px;
-                                color: @heading-color;
-                                padding: 10px;
-
-                                vertical-align: top;
-                                display: -webkit-box;
-                                -webkit-box-orient: vertical;
-                                -webkit-line-clamp: 2;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-
-                            }
-                        }
-
-
-
-                        // 中间活动内容介绍
-                        .mjhd-item-bottom-center {
-                            width: 345px;
-                            height: auto;
-                            padding-bottom: 40px;
-                            border-bottom: 1px solid @background-color;
+                        .top {
+                            // background: red;
+                            padding: 15px;
 
                             p {
-                                padding: 10px;
-                                font-size: @heading2-font-size;
-                                font-weight: 700;
-                                letter-spacing: 0px;
-                                line-height: 20.27px;
-                                color: rgba(38, 38, 38, 1);
-                                text-align: left;
+                                // padding-left: 10px;
+                                font-weight: 800;
+                            }
+
+                        }
+
+                        .bottom {
+                            display: flex;
+                            // height: 60px;
+                            min-height: 60px;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: 15px;
+
+
+                            p {
+                                font-size: 12px;
+                                font-weight: 500;
+                                color: @body-color;
                                 vertical-align: top;
                             }
                         }
-
-
-
-                        // 底部提示文字
-                        .mjhd-item-bottom-bottom {
-                            width: 345px;
-                            height: auto;
-
-
-                            .top {
-                                // background: red;
-                                padding: 15px;
-
-                                p {
-                                    // padding-left: 10px;
-                                    font-weight: 800;
-                                }
-
-                            }
-
-                            .bottom {
-                                display: flex;
-                                // height: 60px;
-                                min-height: 60px;
-                                align-items: center;
-                                justify-content: space-between;
-                                padding: 15px;
-
-
-                                p {
-                                    font-size: 12px;
-                                    font-weight: 500;
-                                    color: @body-color;
-                                    vertical-align: top;
-                                }
-                            }
-                        }
-
-
                     }
 
 
-
-
                 }
+
+
+
+
             }
 
         }

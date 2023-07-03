@@ -28,14 +28,14 @@
 
     <!-- // loding加载效果 -->
     <!-- loding加载效果 -->
-    <CatLoding :loading="loading" :finished="finished" @infinite="getRecommend()" />
+    <CatLoding :loading="loading" :finished="finished" @infinite="GetStoryDataFn()" />
 </template>
 
 <script>
 import { GetStoryData } from '@/api/story.js'
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, onMounted } from 'vue'
 import CatPromptJS from '@/components/libray/CatPrompt.js'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
 
@@ -44,6 +44,16 @@ export default {
     setup() {
         let store = useStore()
         let route = useRoute()
+        let router = useRouter()
+
+
+        onMounted(() => {
+            let regular = router.options.history.state.forward
+            if (regular === null) {
+                store.commit('mjgs/AddStoryList', [])
+                store.commit('mjgs/SetMaxloding', true)
+            }
+        })
 
 
         let fromDat = reactive({
@@ -51,44 +61,40 @@ export default {
             pageSize: 3,
         })
 
-        let StoryList = computed(() => store.state.mjgs.StoryList)
+        let StoryList = computed(() => store.state.mjgs.StoryList)// 获取加载的数据
+
+        let Maxloding = computed(() => store.state.mjgs.Maxloding)
 
 
-        let loading = ref(false);
-        let finished = ref(false)
+        let loading = ref(false)// 控制是否在加载  false 代表可以加载
+        let finished = ref(false)// 控制是还有数据 false代表还有数据
 
-
+        // 获取数据请求
         let GetStoryDataFn = () => {
-            loading.value = true
-            GetStoryData(fromDat).then(({ result }) => {
-                if (result.data.length != 0) {
-                    fromDat.page++
-                    loading.value = false
-                    store.commit('mjgs/AddStoryList', result.data)
-                    CatPromptJS({ text: "获取数据成功", type: 'success' })
-                } else {
+            if (Maxloding.value) {
+                loading.value = true
+                GetStoryData(fromDat).then(({ result }) => {
+                    if (result.data.length != 0) {
+                        fromDat.page++
+                        loading.value = false
+                        store.commit('mjgs/AddStoryList', result.data)
+                        // CatPromptJS({ text: "获取数据成功", type: 'success' })
+                    } else {
+                        finished.value = true
+                        loading.value = false
+                        store.commit('mjgs/SetMaxloding', false)
+                    }
+                }).catch(err => {
                     finished.value = true
                     loading.value = false
-                }
-
-            }).catch(err => {
-                CatPromptJS({ text: "获取数据失败", type: 'error' })
-            })
+                    CatPromptJS({ text: "获取数据失败", type: 'error' })
+                })
+            }
         }
 
         GetStoryDataFn()
 
-
-
-        let getRecommend = () => {
-            GetStoryDataFn()
-        }
-
-
-
-
-
-        return { StoryList, getRecommend, loading, finished }
+        return { StoryList, loading, finished, GetStoryDataFn }
 
     }
 }
@@ -102,17 +108,12 @@ export default {
     height: 100%;
     display: flex;
     justify-content: center;
-    background: @background-color ;
+    // background: @background-color ;
 
     .mjgz-center {
         width: 345px;
         height: 100%;
-        min-height: 400px;
-
-
-
-
-
+        // min-height: 400px;
 
     }
 

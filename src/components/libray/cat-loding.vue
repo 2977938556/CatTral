@@ -62,11 +62,11 @@ export default {
 .endof {
     width: 375px;
     min-height: 200px;
-    ;
     padding-bottom: 49px;
     display: flex;
     justify-content: center;
     align-items: center;
+    // border: 1px solid red;
 
     .loding {
         display: block;

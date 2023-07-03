@@ -62,7 +62,7 @@ const routes = [
   { path: '/home/mjhd', component: CatMjhdPage },// 猫迹活动
   { path: '/home/mjhd/:id', component: CarMjhdDetail },// 猫迹活动详情页面
   { path: '/home/mjhd/appfor/:id', component: CatMjhdAppfor },//报名活动
-  { path: '/home/mjhd/participate', component: CatParticipate },//报名活动
+  { path: '/home/mjhd/participate', component: CatParticipate },//我参与的
 
 
 

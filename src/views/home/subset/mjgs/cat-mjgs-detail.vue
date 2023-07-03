@@ -17,28 +17,23 @@
     </CartStatusBav>
 
     <div class="detail">
-        <div class="detail-center">
+        <div class="detail-center" v-if="StoryDetail">
             <!-- 头图组件 -->
-            <CatBannner />
-            <CarUserInfo PageView="测试" />
+            <CatBannner :items="StoryDetail.imageUrl" />
+            <CarUserInfo :PageView="timeFormat(StoryDetail.updated_at)" :data="StoryDetail.user_id" />
 
             <!-- 内容区域 -->
             <div class="detail-content">
                 <div class="detail-content-top">
                     <p>
-                        从前有一只小猫，它叫做“小三”。小三是一只非常可爱的小猫咪，拥有一身柔软的白色皮毛和一双大大的绿眼睛。它住在一个非常贫穷的旧居民区里，没有人愿意收留这只小猫。小三日夜逃荒，在陌生的街头和城市中飘荡，寻找食物和住所。
-                        有一天，小三遇到了一个善良的女孩，她看到这只无依无靠的小猫，便心生怜悯，决定给小三一个温暖的家。女孩将小三带到家中，并给它洗澡、剪指甲、换上新的玩具和床铺。小三感到非常快乐和自在，开始与女孩成为了好朋友。
-                        随着时间的流逝，小三的生活变得越来越好。它在女孩的陪伴下，享受了有家的温暖和关爱。在女孩的悉心照料下，小三也成长为了一只健康、聪明、活泼的小猫咪。每当女孩回家时，小三总会蹦跶着迎接她，让女孩感到温馨和快乐。
-                        小三的故事告诉我们，即使生活中有挫折和苦难，也不要失去希望和勇气。在这个世界上，总会有那么一些人，用他们的关注和爱心，为你点亮前方的路。而当你也成为了他们生命中的一部分，你同样能够给予他们温暖和善意。就像小三和女孩一样，好朋友之间的情感是无以言表的，我们应该珍惜彼此的陪伴、感激对方的付出，一起走过余生的美好时光。
+                        {{ StoryDetail.content }}
                     </p>
                 </div>
                 <div class="detail-content-bottom">
-                    <p>2023.9.14</p>
-                    <p>199浏览</p>
+                    <p></p>
+                    <p>{{ StoryDetail.clickCount }}浏览</p>
                 </div>
             </div>
-
-
 
             <!-- 评论标题内容 -->
             <div class="detail-comment">
@@ -57,26 +52,38 @@
                     <CatLoding :loading="false" :finished="true" :smail="true" message="没有更多评论哦，快点发布一条评论吧" />
                 </ul>
             </div>
-
-
-
-
-
-
-
         </div>
     </div>
 </template>
 
 
 <script>
+import { GetStoryDetail } from '@/api/story.js'
+import { timeFormat } from '@/utils/timeFilter.js'
+
+import { useRoute } from 'vue-router';
+import { ref, watch } from 'vue'
+
 export default {
     name: "CatMjsdDetail",
     setup() {
-        console.log("测试01");
+        let route = useRoute()
+        async function GetStoryDetailFn() {
+            console.log("调用了");
+            let { result } = await GetStoryDetail(route.params.id)
+            StoryDetail.value = result.data
+        }
+
+        let StoryDetail = ref(null)
+
+
+        GetStoryDetailFn()
+
+        return { StoryDetail, timeFormat }
+
+
     }
 }
-
 
 </script>
 

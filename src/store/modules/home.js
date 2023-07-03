@@ -4,8 +4,8 @@ export default {
         return {
             CatRecommendBar: "B",// 控制选择那个模式
             cityAddrs: JSON.parse(localStorage.getItem('user-store'))?.home.cityAddrs, // 地区数据
-            goodsitem: JSON.parse(localStorage.getItem('user-store'))?.home?.goodsitem || [],
-            HomeBanner: JSON.parse(localStorage.getItem('user-store'))?.home.HomeBanner || []
+            goodsitem: JSON.parse(localStorage.getItem('user-store'))?.home?.goodsitem || [],// 首页推荐的数据
+            HomeBanner: JSON.parse(localStorage.getItem('user-store'))?.home.HomeBanner || [],// banner的数据
         }
     },
     mutations: {
@@ -21,7 +21,6 @@ export default {
         SetGoodsitem(state, payload) {
             payload.map(item => {
                 let index = state.goodsitem.findIndex(items => items?._id === item?._id)
-                console.log(index);
                 if (index < 0) {
                     state.goodsitem.push(item)
                 }
@@ -35,7 +34,9 @@ export default {
         // 设置banner的数据
         SetHomeBanner(state, payload) {
             state.HomeBanner = payload
-        }
+        },
+
+
     },
     actions: {
 

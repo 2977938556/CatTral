@@ -6,7 +6,7 @@
                 <p>浏览{{ item.clickCount }}</p>
             </template>
         </CarUserInfo>
-        <router-link to="/home/mjgs/detai/1">
+        <router-link :to="`/home/mjgs/detai/${item._id}`">
             <!-- 中间的数据 -->
             <div class="mjgz-center-item-center">
                 <p>{{ item.content }}</p>

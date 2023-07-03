@@ -18,21 +18,21 @@
         </CartStatusBav>
 
 
-        <div class="mjhdappfor-center">
+        <div class="mjhdappfor-center" v-if="MjHddatail">
 
             <!-- 01 缩略版的活动 -->
             <div class="mjhdappfor-activity">
                 <div class="mjhdappfor-activity-box">
                     <div class="left">
-                        <img src="https://img.js.design/assets/smartFill/img195164da6ef470.jpg" alt="">
+                        <img v-for="(mitem, index) in MjHddatail.imageUrl" :key="index" :src="mitem" alt="">
                     </div>
                     <div class="right">
                         <div class="top">
-                            <p>关爱流浪猫，温暖在行动——平安普惠联合江东社区开展公益活动</p>
+                            <p>{{ MjHddatail.title }}</p>
                         </div>
                         <div class="bottom">
-                            <p>活动地点：赣州</p>
-                            <p>报名时间:2023.5.20-5.30</p>
+                            <p>活动地点：{{ MjHddatail.adds }}</p>
+                            <p>{{ `${FromTimeArrat(MjHddatail.time[0])}-${FromTimeArrat(MjHddatail.time[1])}` }}</p>
                         </div>
                     </div>
                 </div>
@@ -45,13 +45,13 @@
                     <div class="release-a">
                         <div class="a center">
                             <p>你的电话号码</p>
-                            <input type="text" placeholder="请输入你的电话号码" />
+                            <input v-model="fromData.phone" type="text" placeholder="请输入你的电话号码" />
                         </div>
                     </div>
                     <div class="release-a">
                         <div class="a center">
                             <p>留言</p>
-                            <input type="text" placeholder="输入你的留言" />
+                            <input v-model="fromData.message" type="text" placeholder="输入你的留言" />
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
 
             <!-- 03 提交按钮 -->
             <div class="mjhdappfor-submit">
-                <span>报名</span>
+                <span @click="MjhdSubmit">报名</span>
             </div>
 
 
@@ -75,9 +75,79 @@
 
 
 <script>
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
+import { reactive, ref, registerRuntimeCompiler, watch } from 'vue'
+import { GetMjhdDeatil, PushMjhdSubmit } from '@/api/home.js'
+import { FromTimeArrat } from '@/utils/timeFilter.js'
+import CatPromptJS from '@/components/libray/CatPrompt.js'
+
+
+
+
+
 export default {
     name: "CatMjhdAppfor",
     setup() {
+        let router = useRouter()
+        let route = useRoute()
+        const store = useStore()
+
+
+
+        let fromData = reactive({
+            phone: "1008611",
+            message: "需要携带什么工具呢",
+            _id: route.params.id
+        })
+
+
+
+
+
+        // 当前帖子的id
+
+
+        // 当前
+        let MjHddatail = ref(null)
+
+
+        // 基于当传递的id进行判断
+        watch(() => route.path, (newVal, olVal) => {
+            GetMjhdDeatil(route.params.id).then(({ result }) => {
+                MjHddatail.value = result.data
+            }).catch(err => {
+                CatPromptJS({ text: "获取当前帖子详情失败", type: "error" })
+            })
+
+        }, { immediate: true })
+
+
+
+
+
+
+        let MjhdSubmit = async () => {
+            if (fromData.phone == "") {
+                return CatPromptJS({ text: "手机号为必填", type: "error" })
+            }
+
+            // 这里发送提交请求
+            try {
+                let { message, result } = await PushMjhdSubmit(fromData)
+                CatPromptJS({ text: message || "成功", type: "success" })
+            } catch ({ response: { data: { message } } }) {
+                CatPromptJS({ text: message || "错误", type: "error" })
+            }
+
+
+
+        }
+
+
+
+        return { MjHddatail, FromTimeArrat, fromData, MjhdSubmit }
+
 
     }
 }
