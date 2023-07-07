@@ -34,7 +34,7 @@
                                     <span class="mjsd-item-tag" style="background: rgb(148, 148, 148);"
                                         v-if="item.to_examine === 'end'">活动结束了</span>
                                     <span class=" mjsd-item-tag" style="background: rgb(88, 88, 88);"
-                                        v-if="item.to_examine === 'cancellation'" >活动已经取消了</span>
+                                        v-if="item.to_examine === 'cancellation'">活动已经取消了</span>
                                     <img v-for="(mitem, index) in item.imageUrl" :key="index" :src="mitem" alt="">
                                 </div>
                                 <!-- 底部内容区域 -->
@@ -43,7 +43,7 @@
                                         <h4>{{ item.title }}</h4>
                                     </div>
                                     <div class="mjhd-item-bottom-bottom">
-                                        <p>已报名人数:{{ `${item.people}/${item.participant.length}`}}</p>
+                                        <p>已报名人数:{{ `${item.people}/${item.participant.length}` }}</p>
                                         <p>{{ `${FromTimeArrat(item.time[0])}-${FromTimeArrat(item.time[1])}` }}</p>
                                     </div>
                                 </div>
@@ -80,6 +80,7 @@ export default {
         // 这里是初始化数据和初始化是否需要进行请求
         onMounted(() => {
             let regular = router.options.history.state.forward
+            console.log(regular);
             if (regular === null) {
                 store.commit('mjhd/SetMjhdData', [])
                 store.commit('mjhd/SetMaxloding', true)
@@ -93,7 +94,7 @@ export default {
         //  这个是获取活动需要提交的数据
         let CartConfig = reactive({
             page: 1,//
-            pageSize: 2,
+            pageSize: 3,
             total: 0,
             searchVal: "",
             type: "whole",
@@ -115,7 +116,6 @@ export default {
                         store.commit('mjhd/SetMjhdData', result.data)
                         // 每次请求之后就将当前页添加1页
                         CartConfig.page++
-
                         // 加载结束后将loding状态失效
                         loading.value = false
                         finished.value = false

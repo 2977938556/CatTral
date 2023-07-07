@@ -46,40 +46,43 @@ export default {
         let route = useRoute()
         let router = useRouter()
 
+        // 定义需要返回多少数据
+        let fromDat = computed(() => store.state.mjgs.CartConfig)
 
+
+        // 初始化数据
         onMounted(() => {
             let regular = router.options.history.state.forward
             if (regular === null) {
                 store.commit('mjgs/AddStoryList', [])
                 store.commit('mjgs/SetMaxloding', true)
+                store.commit('mjgs/SetCartConfig')
+                store.commit('mjgs/AddStoryComment', [])
+                store.commit('mjgs/SetFromDataDefault')
+
             }
         })
 
-
-        let fromDat = reactive({
-            page: 1,
-            pageSize: 3,
-        })
-
-        let StoryList = computed(() => store.state.mjgs.StoryList)// 获取加载的数据
-
         let Maxloding = computed(() => store.state.mjgs.Maxloding)
+
 
 
         let loading = ref(false)// 控制是否在加载  false 代表可以加载
         let finished = ref(false)// 控制是还有数据 false代表还有数据
 
+
         // 获取数据请求
         let GetStoryDataFn = () => {
             if (Maxloding.value) {
                 loading.value = true
-                GetStoryData(fromDat).then(({ result }) => {
+                GetStoryData(fromDat.value).then(({ result }) => {
+                    loading.value = false
                     if (result.data.length != 0) {
-                        fromDat.page++
-                        loading.value = false
                         store.commit('mjgs/AddStoryList', result.data)
-                        // CatPromptJS({ text: "获取数据成功", type: 'success' })
-                    } else {
+                        // 加载结束后将loding状态失效
+                        loading.value = false
+                        finished.value = false
+                    } else if (result.data && result.data.length === 0) {
                         finished.value = true
                         loading.value = false
                         store.commit('mjgs/SetMaxloding', false)
@@ -89,12 +92,16 @@ export default {
                     loading.value = false
                     CatPromptJS({ text: "获取数据失败", type: 'error' })
                 })
+            } else {
+                finished.value = true
+                loading.value = false
             }
         }
+        // 获取加载到的数据
+        let StoryList = computed(() => store.state.mjgs.StoryList)
 
-        GetStoryDataFn()
 
-        return { StoryList, loading, finished, GetStoryDataFn }
+        return { StoryList, loading, finished, GetStoryDataFn, Maxloding, fromDat }
 
     }
 }

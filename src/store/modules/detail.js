@@ -47,8 +47,6 @@ export default {
         // 通过回复的id进行查询并添加回复的信息
         SetReplies(state, { refId, playload }) {
             // state.showComment = !state.showComment
-
-
             state.CommentDat.map(item => {
                 // 这里是找到用户点击的评论
                 if (item._id == refId) {

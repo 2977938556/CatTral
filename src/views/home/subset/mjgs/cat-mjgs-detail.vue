@@ -15,7 +15,6 @@
             分享
         </template>
     </CartStatusBav>
-
     <div class="detail">
         <div class="detail-center" v-if="StoryDetail">
             <!-- 头图组件 -->
@@ -37,20 +36,19 @@
 
             <!-- 评论标题内容 -->
             <div class="detail-comment">
-                <RecenGood title="评论" :count="`评论${100}`" />
+                <RecenGood title="评论" :count="`评论${FromData.total}`" />
             </div>
 
             <!-- 渲染评论区内容 -->
             <div class="detail-comment-center">
-                <div class="input">
-                    <input type="text" placeholder="发表评论：">
-                </div>
                 <ul>
                     <!-- 这个是用于处理点赞与回复模块 -->
-                    <CarCommentCommponent v-for="item in 10" />
-                    <!-- loding加载效果 -->
-                    <CatLoding :loading="false" :finished="true" :smail="true" message="没有更多评论哦，快点发布一条评论吧" />
+                    <!-- 这个是单个模块的数据 -->
+                    <CatCommentRefil />
                 </ul>
+                <!-- loding加载效果 -->
+                <!-- 活动无限加载 -->
+                <CatLoding :loading="loading" :finished="finished" @infinite="GetRelativeComment()" />
             </div>
         </div>
     </div>
@@ -58,28 +56,84 @@
 
 
 <script>
-import { GetStoryDetail } from '@/api/story.js'
+import { GetStoryDetail, PushStoryReplay, GetStoryComment } from '@/api/story.js'
 import { timeFormat } from '@/utils/timeFilter.js'
+import CatCommentRefil from './subset/cat-comment.vue'
 
-import { useRoute } from 'vue-router';
-import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex'
+import { reactive, ref, watch, computed, onMounted } from 'vue'
+import CatPromptJS from '@/components/libray/CatPrompt.js'
+
 
 export default {
     name: "CatMjsdDetail",
+    components: { CatCommentRefil },
     setup() {
         let route = useRoute()
+        let store = useStore()
+        let router = useRouter()
+
+
+        // 初始化数据
+        onMounted(() => {
+            let regular = router.options.history.state.forward
+
+
+            if (regular == null) {
+                GetStoryDetailFn()
+            }
+        })
+
+
+        // 获取评论数据
+        let StoryDetail = computed(() => store.state.mjgs.StoryDetail)
+
+
+        // 获取数据
+        let FromData = computed(() => store.state.mjgs.FromData)
+        // 这里是设置id
+        store.commit('mjgs/SetFromData', { _id: route.params.id })
+
         async function GetStoryDetailFn() {
-            console.log("调用了");
-            let { result } = await GetStoryDetail(route.params.id)
-            StoryDetail.value = result.data
+            // 基于故事id获取详情数据
+            GetStoryDetail(FromData.value._id).then(({ result }) => {
+                // StoryDetail.value = result.data
+                store.commit('mjgs/AddStoryDetail', result.data)
+            })
         }
 
-        let StoryDetail = ref(null)
+
+        let loading = ref(false)// 控制是否在加载  false 代表可以加载
+        let finished = ref(false)// 控制是还有数据 false代表还有数据
+
+        function GetRelativeComment() {
+            loading.value = true
+            // 这里是获取评论的数据
+            GetStoryComment(FromData.value).then(({ result }) => {
+                loading.value = false;
+                if (result.data.length != 0) {
+                    store.commit('mjgs/AddStoryComment', result.data)
+                    FromData.total = result.total
+                    FromData.page++
+                    loading.value = false
+                    finished.value = false
+                } else if (result.data.length === 0) {
+                    finished.value = true
+                    loading.value = false
+                }
+            }).catch(err => {
+                finished.value = false
+                loading.value = false
+                CatPromptJS({ text: "获取数据失败", type: "error" })
+            })
+        }
 
 
         GetStoryDetailFn()
 
-        return { StoryDetail, timeFormat }
+
+        return { timeFormat, FromData, StoryDetail, loading, finished, GetRelativeComment }
 
 
     }
@@ -161,39 +215,7 @@ export default {
             flex-direction: column;
 
             //  // 评论
-            .input {
-                width: 100%;
-                height: 72px;
-                position: fixed;
-                bottom: 0px;
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-                box-shadow: @default-showdow;
-                background: @white-color;
-                z-index: 1000000;
 
-
-
-                input {
-                    width: 100%;
-                    margin: 20px;
-                    height: 42px;
-                    opacity: 1;
-                    background: @background-color;
-                    border-radius: 6px;
-                    padding-left: 10px;
-                }
-
-                button {
-                    width: 48px;
-                    height: 40px;
-                    border-radius: 9px;
-                    border: none;
-                    color: #000;
-                }
-
-            }
 
 
 

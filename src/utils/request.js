@@ -38,7 +38,6 @@ instance.interceptors.request.use(config => {
 
 
 
-
 // 请求拦截器
 instance.interceptors.response.use(res => res.data, err => {
     // 判断是否是401状态
@@ -56,7 +55,6 @@ instance.interceptors.response.use(res => res.data, err => {
         } else {
             router.push('/login')
         }
-
     }
 
     return Promise.reject(err)

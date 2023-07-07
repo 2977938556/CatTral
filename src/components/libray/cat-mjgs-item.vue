@@ -52,6 +52,7 @@ export default {
     // 内容区域
 
     .mjgz-center-item-center {
+        text-align: left;
         width: 324px;
         height: 58px;
         margin: 0 auto;
@@ -67,7 +68,7 @@ export default {
             -webkit-line-clamp: 2;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-align: center;
+            text-align: left;
         }
     }
 

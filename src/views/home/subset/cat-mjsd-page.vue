@@ -1,58 +1,60 @@
 <template>
-    <div class="mjsd">
-        <label>
-            上传图片
-            <input @change="filechange" type="file">
-        </label>
+    <div>
+        <!-- 这里是你要截取为图片的内容 -->
+        <h1>测试测试</h1>
+
+        <button @click="openPopup">打开弹窗</button>
     </div>
 </template>
-
+  
 <script>
+import QRCode from 'qrcode';
+import html2canvas from 'html2canvas';
 
-import axios from 'axios'
 export default {
-    name: "CatMjsd",
-    setup() {
-        let ConvertFile = (file) => {
-            return new Promise((reolve, reject) => {
-                const reader = new FileReader()
-                reader.onload = (event) => {
-                    let resulss = event.target.result // 将base64字符串保存到数组中
-                    reolve(resulss)
-                }
-                reader.onerror = function (event) {
-                    reject(new Error("图片转换失败"))
-                }
-                reader.readAsDataURL(file)
-            })
-        }
-        let filechange = (e) => {
+    methods: {
+        openPopup() {
+            const divElement = document.documentElement;
 
-            ConvertFile(e.target.files[0]).then(value => {
-                axios.post('http://172.16.69.58:3000/api/upload/img', {
-                    base64: value
-                }).then(value => {
-                    console.log(value);
-                })
+            // 使用 html2canvas 将整个页面转换为图片
+            html2canvas(divElement).then(canvas => {
+                // 将 canvas 转换为图片的数据 URL
+                const imageDataURL = canvas.toDataURL('image/png');
 
+                // 创建一个 Image 对象加载生成的图片
+                const image = new Image();
+                image.src = imageDataURL;
 
-            }).catch(Err => {
-                console.log("错误");
-            })
+                // 生成页面链接的二维码
+                const qrCodeCanvas = document.createElement('canvas');
+                QRCode.toCanvas(qrCodeCanvas, window.location.href, (error) => {
+                    if (error) {
+                        console.error(error);
+                        return;
+                    }
 
+                    // 在生成的图片上绘制二维码
+                    const context = canvas.getContext('2d');
+                    context.drawImage(qrCodeCanvas, 10, 10); // 自定义二维码的位置
 
+                    // 打开一个新窗口并显示生成的图片
+                    const newWindow = window.open('', '_blank');
+                    newWindow.document.write('<img src="' + canvas.toDataURL('image/png') + '">');
 
-
-        }
-
-
-
-        return { filechange }
-
-
-    }
-}
-
-
-
+                    // 在弹窗中添加保存按钮，点击按钮触发下载
+                    const saveButton = newWindow.document.createElement('button');
+                    saveButton.innerText = '保存图片';
+                    saveButton.addEventListener('click', () => {
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = canvas.toDataURL('image/png');
+                        downloadLink.download = 'screenshot.png';
+                        downloadLink.click();
+                    });
+                    newWindow.document.body.appendChild(saveButton);
+                });
+            });
+        },
+    },
+};
 </script>
+  

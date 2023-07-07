@@ -145,7 +145,6 @@
 
         <!-- 全屏图片组件 -->
         <CatFullImg v-if="openFullImg" @cancel="cancel" :openImg="openImg" />
-
     </div>
 </template>
 

@@ -14,7 +14,7 @@ import CatRecommendBar from './cat-recommend-bar.vue'
 import CatRecommendBarSkice from './cat-recommend-bar-skice.vue'
 // 底部加载效果
 import CatLoding from './cat-loding.vue'
-// 返回模块
+// ddddddd
 import CatReturn from './cat-return.vue'
 // 提示组件
 import CatMessage from './cat-message.vue'
@@ -49,7 +49,7 @@ import CarUserInfo from './cat-user-info.vue'
 // 用户提交的按钮
 import CatSubmit from './cat-submit.vue'
 // 评论模块
-import CarCommentCommponent from './cat-comment-component.vue'
+// import CarCommentCommponent from './cat-comment-component.vue'
 // 猫迹故事组件
 import CatMjgsItem from './cat-mjgs-item.vue'
 
@@ -80,7 +80,7 @@ export default {
         app.component(CatApply.name, CatApply)
         app.component(CarUserInfo.name, CarUserInfo)
         app.component(CatSubmit.name, CatSubmit)
-        app.component(CarCommentCommponent.name, CarCommentCommponent)
+        // app.component(CarCommentCommponent.name, CarCommentCommponent)
         app.component(CatMjgsItem.name, CatMjgsItem)
 
 

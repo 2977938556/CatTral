@@ -38,31 +38,35 @@ import CommentDetail from '@/views/cat-details/subset/cat-commentDeatil-page.vue
 import CatAppluyFor from '@/views/cat-details/subset/cat-applyfor-page.vue'
 
 
+// 评论详情的通用组件
+import CatCommentDetailsDomponent from '@/components/libray/cat-comment-details-domponent.vue'
+import CatCommentDetail from '@/views/home/subset/mjgs/car-mjgs-comment.vue'
+
 // 404错误对象
 import CatError from '@/views/error/index.vue'
 
 const routes = [
   // 首页模块功能路由
   { path: "/", redirect: '/home', },
-  { path: "/home", component: Home }, // 开启路由缓存 },// 首页,
+  { path: "/home", component: Home }, ,// 首页,
 
   { path: '/home/mjgs', component: CatMjgsPage },//猫迹故事
   { path: '/home/mjgs/storyfrom', component: CatStoryFromPage },// 发布模块
   { path: "/home/mjgs/detai/:id", component: CatMjsdDetail },// 帖子详情模块
   { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
+  { path: '/home/mjgs/comment/:id', component: CatCommentDetail },// 通用的详情模块
 
 
   { path: '/home/mjzn', component: CatMjznPage },// 猫迹指南
   { path: '/home/mjzn/:id', component: CatMjznDetail },// 猫迹指南详情
 
 
-
-
-
   { path: '/home/mjhd', component: CatMjhdPage },// 猫迹活动
   { path: '/home/mjhd/:id', component: CarMjhdDetail },// 猫迹活动详情页面
   { path: '/home/mjhd/appfor/:id', component: CatMjhdAppfor },//报名活动
   { path: '/home/mjhd/participate', component: CatParticipate },//我参与的
+
+
 
 
 
