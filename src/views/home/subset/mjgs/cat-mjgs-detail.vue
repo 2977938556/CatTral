@@ -20,7 +20,6 @@
             <!-- 头图组件 -->
             <CatBannner :items="StoryDetail.imageUrl" />
             <CarUserInfo :PageView="timeFormat(StoryDetail.updated_at)" :data="StoryDetail.user_id" />
-
             <!-- 内容区域 -->
             <div class="detail-content">
                 <div class="detail-content-top">
@@ -86,7 +85,10 @@ export default {
         })
 
 
-        // 获取评论数据
+        // 获取总评论数量
+
+
+        // 获取详情数据
         let StoryDetail = computed(() => store.state.mjgs.StoryDetail)
 
 
@@ -95,10 +97,10 @@ export default {
         // 这里是设置id
         store.commit('mjgs/SetFromData', { _id: route.params.id })
 
+        // 这里的数据保存到vuex中
         async function GetStoryDetailFn() {
             // 基于故事id获取详情数据
             GetStoryDetail(FromData.value._id).then(({ result }) => {
-                // StoryDetail.value = result.data
                 store.commit('mjgs/AddStoryDetail', result.data)
             })
         }
@@ -113,8 +115,9 @@ export default {
             GetStoryComment(FromData.value).then(({ result }) => {
                 loading.value = false;
                 if (result.data.length != 0) {
+                    console.log("获取数据", result.total);
                     store.commit('mjgs/AddStoryComment', result.data)
-                    FromData.total = result.total
+                    FromData.value.total = result.total
                     FromData.page++
                     loading.value = false
                     finished.value = false
@@ -132,10 +135,7 @@ export default {
 
         GetStoryDetailFn()
 
-
         return { timeFormat, FromData, StoryDetail, loading, finished, GetRelativeComment }
-
-
     }
 }
 
