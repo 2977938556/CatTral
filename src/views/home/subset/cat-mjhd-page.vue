@@ -80,7 +80,6 @@ export default {
         // 这里是初始化数据和初始化是否需要进行请求
         onMounted(() => {
             let regular = router.options.history.state.forward
-            console.log(regular);
             if (regular === null) {
                 store.commit('mjhd/SetMjhdData', [])
                 store.commit('mjhd/SetMaxloding', true)

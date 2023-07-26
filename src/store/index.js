@@ -12,6 +12,7 @@ import user from '@/store/modules/user.js'
 import detail from '@/store/modules/detail.js'
 import mjgs from '@/store/modules/mjgs.js'
 import mjhd from '@/store/modules/mjhd.js'
+import mjzn from '@/store/modules/mjzn.js'
 
 let store = createStore({
     modules: {
@@ -21,7 +22,8 @@ let store = createStore({
         user,
         detail,
         mjgs,
-        mjhd
+        mjhd,
+        mjzn
     },
 
     // 持久化配置

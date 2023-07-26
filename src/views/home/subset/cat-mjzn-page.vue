@@ -1,7 +1,7 @@
 <template>
     <div class="mjzn">
         <!-- 头状态栏 -->
-        <CartStatusBav :isstyle="false">
+        <CartStatusBav :isstyle="true">
             <!-- 左边内容插槽 -->
             <template #left>
                 <!-- 返回 -->
@@ -17,8 +17,6 @@
             </template>
         </CartStatusBav>
 
-
-
         <!-- 内容区域 -->
         <div class="ymzn-center">
             <div class="mjzn-banner">
@@ -28,18 +26,17 @@
                 <RecenGood />
                 <div class="mjzn-tj-box">
                     <ul>
-                        <li class="mjzn-tj-box-item" v-for="item in 9">
-                            <router-link :to="`/home/mjzn/13213123${item}`">
+                        <li class="mjzn-tj-box-item" v-for="item in GuideList">
+                            <router-link :to="`/home/mjzn/${item._id}`">
                                 <div class="item-top">
-                                    <img src="https://img.js.design/assets/img/6471d0e0a9e4fdcd385318a5.png#037ffd6298c966b45058eacf8ab90465"
-                                        alt="">
+                                    <img v-for="citem in item.imageUrl" :src="citem" alt="">
                                 </div>
                                 <div class="item-bottom">
                                     <div class="item-bottom-top">
-                                        <p>萌新养猫需要哪些东西，这次一次给你搞定萌新养猫需要哪些东西，这次一次给你搞定萌新养猫需要哪些东西，这次一次给你搞定</p>
+                                        <p>{{ item.content }}</p>
                                     </div>
                                     <div class="item-bottom-bottom">
-                                        <p>浏览:312</p>
+                                        <p>浏览:{{ item.clickCount }}</p>
                                     </div>
                                 </div>
                             </router-link>
@@ -47,7 +44,7 @@
                     </ul>
 
                     <!-- 提示用户 -->
-                    <CatLoding :finished="true" :smail="true" />
+                    <CatLoding :loading="loading" :finished="finished" @infinite="GetGuideFn()" :smail="true" />
                 </div>
             </div>
         </div>
@@ -58,9 +55,110 @@
 </template>
 
 
+<script setup>
+import { GetGuideList } from '@/api/guide.js'
+import { useStore } from 'vuex'
+import MessageJs from '@/components/libray/CarMessage.js'
+import { reactive, ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+
+
+
+
+let store = useStore();
+let router = useRouter()
+
+
+
+// 初始化数据
+// 初始化数据
+onMounted(() => {
+    let regular = router.options.history.state.forward
+    if (regular === null) {
+        store.commit('mjzn/AddGooList', [])
+        store.commit('mjzn/SetMaxloding', true)
+        store.commit('mjzn/SetCartConfigdefault', null)
+    }
+})
+
+
+
+
+
+
+let loading = ref(false)// 控制是否在加载  false 代表可以加载
+let finished = ref(false)// 控制是还有数据 false代表还有数据
+
+
+// 获取查询的数据
+let GuideList = computed(() => store.state.mjzn.GoodList)
+
+// 获取最大值
+let Maxloding = computed(() => store.state.mjzn.Maxloding)
+
+// 获取的配置文件
+let CartConfig = computed(() => store.state.mjzn.CartConfig)
+
+if (!Maxloding.value) {
+    loading.value = false
+    finished.value = true
+}
+
+
+function GetGuideFn() {
+    loading.value = true
+    // 获取首页列表数据
+    GetGuideList(CartConfig.value).then(({ result: { data } }) => {
+        loading.value = false
+        if (data.length != 0) {
+            // 这里将获取到的值保存在vuex中
+            store.commit('mjzn/AddGooList', data)
+            // 这里需要将当前的页数增加1\
+            // store.commit('mjzn/SetCartConfig', { page: })
+            // CartConfig.value.page++
+
+            loading.value = false
+            finished.value = false
+        } else {
+            // 这里需要将已经全部加载完毕修改一下
+            store.commit('mjzn/SetMaxloding', false)
+            loading.value = false
+            finished.value = true
+        }
+    }).catch(err => {
+        loading.value = false
+        finished.value = false
+        return MessageJs({
+            message: "获取数据失败",
+            type: 'error',
+        })
+    })
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
 
 
 <style lang="less" scoped>
+div {}
+
 .mjzn {
     width: 100%;
     height: 100%;
