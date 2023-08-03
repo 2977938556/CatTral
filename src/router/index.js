@@ -3,7 +3,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 import Home from '@/views/home/index.vue'// 首页
 import Search from '@/views/search/index.vue'//搜索
-import Message from '@/views/message/index.vue'//消息
 import User from '@/views/user/index.vue'//个人中心
 import CatLogin from '@/views/login/index.vue'//登录
 import CatRegister from '@/views/register/index.vue'// 注册
@@ -32,10 +31,25 @@ import CatParticipate from '@/views/home/subset/mjhd/cat-mjhd-participate-page.v
 import History from '@/views/user/subset/cat-history-page.vue'// 历史记录
 import SetUser from '@/views/user/subset/cat-setuser-page.vue'// 设置用户名称
 
+
+// 消息页面
+import Message from '@/views/message/index.vue'
+import MesageDetail from '@/views/message/subset/message-detail.vue'// 聊天消息页面
+import MessageSetup from '@/views/message/subset/message-setup.vue'// 私聊设置页面
+import MessageApplyFor from '@/views/message/subset/message-applyfor.vue'// 申请页面
+
+
+
+
+
+
+
 // 流浪猫详情组件
 import CatDetail from '@/views/cat-details/index.vue'
 import CommentDetail from '@/views/cat-details/subset/cat-commentDeatil-page.vue'
-import CatAppluyFor from '@/views/cat-details/subset/cat-applyfor-page.vue'
+import CatAppluyFor from '@/views/cat-details/subset/cat-applyfor-page.vue'// 申请页面
+import Apply from '@/views/message/subset/subset/apply.vue'
+import ApplyMy from '@/views/message/subset/subset/applymy.vue'
 
 
 // 评论详情的通用组件
@@ -69,15 +83,20 @@ const routes = [
 
 
 
-
-
-
-
-
   { path: '/user/release', component: Release },// 发布帖子
 
   // 消息模块
-  { path: "/message", component: Message, },
+  { path: "/message", component: Message, },// 消息页面
+  { path: '/message/detail/:id', component: MesageDetail },// 聊天页面
+  { path: '/message/setup/:id', component: MessageSetup },// 私聊设置页面
+  {
+    path: '/message/applyfor/', component: MessageApplyFor, children: [
+      { path: "", redirect: "/message/applyfor/apply" },
+      { path: 'apply', name: "apply", component: Apply },// 申请页面
+      { path: 'applymy', name: "applymy", component: ApplyMy },// 我的申请页面
+    ]
+  },// 申请页面
+
 
   // 搜索模块
   { path: "/search", component: Search, },

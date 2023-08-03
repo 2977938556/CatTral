@@ -9,11 +9,24 @@
 import { useRouter } from 'vue-router'
 export default {
     name: "CatReturn",
-    setup() {
+    props: {
+        http: {
+            type: String,
+            default: ""
+        }
+    },
+    setup(props) {
         // 这个是返回上一个页
         let router = useRouter()
+
         let goBack = () => {
-            router.go(-1);
+            if (props.http == "") {
+                router.go(-1);
+            } else {
+                console.log("进来1");
+                console.log(props.http);
+                router.push(props.http);
+            }
         }
         return { goBack }
     }

@@ -150,6 +150,18 @@ export const PushFollow = (data) => {
 
 
 
+/**
+ * @returns {promsie} replier
+ * 申请模块
+ */
+export const PushCatApply = (data) => {
+    return request('/detail/applyfor', 'post', data)
+}
+
+
+
+
+
 
 
 

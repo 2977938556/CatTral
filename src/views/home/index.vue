@@ -81,7 +81,7 @@
             <CarGoodsItem :goodsitem="goodsitem" />
         </div>
         <div class="recommende-count lodings" v-else-if="loading == true">
-            <CatLodingItem v-for="item in 3" key="item" :width="158" :height="100" />
+            <CatLodingItem v-for="item in 3" key="item" :width="179" :height="160" />
         </div>
     </div>
 
@@ -96,10 +96,18 @@ import { GetHomePageBanner, GetHomePageTuiJian } from '@/api/home.js'
 import MessageJs from '@/components/libray/CarMessage.js'
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex'
+import { socket } from '@/utils/socket.js'
+
 
 export default {
     setup() {
         let store = useStore()
+
+        socket.emit('join', store.state.user.profile._id || "");
+        // // 获取数据
+        // socket.on('welcome', (result) => {
+        //     store.commit('websocket/AddFriends', result.friends)
+        // })
 
         let loading = ref(false)// 控制是否在加载  false 代表可以加载
         let finished = ref(false)// 控制是还有数据 false代表还有数据

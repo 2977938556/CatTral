@@ -8,56 +8,54 @@
 
         <div class="message-conent">
             <div class="message-item">
-                <a href="javascript:;">
+                <router-link to="/message/applyfor">
                     <div class="message-item-center">
                         <!-- 头像 -->
                         <div class="message-user-img">
                             <div>
                                 <img src="../../assets/image/cat-message-tz.png" alt="领养通知">
                             </div>
-                            <span>9</span>
+                            <span v-if="yd">{{ ApplyList.length || 1 }}</span>
                         </div>
                         <!-- 信息 -->
                         <div class="message-xiaoxi">
                             <div class="xiaoxi-center">
                                 <p class="title">申请通知</p>
-                                <p class="content">你好，我想知道这只猫是在哪里呢？我想养一只猫你好，我想知道这只猫是在哪里呢？我想养一只猫你好，我想知道这只猫是在哪里呢？我想养一只猫</p>
+                                <p class="content">{{ ApplyList[0]?.content || "暂无申请通知" }}</p>
                             </div>
                         </div>
                         <!-- 时间 -->
                         <div class="message-time">
-                            <p>21:30</p>
+                            <p>{{ timeFormat(ApplyList[0]?.created_at) == "暂无时间" ? '' : '' }}</p>
                         </div>
                     </div>
-                </a>
+                </router-link>
             </div>
-            <div class="message-item" v-for="(item, index) in 20" :key="index">
-                <a href="javascript:;">
+            <div class="message-item" v-for="(item, index) in userList" :key="index">
+                <router-link :to="`/message/detail/${item.fuser_id._id}`">
                     <div class="message-item-center">
                         <!-- 头像 -->
                         <div class="message-user-img">
+                            <span v-if="item.unread.length">{{ item.unread.length }}</span>
                             <div>
-                                <img class="user"
-                                    src="https://img.iplaysoft.com/wp-content/uploads/2019/free-images/free_stock_photo.jpg!0x0.webp"
-                                    alt="领养通知">
+                                <img class="user" :src="item.fuser_id.bgimgUrl" alt="头像">
                             </div>
-                            <span>9</span>
+                            <!-- <span>9</span> -->
                         </div>
                         <!-- 信息 -->
                         <div class="message-xiaoxi">
                             <div class="xiaoxi-center">
-                                <p class="title">申请通知</p>
-                                <p class="content">你好，我想知道这只猫是在哪里呢？我想养一只猫你好，我想知道这只猫是在哪里呢？我想养一只猫你好，我想知道这只猫是在哪里呢？我想养一只猫</p>
+                                <p class="title">{{ item.fuser_id.username }}</p>
+                                <p class="content">{{ item.message[item.message.length - 1]?.neiron }}</p>
                             </div>
                         </div>
                         <!-- 时间 -->
                         <div class="message-time">
-                            <p>21:30</p>
+                            <p>{{ timeFormat(item.created_at) }}</p>
                         </div>
                     </div>
-                </a>
+                </router-link>
             </div>
-
         </div>
 
 
@@ -65,6 +63,70 @@
 
     </div>
 </template>
+
+
+
+<script setup>
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { timeFormat } from '@/utils/timeFilter.js'
+import { ref, computed } from 'vue'
+import { socket } from '@/utils/socket.js'
+import { GetApplyCat, PushApplyCat } from '@/api/message.js'
+
+
+
+// import { io } from 'socket.io-client';
+
+// window
+let store = useStore()
+let route = useRoute()
+let router = useRouter()
+
+
+socket.emit('join', store.state.user.profile._id);
+
+
+// 这里是获取用户的私信
+let userList = computed(() => store.state.websocket.friends)
+
+
+
+
+
+// 收集申请的数据
+let ApplyList = ref([])
+// 判断是否需要显示圆点
+let yd = ref(false)
+
+
+// 这里是获取申请通知
+GetApplyCat({ _id: store.state.user.profile._id }).then(({ result }) => {
+    // 这里查询出是否有待申请的
+    let s = result.data.filter(item => item.to_examine === 'examine')
+
+    // 如果没有申请的那么就不显示圆点,并且将所有的申请数据赋值给他
+    if (s.length === 0) {
+        ApplyList.value = result.data
+        yd.value = false
+
+        // 否则就需要显示圆点并且将需要显示的数据赋值
+    } else {
+        yd.value = true
+        ApplyList.value = s
+    }
+})
+
+
+
+
+
+
+
+
+
+
+</script>
 
 
 <style lang="less" scoped>

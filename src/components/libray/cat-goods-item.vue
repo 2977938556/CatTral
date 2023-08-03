@@ -35,6 +35,7 @@ export default {
         }
     },
     setup(props) {
+        // console.log(props.goodsitem);
         // console.log("01",props.goodsitem);
         return { timeFormat, Processingregion }
     }

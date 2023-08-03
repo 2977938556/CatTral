@@ -41,11 +41,11 @@ export default {
     height: 22px;
     display: flex;
     justify-content: space-between;
-
     .recen-good-center {
-        flex: 1;
+        width: 345px;
         height: 22px;
         margin: 0 auto;
+
         img {
             width: 14px;
             height: 13px;

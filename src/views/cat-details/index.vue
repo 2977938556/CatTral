@@ -9,7 +9,7 @@
             <template #center>
                 <p>启示详情</p>
             </template>
-            <template #right>
+            <template #right v-if="DetailData">
                 <CatApply :DetailData="DetailData" />
             </template>
         </CartStatusBav>
@@ -149,7 +149,7 @@
 </template>
 
 
-<script>
+<script setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -159,200 +159,228 @@ import MessageJs from '@/components/libray/CarMessage.js'
 import { Processingregion } from '@/utils/timeFilter.js'
 import CatPromptJS from '@/components/libray/CatPrompt.js'
 import router from '../../router'
-
-
-export default {
-    name: "CatDetail",
-    setup() {
-
-        let route = useRoute();
-        let store = useStore()
+import { socket } from '@/utils/socket.js'
 
 
 
-        let showComment = computed(() => store.state.detail.showComment)
+
+let route = useRoute();
+let store = useStore()
 
 
-        let userData = JSON.parse(localStorage.getItem('user-store')).user.profile
-
-        // 01：点击查看全屏图片
-        let openImg = ref({})// 图片的数据
-        let openFullImg = ref(false)// 控制是否开启
-        let opneMax = (result) => {
-            // 这里找出被点击的索引值
-            result.index = result.data.findIndex(item => item == result.target)
-            openFullImg.value = true
-            openImg.value = result
-        }
-        // 02：关闭全屏预览图片
-        let cancel = () => {
-            openFullImg.value = !openFullImg.value
-        }
+socket.emit('join', store.state.user.profile._id);
 
 
-        // 03：控制简介的点击开启
-        let BriefIntVaild = ref("")
-        let BriefIntVaildFn = (text) => {
-            if (BriefIntVaild.value != "") {
-                BriefIntVaild.value = ''
-                return false;
+
+let showComment = computed(() => store.state.detail.showComment)
+
+
+let userData = JSON.parse(localStorage.getItem('user-store')).user.profile
+
+// 01：点击查看全屏图片
+let openImg = ref({})// 图片的数据
+let openFullImg = ref(false)// 控制是否开启
+let opneMax = (result) => {
+    // 这里找出被点击的索引值
+    result.index = result.data.findIndex(item => item == result.target)
+    openFullImg.value = true
+    openImg.value = result
+}
+// 02：关闭全屏预览图片
+let cancel = () => {
+    openFullImg.value = !openFullImg.value
+}
+
+
+// 03：控制简介的点击开启
+let BriefIntVaild = ref("")
+let BriefIntVaildFn = (text) => {
+    if (BriefIntVaild.value != "") {
+        BriefIntVaild.value = ''
+        return false;
+    }
+    // 大于了五十的字符长度那么就需要设置一下
+    if (text.length > 50) {
+        BriefIntVaild.value = 'cancel-ellipsis'
+    }
+}
+
+
+
+// 获取评论的数据
+let commentData = ref([])
+
+
+// 通过routqe中获取parmas的参数 id获取详情数据
+let GoodsId = ref(route.params.id)
+
+
+
+// 01_1 获取当前页面的数据
+let DetailData = ref(null)
+
+
+
+// 02_2 用户保存用户的收藏信息
+let collectData = ref({})
+// 这个是控制是否收藏了
+let collectFlage = ref(false)
+
+// 03_3 保存用户的推荐数据
+let RemmendData = ref([])
+
+
+// 04_4 保存用户的关注数据
+let FollowData = ref([])
+
+
+// 获取帖子的数据
+let GetGetDEtailCat = async () => {
+    // 获取帖子的详情数据
+    GetDEtailCat(GoodsId.value).then(({ result }) => {
+        DetailData.value = result.data.DetailData
+        commentData.value = result.data.commentData
+        // 这里我们需要将帖子的数据存入vuex中
+        store.commit('detail/SetDetailData', result.data.DetailData)
+    }).catch(({ response: { data } }) => {
+        // 这里是没有数据的情况下。我们跳转到404页面上
+        router.push('/error')
+    })
+
+
+    // 获取用户的收藏数据
+    let GetCollectData = await GetCollect(userData.user_id)
+    collectData.value = GetCollectData.result.data
+
+    // 获取用户的推荐数据
+    let remmedData = await GetRemmed()
+    RemmendData.value = remmedData.result.data
+
+
+    // 获取用户关注的数据
+    let { result: { data: { follow } } } = await GetFollow()
+    FollowData.value = follow
+
+
+}
+GetGetDEtailCat()
+
+
+
+// 设置节流阀
+let Debouncing = null
+// 点击收藏的时候就发送请求将收藏的数据添加进去
+let CollectFn = () => {
+    if (!Debouncing) {
+        clearInterval(Debouncing)
+        Debouncing = setInterval(() => {
+            // 发送请求
+            GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId.value, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
+                // 这里由于我直接修改了储存收藏的数据所以会自动更新
+                collectData.value = result.data
+                clearInterval(Debouncing)
+                Debouncing = null
+            })
+        }, 500)
+    }
+}
+
+// 这里我是直接监听收藏的数据
+watch(() => collectData.value, (newVal, olVal) => {
+    // 这里我们设置了一下如果没有值的情况那么就会直接赋值为1
+    if (newVal?.bookmarks?.length == 0) {
+        collectFlage.value = false
+        return
+    }
+
+    // // 这里是查早是否有数据
+    let index = collectData?.value?.bookmarks?.findIndex(item => item.cat_id == GoodsId.value);
+
+    if (index < 0 || index == "undefined") {
+        collectFlage.value = false
+    } else if (index >= 0) {
+        collectFlage.value = true
+    }
+}, { immediate: true })
+
+
+// 这里是监听的当前页面其他的流浪猫卡片
+watch(() => route.params.id, (newVal, olVal) => {
+    if (newVal != olVal) {
+        // 将当前需要被查询的帖子id进行查询
+        GoodsId.value = newVal
+        GetGetDEtailCat()
+    }
+})
+
+
+// 这个是开启与关闭评论模块
+let openComment = () => {
+    store.commit('detail/SetShowComment')
+}
+
+
+// 关注
+let pushFollowFn = (id) => {
+    try {
+        PushFollow({ user_id: userData._id, follow_id: id }).then((result) => {
+            console.log(result);
+            if (!result.result.data) {
+                console.log(result.result.data);
+                return CatPromptJS({ text: `${result.message}`, type: "error" })
             }
-            // 大于了五十的字符长度那么就需要设置一下
-            if (text.length > 50) {
-                BriefIntVaild.value = 'cancel-ellipsis'
-            }
-        }
+
+            FollowData.value = result?.result?.data?.follow
+            CatPromptJS({ text: `${result.message}`, type: "success" })
+        })
+
+    } catch (err) {
+        CatPromptJS({ text: "操作失败请重试", type: "error" })
+    }
+}
 
 
 
-        // 获取评论的数据
-        let commentData = ref([])
+// 这里还需要判断是否被拉黑了
 
+// 这里需要设置用户是否开启了私聊模式
+let PrivateChatModule = async () => {
+    // 这里是验证是否该用户开启了私聊
+    if (DetailData.value.user_id.configuration_information.private_letter) {
+        // 这里是判断是否是当前的用户
+        if (DetailData.value.user_id._id !== userData._id) {
+            socket.emit('frienMessage', { user_id: userData._id, friends: DetailData.value.user_id._id })
 
-        // 通过routqe中获取parmas的参数 id获取详情数据
-        let GoodsId = ref(route.params.id)
-
-
-
-        // 01_1 获取当前页面的数据
-        let DetailData = ref(null)
-
-
-
-        // 02_2 用户保存用户的收藏信息
-        let collectData = ref({})
-        // 这个是控制是否收藏了
-        let collectFlage = ref(false)
-
-        // 03_3 保存用户的推荐数据
-        let RemmendData = ref([])
-
-
-        // 04_4 保存用户的关注数据
-        let FollowData = ref([])
-
-
-        // 获取帖子的数据
-        let GetGetDEtailCat = async () => {
-            // 获取帖子的详情数据
-            GetDEtailCat(GoodsId.value).then(({ result }) => {
-                DetailData.value = result.data.DetailData
-                commentData.value = result.data.commentData
-                // 这里我们需要将帖子的数据存入vuex中
-                store.commit('detail/SetDetailData', result.data.DetailData)
-            }).catch(({ response: { data } }) => {
-                // 这里是没有数据的情况下。我们跳转到404页面上
-                router.push('/error')
+            // 这里是监听私聊按钮的模块 如果合格那么就可以私聊否则不行
+            socket.on('frienMessage_isok', ({ vavle, friends }) => {
+                if (vavle) {
+                    router.push(`/message/detail/${friends}`)
+                } else {
+                    CatPromptJS({ text: "系统错误", type: "error" })
+                }
             })
 
 
-            // 获取用户的收藏数据
-            let GetCollectData = await GetCollect(userData.user_id)
-            collectData.value = GetCollectData.result.data
+            // socket.on('blackList_data', ({ data, vavle }) => {
+            //     if (data && vavle == true) {
+            //         return CatPromptJS({ text: "你已经被该用户拉黑了", type: "error" })
+            //     } else {
 
-            // 获取用户的推荐数据
-            let remmedData = await GetRemmed()
-            RemmendData.value = remmedData.result.data
-
-
-            // 获取用户关注的数据
-            let { result: { data: { follow } } } = await GetFollow()
-            FollowData.value = follow
+            //     }
+            // })
 
 
+
+
+
+
+
+        } else {
+            CatPromptJS({ text: "禁止私聊自己", type: "error" })
         }
-        GetGetDEtailCat()
-
-
-
-        // 设置节流阀
-        let Debouncing = null
-        // 点击收藏的时候就发送请求将收藏的数据添加进去
-        let CollectFn = () => {
-            if (!Debouncing) {
-                clearInterval(Debouncing)
-                Debouncing = setInterval(() => {
-                    // 发送请求
-                    GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId.value, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
-                        // 这里由于我直接修改了储存收藏的数据所以会自动更新
-                        collectData.value = result.data
-                        clearInterval(Debouncing)
-                        Debouncing = null
-                    })
-                }, 500)
-            }
-        }
-
-        // 这里我是直接监听收藏的数据
-        watch(() => collectData.value, (newVal, olVal) => {
-            // 这里我们设置了一下如果没有值的情况那么就会直接赋值为1
-            if (newVal?.bookmarks?.length == 0) {
-                collectFlage.value = false
-                return
-            }
-
-            // // 这里是查早是否有数据
-            let index = collectData?.value?.bookmarks?.findIndex(item => item.cat_id == GoodsId.value);
-
-            if (index < 0 || index == "undefined") {
-                collectFlage.value = false
-            } else if (index >= 0) {
-                collectFlage.value = true
-            }
-        }, { immediate: true })
-
-
-        // 这里是监听的当前页面其他的流浪猫卡片
-        watch(() => route.params.id, (newVal, olVal) => {
-            if (newVal != olVal) {
-                // 将当前需要被查询的帖子id进行查询
-                GoodsId.value = newVal
-                GetGetDEtailCat()
-            }
-        })
-
-
-        // 这个是开启与关闭评论模块
-        let openComment = () => {
-            store.commit('detail/SetShowComment')
-        }
-
-
-        // 关注
-        let pushFollowFn = (id) => {
-            try {
-                PushFollow({ user_id: userData._id, follow_id: id }).then((result) => {
-                    console.log(result);
-                    if (!result.result.data) {
-                        console.log(result.result.data);
-                        return CatPromptJS({ text: `${result.message}`, type: "error" })
-                    }
-
-                    FollowData.value = result?.result?.data?.follow
-                    CatPromptJS({ text: `${result.message}`, type: "success" })
-                })
-
-            } catch (err) {
-                CatPromptJS({ text: "操作失败请重试", type: "error" })
-            }
-        }
-
-
-        // 这里需要设置用户是否开启了私聊模式
-        let PrivateChatModule = () => {
-            // console.log();
-            if (userData.configuration_information.private_letter) {
-                CatPromptJS({ text: "可以私聊", type: "success" })
-                // 这里就是需要跳转到用户与该用户私聊的窗口中了，
-                // 我的想法大概是当用户点击的时候那么就设置在message数据库中基于当前的用用户保存
-                // 当前私聊的用户和需要回复的用户并且设置， 
-                // 当回复的用户发送第一条信息的时候那么就需要设置一下在当前的数据中
-            } else {
-                CatPromptJS({ text: "用户已禁止私聊了", type: "error" })
-            }
-        }
-
-        return { showComment, timeFormat, commentData, BriefIntVaildFn, PrivateChatModule, GoodsId, BriefIntVaild, DetailData, FollowData, openComment, pushFollowFn, opneMax, RemmendData, Processingregion, openImg, openFullImg, cancel, collectData, collectFlage, CollectFn }
+        // 这个是点击后发送数据
+    } else {
+        CatPromptJS({ text: "用户已经禁止别人私聊", type: "error" })
     }
 }
 
@@ -782,7 +810,7 @@ export default {
     .recommendeCount {
         width: 375px;
         margin-top: 20px;
-        // min-height: 100px;
+        min-height: 100px;
 
         .recommende-count {
             width: 345px;

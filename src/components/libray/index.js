@@ -71,7 +71,7 @@ export default {
         app.component(CatComment.name, CatComment)
         app.component(CatOpenCity.name, CatOpenCity)
         app.config.globalProperties.$CatConfire = CatConfire// 原型函数挂在提示组件
-        app.component(CatConfires.name, CatConfires)
+        app.component(CatConfires.name, CatConfires)// 这个是不需要弹窗组件使用组件进行调用
         app.component(CatRegisterLoding.name, CatRegisterLoding)
         app.component(CatFullImg.name, CatFullImg)
         app.component(CatDetailLoding.name, CatDetailLoding)

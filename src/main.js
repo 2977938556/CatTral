@@ -23,6 +23,19 @@ app.use(UI)
 // 注册mockjs
 import '@/mock/index.js'
 
+import { socket } from '@/utils/socket.js'
+
+
+
+
+
+
+// 这个是监听列表信息
+socket.on('welcome', (result) => {
+    if (result) {
+        store.commit('websocket/AddFriends', result)
+    }
+})
 
 
 
@@ -30,7 +43,5 @@ import '@/mock/index.js'
 
 app.use(router)
 app.use(store)
-
-
 
 app.mount('#app')

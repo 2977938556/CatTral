@@ -13,6 +13,7 @@ import detail from '@/store/modules/detail.js'
 import mjgs from '@/store/modules/mjgs.js'
 import mjhd from '@/store/modules/mjhd.js'
 import mjzn from '@/store/modules/mjzn.js'
+import websocket from '@/store/modules/websocket.js'
 
 let store = createStore({
     modules: {
@@ -23,17 +24,21 @@ let store = createStore({
         detail,
         mjgs,
         mjhd,
-        mjzn
+        mjzn,
+        websocket
     },
 
     // 持久化配置
     plugins: [
         createPersistedstate({
             key: 'user-store',
-            paths: ['user', 'home']
+            paths: ['user', 'home', 'websocket']
         }, {
             key: 'mjgs-store',
             paths: ['mjgs']
+        }, {
+            key: 'mjgs-store',
+            paths: ['websocket']
         })
     ]
 })

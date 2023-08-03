@@ -183,8 +183,6 @@ export default {
 
 
 
-
-
         return { timeFormat, CommenTetails, commenter, addUpFN, sendCommentOrReply, CommenTvalue, inputs, placeholder }
 
     }

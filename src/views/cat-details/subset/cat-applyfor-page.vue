@@ -16,7 +16,7 @@
                     <h1>申请内容</h1>
                 </div>
                 <div class="applyfor-text">
-                    <textarea placeholder="请填写你的申请吧，领养替代购买"></textarea>
+                    <textarea v-model="message" placeholder="请填写你的申请吧，领养替代购买"></textarea>
                 </div>
                 <div class="applyfor-btn">
                     <div class="btn">
@@ -24,8 +24,8 @@
                     </div>
                     <div class="zysx">
                         <p>
-                            <input type="checkbox">
-                            <span>隐私条款</span>
+                            <input type="checkbox" v-model="agreement">
+                            <span>隐私协议</span>
                         </p>
                         <p>
                             注意事项
@@ -35,24 +35,47 @@
             </div>
         </div>
 
-
-
-
-
     </div>
 </template>
-<script>
-import  MessageJs  from '@/components/libray/CarMessage.js'
-export default {
-    name: "CatAppluyFor",
-    setup() {
-        let sub = () => {
-            MessageJs({type:"success",text:"提交成功"})
-        }
-        return {sub}
+<script setup>
+import MessageJs from '@/components/libray/CarMessage.js'
+import { PushCatApply } from '@/api/detail.js'
+import { useRouter, useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import { ref } from 'vue'
+import CatPromptJS from '@/components/libray/CatPrompt.js'
+
+name: "CatAppluyFor";
 
 
 
+let router = useRouter()
+let route = useRoute()
+let store = useStore()
+
+
+// 数据双向绑定
+let agreement = ref(true)
+let message = ref("我很喜欢你的猫我是学生请给我")
+
+
+
+// 提交事件
+let sub = async () => {
+
+    if (agreement.value == false) {
+        return MessageJs({ type: "error", text: "隐私协议", timeout: 1000 })
+    } else if (message.value == "") {
+        return MessageJs({ type: "error", text: "留言内容不能为空", timeout: 1000 })
+    }
+
+    // 这里就是去提交数据了
+    try {
+        let { result } = await PushCatApply({ _id: route.params.id, message: message.value })
+        CatPromptJS({ text: result.message, type: 'warn' })
+        router.go(-1)
+    } catch ({ response: { data } }) {
+        CatPromptJS({ text: data.message, type: 'warn' })
     }
 }
 
@@ -64,6 +87,9 @@ export default {
 .applyfor {
     width: 100%;
     height: auto;
+    background: white;
+    padding-bottom: 100%;
+
 
     .applyfor-content-center {
         width: 345px;
