@@ -2,7 +2,7 @@
     <div class="catInfor">
         <div class="catInfor-content">
             <div class="catInfor-center">
-                <router-link :to="`/catdetail/${cat.cat_id}`">
+                <router-link :to="`/catdetail/${cat._id}`">
                     <div class="left">
                         <div :class="[{ label: cat.to_examine === 'pass' }, { labelB: cat.to_examine == 'ok' }]">
                             {{ cat.to_examine == 'pass' ? '领养中' : '已领养' }}

@@ -244,13 +244,14 @@ let GetGetDEtailCat = async () => {
         store.commit('detail/SetDetailData', result.data.DetailData)
     }).catch(({ response: { data } }) => {
         // 这里是没有数据的情况下。我们跳转到404页面上
-        router.push('/error')
+        // router.push('/error')
     })
 
 
     // 获取用户的收藏数据
-    let GetCollectData = await GetCollect(userData.user_id)
-    collectData.value = GetCollectData.result.data
+    let { result } = await GetCollect(userData._id)
+    console.log(result);
+    collectData.value = result.data
 
     // 获取用户的推荐数据
     let remmedData = await GetRemmed()
@@ -260,8 +261,6 @@ let GetGetDEtailCat = async () => {
     // 获取用户关注的数据
     let { result: { data: { follow } } } = await GetFollow()
     FollowData.value = follow
-
-
 }
 GetGetDEtailCat()
 
@@ -278,6 +277,22 @@ let CollectFn = () => {
             GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId.value, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
                 // 这里由于我直接修改了储存收藏的数据所以会自动更新
                 collectData.value = result.data
+
+
+                // 下面的代码表示的是每次用户点击收藏按钮都会将收藏的数据返回回(每次返回的都是添加收藏或者取消收藏的数据)
+                
+                // 这里表示没有收藏的数据表示需要收藏
+                if (result.data.bookmarks.length == 0) {
+                    // 这里是需要设置收藏的数据
+                    store.commit('user/SetCatLove', [])
+                } else if (collectFlage.value == false) {
+                    // console.log("我需要收藏");
+                    store.commit('user/SetCatLove', result.data.bookmarks.map(item => item.cat_id))
+                } else if (collectFlage.value == true) {
+                    // console.log("我需要删除");
+                    store.commit('user/SetCatLove', result.data.bookmarks.map(item => item.cat_id))
+                }
+
                 clearInterval(Debouncing)
                 Debouncing = null
             })
@@ -287,6 +302,7 @@ let CollectFn = () => {
 
 // 这里我是直接监听收藏的数据
 watch(() => collectData.value, (newVal, olVal) => {
+
     // 这里我们设置了一下如果没有值的情况那么就会直接赋值为1
     if (newVal?.bookmarks?.length == 0) {
         collectFlage.value = false
@@ -294,8 +310,10 @@ watch(() => collectData.value, (newVal, olVal) => {
     }
 
     // // 这里是查早是否有数据
-    let index = collectData?.value?.bookmarks?.findIndex(item => item.cat_id == GoodsId.value);
+    let index = collectData?.value?.bookmarks?.findIndex(item => item.cat_id._id == GoodsId.value);
 
+    // true 表示需要删除
+    // false 表示需要关注
     if (index < 0 || index == "undefined") {
         collectFlage.value = false
     } else if (index >= 0) {

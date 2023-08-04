@@ -117,7 +117,6 @@ export default {
                     let result = await GetUserLogin(FromDat)
                     if (result?.code === 200 || result?.code === 201) {
                         MessageJs({ text: `登录成功`, type: 'warn', timeout: 1000 })
-                        console.log(store.state);
                         store.commit("user/SetUser", { ...result.result.user, token: result.result.token })
                         router.push('/')
                     }

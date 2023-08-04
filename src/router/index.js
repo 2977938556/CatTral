@@ -3,7 +3,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 import Home from '@/views/home/index.vue'// 首页
 import Search from '@/views/search/index.vue'//搜索
-import User from '@/views/user/index.vue'//个人中心
 import CatLogin from '@/views/login/index.vue'//登录
 import CatRegister from '@/views/register/index.vue'// 注册
 import Release from '@/views/release/index.vue'// 发布页面
@@ -27,9 +26,15 @@ import CarMjhdDetail from '@/views/home/subset/mjhd/cat-mjhd-detail-page.vue'// 
 import CatMjhdAppfor from '@/views/home/subset/mjhd/cat-mjhd-applyfor-page.vue'// 报名页面
 import CatParticipate from '@/views/home/subset/mjhd/cat-mjhd-participate-page.vue'// 我参与的活动
 
+
+
 // 个人中心的功能模块
+import User from '@/views/user/index.vue'//个人中心
 import History from '@/views/user/subset/cat-history-page.vue'// 历史记录
 import SetUser from '@/views/user/subset/cat-setuser-page.vue'// 设置用户名称
+import MyRelase from '@/views/user/subset/cat-relase-page.vue'// 我的发布
+import MyLove from '@/views/user/subset/cat-love-page.vue'// 我的收藏
+import MyApply from '@/views/user/subset/cat-apply-page.vue'// 我的领养
 
 
 // 消息页面
@@ -109,9 +114,13 @@ const routes = [
 
 
   // 我的模块功能
-  { path: "/user", component: User },
+  { path: "/user", component: User },// 个人中心模块
   { path: '/user/history', component: History },// 历史记录
   { path: '/user/setuser', component: SetUser },// 修改个人用户数据的模块
+
+  { path: '/user/myrelase', component: MyRelase },// 修改个人用户数据的模块
+  { path: '/user/mylove', component: MyLove },// 修改个人用户数据的模块
+  { path: '/user/myapply', component: MyApply },// 修改个人用户数据的模块
 
 
 

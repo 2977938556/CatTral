@@ -42,16 +42,22 @@
                     <!-- 控制居中 -->
                     <div class="user-fun-top-center">
                         <div class="item-a">
-                            <img src="../../assets/image/user-fabu-icon.png" alt="">
-                            <p>我的发布</p>
+                            <router-link to="/user/myrelase">
+                                <img src="../../assets/image/user-fabu-icon.png" alt="">
+                                <p>我的发布</p>
+                            </router-link>
                         </div>
                         <div class="item-a">
-                            <img src="../../assets/image/user-shoc-icon.png" alt="">
-                            <p>我的收藏</p>
+                            <router-link to="/user/mylove">
+                                <img src="../../assets/image/user-shoc-icon.png" alt="">
+                                <p>我的收藏</p>
+                            </router-link>
                         </div>
                         <div class="item-a">
-                            <img src="../../assets/image/user-wdly-icon.png" alt="">
-                            <p>我的领养</p>
+                            <router-link to="/user/myapply">
+                                <img src="../../assets/image/user-wdly-icon.png" alt="">
+                                <p>我的领养</p>
+                            </router-link>
                         </div>
 
                     </div>
@@ -181,9 +187,11 @@ export default {
         // 退出登录
         let userOut = () => {
             CatConfire({ title: "系统提示", text: "是否退出登录" }).then(value => {
-                store.commit('user/SetUser', {})
-                store.commit('home/SetcityAddrs', {})
-                store.commit('home/DeleteGoodsitem', [])
+                store.commit('user/SetUser', {})// 清空用户数据
+                store.commit('home/SetcityAddrs', {})// 清空地区数据
+                store.commit('home/DeleteGoodsitem', []) //清空首页数据
+                store.commit('user/SetCatLove', []) //清空收藏数据
+
                 // 这里可以优化一下 弹窗确认
                 MessageJs({ text: '退出登录成功', type: 'success', timeout: 1000 })
                 router.push('/login')
@@ -209,18 +217,22 @@ export default {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    border: 1px solid rgba(255, 0, 0, 0);
+    // border: 1px solid rgba(255, 0, 0, 0);
     transition: all 0.5s ease;
 
 
     // 用户背景图片
     .user-bg {
         width: 100%;
-        height: 309px;
-        border: 1px solid red;
+        height: 100%;
+        // border: 1px solid red;
         align-items: center;
-        position: fixed;
+        // position: fixed;
         z-index: -100000;
+        position: absolute;
+        background: @background-color;
+
+
 
 
         img {
@@ -375,7 +387,6 @@ export default {
         align-items: center;
         justify-content: center;
         padding-bottom: 74px;
-        background: @background-color;
 
 
 
