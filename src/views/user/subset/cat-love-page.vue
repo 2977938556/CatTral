@@ -149,7 +149,7 @@ let DeleteFn = async () => {
         store.commit('user/SetCatLove', result.data?.map(item => item.cat_id) || [])
 
 
-        CatPromptJS({ text: `删除了${result.data.length}条`, type: 'success', timeout: 1000 })
+        CatPromptJS({ text: `删除成功${result.data.length}`, type: 'error', timeout: 1000 })
 
         // 关闭开关
         edit.value = !edit.value

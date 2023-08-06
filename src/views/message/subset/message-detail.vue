@@ -79,7 +79,9 @@ import { ref, onMounted, nextTick, computed } from 'vue';
 import { useRoute, useRouter, } from 'vue-router'
 import { useStore } from 'vuex'
 import { socket } from '@/utils/socket.js'
+import { GetUserData } from '@/api/user.js'
 import CatPromptJS from '@/components/libray/CatPrompt.js'
+
 
 let route = useRoute()
 let store = useStore()
@@ -92,6 +94,16 @@ let contents = ref(null)
 
 // 进入聊天界面那么就清空掉未读信息
 socket.emit('delete_unread', { user_id: store.state.user.profile._id, fuser_id: route.params.id });
+
+let userData = ref(null)
+
+
+GetUserData(route.params.id).then(({ result }) => {
+    userData.value = result.data
+}).catch(err => { console.log(err); })
+
+
+
 
 
 
@@ -134,6 +146,13 @@ let message = ref("hellow")
 
 // 发送私聊数据
 let messagePush = () => {
+
+
+
+
+    if (userData.value.configuration_information.private_letter == true) {
+        return CatPromptJS({ text: store.state.user.profile._id == userData.value._id ? '你开启了禁止私聊' : '用户已经开了禁止私聊', type: "error" })
+    }
     // 先解绑之前的事件处理程序
     socket.off('black_detai');
     // 这里我们先发送一个请求验证是否被拉黑了

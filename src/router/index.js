@@ -1,11 +1,19 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 
-import Home from '@/views/home/index.vue'// 首页
-import Search from '@/views/search/index.vue'//搜索
-import CatLogin from '@/views/login/index.vue'//登录
-import CatRegister from '@/views/register/index.vue'// 注册
-import Release from '@/views/release/index.vue'// 发布页面
+// import Home from '@/views/home/index.vue'// 首页
+// import Search from '@/views/search/index.vue'//搜索
+// import CatLogin from '@/views/login/index.vue'//登录
+// import CatRegister from '@/views/register/index.vue'// 注册
+// import Release from '@/views/release/index.vue'// 发布页面
+
+
+
+const Home = () => import('@/views/home/index.vue')// 首页
+const Search = () => import('@/views/search/index.vue')//搜索
+const CatLogin = () => import('@/views/login/index.vue')//登录
+const CatRegister = () => import('@/views/register/index.vue')// 注册
+const Release = () => import('@/views/release/index.vue')// 发布页面
 
 
 // 首页功能模块
@@ -32,9 +40,20 @@ import CatParticipate from '@/views/home/subset/mjhd/cat-mjhd-participate-page.v
 import User from '@/views/user/index.vue'//个人中心
 import History from '@/views/user/subset/cat-history-page.vue'// 历史记录
 import SetUser from '@/views/user/subset/cat-setuser-page.vue'// 设置用户名称
+
 import MyRelase from '@/views/user/subset/cat-relase-page.vue'// 我的发布
 import MyLove from '@/views/user/subset/cat-love-page.vue'// 我的收藏
 import MyApply from '@/views/user/subset/cat-apply-page.vue'// 我的领养
+import SocialPrivacy from '@/views/user/subset/cat-socialprivacy-page.vue'// 社交隐私模块
+import MoreFunction from '@/views/user/subset/cat-morefunction-page.vue'// 更多功能
+import Aboutus from '@/views/user/subset/cat-aboutus-page.vue'// 关于我们
+
+
+
+
+
+
+
 
 
 // 消息页面
@@ -50,8 +69,8 @@ import MessageApplyFor from '@/views/message/subset/message-applyfor.vue'// 申�
 
 
 // 流浪猫详情组件
-import CatDetail from '@/views/cat-details/index.vue'
-import CommentDetail from '@/views/cat-details/subset/cat-commentDeatil-page.vue'
+import CatDetail from '@/views/cat-details/index.vue'// 详情组件
+import CommentDetail from '@/views/cat-details/subset/cat-commentDeatil-page.vue' //评论组件
 import CatAppluyFor from '@/views/cat-details/subset/cat-applyfor-page.vue'// 申请页面
 import Apply from '@/views/message/subset/subset/apply.vue'
 import ApplyMy from '@/views/message/subset/subset/applymy.vue'
@@ -121,6 +140,9 @@ const routes = [
   { path: '/user/myrelase', component: MyRelase },// 修改个人用户数据的模块
   { path: '/user/mylove', component: MyLove },// 修改个人用户数据的模块
   { path: '/user/myapply', component: MyApply },// 修改个人用户数据的模块
+  { path: '/user/social', component: SocialPrivacy },// 社交隐私模块
+  { path: '/user/morefunction', component: MoreFunction },// 社交隐私模块
+  { path: '/user/aboutus', component: Aboutus },// 关于我们模块
 
 
 

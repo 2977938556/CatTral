@@ -1,7 +1,7 @@
 <template>
     <div class="History">
         <!--  头部 -->
-        <CartStatusBav :isstyle="true">
+        <CartStatusBav :isstyle="false">
             <!-- 左边内容插槽 -->
             <template #left>
                 <CatReturn></CatReturn>
@@ -11,28 +11,26 @@
                 历史记录
             </template>
             <template #right>
-                <p class="remover-p" @click="cesjo">清空全部</p>
+                <p class="remover-p" @click="clonehish">清空全部</p>
             </template>
         </CartStatusBav>
-
 
         <!-- 内容区域 -->
         <div class="history-content-box">
             <div class="history-center">
-                <ul>
+                <ul v-if="HistryList.length">
                     <!-- 单个元素 -->
-                    <li v-for="item in 5" :key="item">
+                    <li v-for="item in HistryList" :key="item._id">
                         <div class="history-item">
                             <div class="history-img">
-                                <img src="https://img.js.design/assets/smartFill/img193164da6ef470.jpg" alt="">
+                                <img v-for="mitem in item.cat_id.imageUrl" :src="mitem" alt="图片">
                             </div>
                             <div class="history-text">
                                 <div class="history-text-top">
-                                    <p>有需要领奖猫猫的吗，个人因为工作的原因，不方便养猫了。。有需要领奖猫猫的吗，个人因为工作的原因，不方便养猫了。。有需要领奖猫猫的吗，个人因为工作的原因，不方便养猫了。。
-                                    </p>
+                                    <p>{{ item.cat_id.title }}</p>
                                 </div>
                                 <div class="history-text-bottom">
-                                    <p>2023.5.4</p>
+                                    <p>{{ timeFormat(item.updated_at) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -40,12 +38,11 @@
                 </ul>
             </div>
 
-            <!-- 显示组件 -->
-            <CatLoding></CatLoding>
-
-
+            <!-- loding加载效果 -->
+            <CatLoding :loading="loading" :finished="finished" @infinite="getCatData()" />
 
         </div>
+
 
 
 
@@ -53,17 +50,104 @@
 </template>
 
 
-<script>
-export default {
-    name: 'History',
-    setup() {
-        let cesjo = () => {
-            console.log("11");
-        }
-        return {cesjo}
-    },
+<script setup>
+import { markRaw, shallowRef, ref, reactive, watch, computed } from 'vue';
+import { useStore } from 'vuex';
+import CatPromptJS from '@/components/libray/CatPrompt.js'
+import { DeleteCatLove } from '@/api/user.js'
+import { timeFormat } from '@/utils/timeFilter.js'
 
+
+
+// 获取数据
+import { GetCatData, DeleteHistory } from '@/api/user.js'
+
+
+let store = useStore()
+let loading = ref(false)
+let finished = ref(false)
+
+
+
+
+let HistryList = ref([])
+
+
+
+
+// 发起请求的参数
+let fromOtion = reactive({
+    customertype: 0,// 对内
+    _id: store.state.user.profile._id,// 当前登录的用户id
+    types: 'MyHistory',// 获取为历史记录模块的数据
+    option: {
+        page: 1,
+        pageSize: 10,
+        store: -1
+    }
+})
+
+
+function getCatData() {
+    loading.value = true
+    finished.value = false
+    // 这里是设置状态
+    // 这里是发送请求获取数据
+    GetCatData(fromOtion).then(({ result }) => {
+
+        console.log(result);
+
+        let daya = result.data.filter(item => item.cat_id != null)
+
+        console.log(daya);
+
+
+        if (daya.length != 0) {
+            loading.value = false
+            finished.value = true
+            HistryList.value.push(...daya)
+            fromOtion.option.page++
+        } else {
+            console.log("进来了");
+            loading.value = false
+            finished.value = true
+        }
+
+    }).catch(({ response: { data } }) => {
+        // CatPromptJS({ text: data?.message || "暂时没有历史记录哦", type: 'error' })
+        loading.value = false
+        finished.value = true
+    })
 }
+
+// 这里如果没有数据那么就可以发送一次请求
+// if (CatgoodsList.value.length <= 0) {
+// getCatData()
+// }
+
+
+
+
+// 清空数据
+let clonehish = () => {
+    DeleteHistory({ _id: store.state.user.profile._id }).then(({ result }) => {
+        if (result.data.length != 0) {
+            HistryList.value = []
+            loading.value = false
+            finished.value = true
+            CatPromptJS({ text: result.data?.message || "清空成功", type: 'success' })
+        }
+    }).catch(({ response: { data } }) => {
+        CatPromptJS({ text: data?.message || "暂时没有历史记录哦", type: 'error' })
+    })
+}
+
+
+
+
+
+
+
 </script>
 
 
@@ -86,7 +170,7 @@ export default {
     .history-content-box {
         width: 100%;
         height: 100%;
-        min-height: 812px;
+        // min-height: 812px;
         background: @background-color;
         overflow: hidden;
 
@@ -184,4 +268,5 @@ export default {
     }
 
 
-}</style>
+}
+</style>

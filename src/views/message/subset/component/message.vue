@@ -37,7 +37,8 @@ let props = defineProps({
 
         .message-center {
             width: 325px;
-            height: 66px;
+            max-height: 60px;
+            overflow: auto;
             background: rgba(242, 242, 242, 1);
             border-radius: 6px;
             font-size: @heading3-font-size;

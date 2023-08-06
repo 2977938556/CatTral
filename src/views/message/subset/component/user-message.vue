@@ -37,6 +37,8 @@ let props = defineProps({
 
     .message-content {
         width: 345px;
+        max-height: 100px;
+        overflow: auto;
         display: flex;
         align-items: center;
         justify-content: center;

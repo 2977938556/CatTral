@@ -47,10 +47,9 @@ export default {
         },
         // 设置收藏数据
         SetCatLove(state, playload) {
-            console.log(playload, "01测试");
+            console.log(playload, "设置收藏的数据");
             // 这里遍历每一个对象添加一个选中的属性
             if (playload.length != 0) {
-                console.log(playload, "02测试");
                 playload.forEach(item => {
                     item.select = false
                 });

@@ -121,13 +121,15 @@ let message = ref('')
 
 // 删除按钮
 let ok = ({ vavles, item }) => {
+    console.log(vavles, item);
     vavle.value = true
     catType.value = 'ok'
     Appluy_user_item.value = item
 }
 
-// 修改按钮
+// 修改留言按钮
 let no = ({ vavles, item }) => {
+    console.log(vavles, item);
     vavle.value = true
     catType.value = 'no'
     Appluy_user_item.value = item
@@ -135,16 +137,15 @@ let no = ({ vavles, item }) => {
 }
 
 
-
-
 // 弹窗的确认模块
 let subCallback = async (s) => {
     try {
-
-        let { result } = await PushApplyDelete({ _id: Appluy_user_item.value._id, statuss: catType.value, message: message.value, user_id: userData._id })
+        let { result } = await PushApplyDelete({ _id: Appluy_user_item.value.cat_id._id, statuss: catType.value, message: message.value, user_id: userData._id })
 
         // 获取索引值
         let index = ApplyLiat.value.findIndex((item) => item._id === Appluy_user_item.value._id)
+
+        console.log(index, "测试模块");
 
         // 这里是修改留言的
         if (catType.value == 'no') {
@@ -192,8 +193,6 @@ let closeCallback = (s) => {
 
 
 <style lang="less" scoped>
-
-
 // 留言
 .input-message {
     width: 100%;

@@ -41,3 +41,15 @@ export let GetCatData = (data) => {
 export let DeleteCatLove = (data) => {
     return request(`/user/lovedelete`, 'post', data)
 }
+
+
+// 清空历史记录
+export let DeleteHistory = (data) => {
+    return request('/user/deletehistory', 'post', data)
+}
+
+
+// 隐私设置
+export let SetPrivacy = (data) => {
+    return request('/user/setprivacy', 'post', data)
+}

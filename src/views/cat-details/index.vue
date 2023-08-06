@@ -222,7 +222,7 @@ let DetailData = ref(null)
 
 
 // 02_2 用户保存用户的收藏信息
-let collectData = ref({})
+let collectData = ref([])
 // 这个是控制是否收藏了
 let collectFlage = ref(false)
 
@@ -243,25 +243,26 @@ let GetGetDEtailCat = async () => {
         // 这里我们需要将帖子的数据存入vuex中
         store.commit('detail/SetDetailData', result.data.DetailData)
     }).catch(({ response: { data } }) => {
+        console.log(data);
         // 这里是没有数据的情况下。我们跳转到404页面上
-        // router.push('/error')
+        return router.push('/error')
     })
 
 
     // 获取用户的收藏数据
     let { result } = await GetCollect(userData._id)
-    console.log(result);
-    collectData.value = result.data
+    collectData.value = result.data.bookmarks.map(item => item.cat_id)
 
     // 获取用户的推荐数据
     let remmedData = await GetRemmed()
     RemmendData.value = remmedData.result.data
 
-
     // 获取用户关注的数据
     let { result: { data: { follow } } } = await GetFollow()
     FollowData.value = follow
 }
+
+
 GetGetDEtailCat()
 
 
@@ -275,22 +276,23 @@ let CollectFn = () => {
         Debouncing = setInterval(() => {
             // 发送请求
             GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId.value, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
+
                 // 这里由于我直接修改了储存收藏的数据所以会自动更新
-                collectData.value = result.data
+                collectData.value = result.data.bookmarks.map(item => item.cat_id) || []
 
 
                 // 下面的代码表示的是每次用户点击收藏按钮都会将收藏的数据返回回(每次返回的都是添加收藏或者取消收藏的数据)
-                
+
                 // 这里表示没有收藏的数据表示需要收藏
-                if (result.data.bookmarks.length == 0) {
+                if (collectData.value.length == 0) {
                     // 这里是需要设置收藏的数据
                     store.commit('user/SetCatLove', [])
                 } else if (collectFlage.value == false) {
                     // console.log("我需要收藏");
-                    store.commit('user/SetCatLove', result.data.bookmarks.map(item => item.cat_id))
+                    store.commit('user/SetCatLove', collectData.value)
                 } else if (collectFlage.value == true) {
                     // console.log("我需要删除");
-                    store.commit('user/SetCatLove', result.data.bookmarks.map(item => item.cat_id))
+                    store.commit('user/SetCatLove', collectData.value)
                 }
 
                 clearInterval(Debouncing)
@@ -304,13 +306,13 @@ let CollectFn = () => {
 watch(() => collectData.value, (newVal, olVal) => {
 
     // 这里我们设置了一下如果没有值的情况那么就会直接赋值为1
-    if (newVal?.bookmarks?.length == 0) {
+    if (collectData.value.length == 0) {
         collectFlage.value = false
         return
     }
 
     // // 这里是查早是否有数据
-    let index = collectData?.value?.bookmarks?.findIndex(item => item.cat_id._id == GoodsId.value);
+    let index = collectData.value.findIndex(item => item._id == GoodsId.value);
 
     // true 表示需要删除
     // false 表示需要关注
@@ -364,7 +366,7 @@ let pushFollowFn = (id) => {
 // 这里需要设置用户是否开启了私聊模式
 let PrivateChatModule = async () => {
     // 这里是验证是否该用户开启了私聊
-    if (DetailData.value.user_id.configuration_information.private_letter) {
+    if (DetailData.value.user_id.configuration_information.view_favorites == false) {
         // 这里是判断是否是当前的用户
         if (DetailData.value.user_id._id !== userData._id) {
             socket.emit('frienMessage', { user_id: userData._id, friends: DetailData.value.user_id._id })

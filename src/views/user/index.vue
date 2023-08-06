@@ -69,8 +69,8 @@
                 <div class="user-fun-btn">
                     <div class="user-fun-btn-center">
                         <!-- 功能1-->
-                        <div class="user-fun-a">
-                            <div class="item">
+                        <div class="user-fun-a bottom">
+                            <!-- <div class="item">
                                 <div class="item-icon">
                                     <img src="../../assets/image/cat-user-ddgl-icon.png" alt="">
                                 </div>
@@ -82,7 +82,7 @@
                                         <img src="../../assets/image/cat-fanhui-icon.png" alt="">
                                     </a>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="item">
                                 <div class="item-icon">
@@ -104,7 +104,9 @@
                                     <img src="../../assets/image/cat-user-sjys-icon.png" alt="">
                                 </div>
                                 <div class="item-title">
-                                    <p>社交隐私</p>
+                                    <router-link to="/user/social">
+                                        <p>社交隐私</p>
+                                    </router-link>
                                 </div>
                                 <div class="item-fanhui-icon">
                                     <a href="javascript:;">
@@ -115,13 +117,15 @@
 
                         </div>
                         <!-- 功能2-->
-                        <div class="user-fun-b">
+                        <div class="user-fun-b bottom">
                             <div class="item">
                                 <div class="item-icon">
                                     <img src="../../assets/image/cat-user-gdgn-icon.png" alt="">
                                 </div>
                                 <div class="item-title">
-                                    <p>更多功能</p>
+                                    <router-link to="/user/morefunction">
+                                        <p>更多功能</p>
+                                    </router-link>
                                 </div>
                                 <div class="item-fanhui-icon">
                                     <a href="javascript:;">
@@ -134,7 +138,9 @@
                                     <img src="../../assets/image/cat-user-gywm-icon.png" alt="">
                                 </div>
                                 <div class="item-title">
-                                    <p>关于我们</p>
+                                    <router-link to="/user/aboutus">
+                                        <p>关于我们</p>
+                                    </router-link>
                                 </div>
                                 <div class="item-fanhui-icon">
                                     <a href="javascript:;">
@@ -145,14 +151,11 @@
 
                         </div>
                         <!-- 功能3-->
-                        <div class="user-fun-c">
+                        <div class="user-fun-c bottom">
                             <div @click="userOut">退出当前账户</div>
                         </div>
                     </div>
                 </div>
-
-
-
 
             </div>
         </div>
@@ -413,7 +416,6 @@ export default {
 
 
 
-
                 .user-fun-top-center {
                     width: 80%;
                     height: 64px;
@@ -421,6 +423,8 @@ export default {
                     display: flex;
                     justify-content: space-between;
                     // background: red;
+
+
 
                     .item-a {
                         // border: 1px solid rgb(98, 0, 255);
@@ -460,20 +464,36 @@ export default {
                 // 居中的内容
                 .user-fun-btn-center {
                     width: 345px;
-                    height: 420px;
+                    height: auto;
                     padding-top: 20px;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
+
+                    .bottom {
+                        margin-bottom: 20px;
+                    }
+
+                    .item-icon {
+                        margin-left: 13px;
+
+                        img {
+                            // background: red;
+                            width: 100px;
+                            height: 10px;
+                        }
+
+                    }
 
                     .item {
                         width: 100%;
                         height: 60px;
                         display: flex;
                         align-items: center;
-                        justify-content: space-between;
+                        // justify-content: space-between;
                         background: @white-color;
                         border-radius: 10px;
+                        // justify-content: space-around;
 
                         // 图标
                         .item-icon {
@@ -509,12 +529,12 @@ export default {
                         // 返回按钮 
                         .item-fanhui-icon {
                             a {
-                                padding-right: 10px;
+                                padding-right: 13px;
 
                                 img {
                                     object-fit: cover;
-                                    width: 9px;
-                                    height: 9px;
+                                    width: 23px;
+                                    height: 22px;
                                 }
                             }
                         }
@@ -524,27 +544,38 @@ export default {
 
                     .user-fun-a {
                         width: 100%;
-                        height: 188px;
+                        height: auto;
                         display: flex;
                         flex-direction: column;
                         justify-content: space-between;
+
+                        .item {
+                            // padding-bottom: 10px;
+                            margin-bottom: 4px;
+                        }
+
                     }
 
                     .user-fun-b {
                         width: 100%;
-                        height: 128px;
+                        height: auto;
                         display: flex;
                         flex-direction: column;
                         justify-content: space-around;
 
+                        .item {
+                            // padding-bottom: 10px;
+                            margin-bottom: 4px;
+                        }
                     }
 
                     .user-fun-c {
                         width: 100%;
-                        height: 60px;
+                        height: auto;
                         display: flex;
                         flex-direction: column;
                         justify-content: space-between;
+                        margin-top: 20px;
 
                         div {
                             width: 345px;

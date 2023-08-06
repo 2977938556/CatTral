@@ -6,6 +6,13 @@
                 <input class="round-checkbox" type="checkbox"
                     @change="handleInputChange({ checked: $event.target.checked, id: item._id })">
             </div>
+
+            <!-- <div class="box-delete" v-if="item.cat_id == null">
+                <div class="img">
+                    已被主人删除
+                </div>
+            </div> -->
+
             <router-link :to='`/catdetail/${item._id}`'>
                 <div class="item-img">
                     <img :src="item.imageUrl[0]" alt="">
@@ -99,6 +106,23 @@ export default {
         transition: none;
         background-color: @transition-color;
         box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
+    }
+}
+
+.box-delete {
+    width: 162px;
+    height: 280px;
+    background: @background-color;
+    font-size: 12px;
+
+    .img {
+        width: 100%;
+        height: 200px;
+        background: rgb(220, 220, 220);
+        font-size: 14px;
+        color: rgb(132, 132, 132);
+        text-align: center;
+        line-height: 200px;
     }
 }
 
