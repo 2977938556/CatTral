@@ -37,3 +37,7 @@ export const GetMjhdSubmit = (_id) => {
     return request(`/home/mjhdsubmit?_id=${_id}`, 'get')
 }
 
+// 获取排行榜的数据
+export const GetPhbDAta = (data) => {
+    return request("/home/lyphlist", 'post', data)
+}

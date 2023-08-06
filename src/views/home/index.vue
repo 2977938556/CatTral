@@ -47,8 +47,8 @@
                 </router-link>
             </div>
             <div class="tab-nav-four-item">
-                <router-link to="/home/mjsd">
-                    <img src="../../assets/image/cat-tab-mjsd.png" alt="">
+                <router-link to="/home/lyph">
+                    <img src="../../assets/image/cat-tab-lyph.png" alt="">
                 </router-link>
             </div>
             <div class="tab-nav-four-item">

@@ -22,7 +22,7 @@ import CatStoryFromPage from '@/views/home/subset/mjgs/cat-story-from-page.vue'/
 import CatMjsdDetail from '@/views/home/subset/mjgs/cat-mjgs-detail.vue'// 详情页面
 
 
-import CatMjsdPage from '@/views/home/subset/cat-mjsd-page.vue'// 猫迹商店
+import CatLyphPage from '@/views/home/subset/cat-lyph-page.vue'// 猫迹商店
 
 
 
@@ -91,7 +91,7 @@ const routes = [
   { path: '/home/mjgs', component: CatMjgsPage },//猫迹故事
   { path: '/home/mjgs/storyfrom', component: CatStoryFromPage },// 发布模块
   { path: "/home/mjgs/detai/:id", component: CatMjsdDetail },// 帖子详情模块
-  { path: '/home/mjsd', component: CatMjsdPage },// 猫迹商店
+  { path: '/home/lyph', component: CatLyphPage },// 领养排行
   { path: '/home/mjgs/comment/:id', component: CatCommentDetail },// 通用的详情模块
 
 

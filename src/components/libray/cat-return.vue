@@ -1,6 +1,8 @@
 <template>
     <div class="fh" @click="goBack">
-        <img class="fanhui" src="../../assets/image/cat-fanhui-active-icon.png" alt="返回">
+        <slot name="img">
+            <img class="fanhui" src="../../assets/image/cat-fanhui-active-icon.png" alt="返回">
+        </slot>
         <slot></slot>
     </div>
 </template>
