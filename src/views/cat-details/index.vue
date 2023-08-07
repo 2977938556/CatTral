@@ -22,7 +22,7 @@
                 <!-- 头部用户信息模块 -->
                 <div class="detail-user">
                     <div class="detail-left">
-                        <a href="javascript:;">
+                        <router-link :to="`/user/space/${DetailData.user_id._id}`">
                             <div class="detail-left-img">
                                 <img :src="DetailData.user_id?.bgimgUrl" alt="">
                             </div>
@@ -37,7 +37,7 @@
                                     {{ FollowData?.findIndex(itemssa => itemssa.follow_id == DetailData.user_id._id)
                                         < 0 ? '关注' : '取关' }} </span>
                             </div>
-                        </a>
+                        </router-link>
                     </div>
                     <div class="detail-right">
 
@@ -276,7 +276,6 @@ let CollectFn = () => {
         Debouncing = setInterval(() => {
             // 发送请求
             GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId.value, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
-
                 // 这里由于我直接修改了储存收藏的数据所以会自动更新
                 collectData.value = result.data.bookmarks.map(item => item.cat_id) || []
 

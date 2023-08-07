@@ -12,16 +12,26 @@
         </template>
 
         <template #right>
-            分享
+            <p @click="share">分享</p>
         </template>
     </CartStatusBav>
+
+
+    <div class="fxmok" v-if="fxshow">
+        <div class="mk"></div>
+        <div class="img">
+            <img :src="imgsrc" alt="">
+            <span @click="clonefx">关闭(长按保存)</span>
+        </div>
+    </div>
+
     <div class="detail">
         <div class="detail-center" v-if="StoryDetail">
             <!-- 头图组件 -->
             <CatBannner :items="StoryDetail.imageUrl" />
             <CarUserInfo :PageView="timeFormat(StoryDetail.updated_at)" :data="StoryDetail.user_id" />
             <!-- 内容区域 -->
-            <div class="detail-content">
+            <div class="detail-content" ref="fx">
                 <div class="detail-content-top">
                     <p>
                         {{ StoryDetail.content }}
@@ -32,6 +42,8 @@
                     <p>{{ StoryDetail.clickCount }}浏览</p>
                 </div>
             </div>
+
+
 
             <!-- 评论标题内容 -->
             <div class="detail-comment">
@@ -55,15 +67,17 @@
 
 
 <script>
-import { GetStoryDetail, PushStoryReplay, GetStoryComment } from '@/api/story.js'
+import { GetStoryDetail, GetStoryComment } from '@/api/story.js'
 import { timeFormat } from '@/utils/timeFilter.js'
 import CatCommentRefil from './subset/cat-comment.vue'
 
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex'
-import { reactive, ref, watch, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import CatPromptJS from '@/components/libray/CatPrompt.js'
-
+// 在顶部导入所需库和方法
+import html2canvas from 'html2canvas';
+// import domtoimage from 'dom-to-image';
 
 export default {
     name: "CatMjsdDetail",
@@ -115,7 +129,6 @@ export default {
             GetStoryComment(FromData.value).then(({ result }) => {
                 loading.value = false;
                 if (result.data.length != 0) {
-                    console.log("获取数据", result.total);
                     store.commit('mjgs/AddStoryComment', result.data)
                     FromData.value.total = result.total
                     FromData.page++
@@ -135,7 +148,53 @@ export default {
 
         GetStoryDetailFn()
 
-        return { timeFormat, FromData, StoryDetail, loading, finished, GetRelativeComment }
+
+
+        let fx = ref(null)
+
+
+        // 图片路径
+        let imgsrc = ref('')
+
+
+
+        // 控制是否分享模块
+        let fxshow = ref(false)
+
+        //  关闭菜单
+        let clonefx = () => {
+            fxshow.value = false
+        }
+
+
+
+
+
+        // 创建为图片
+        let share = () => {
+            const options = {
+                width: fx.value.offsetWidth,  // 设置图片宽度为div的宽度
+                height: fx.value.offsetHeight,  // 设置图片高度为div的高度
+            };
+
+            // 使用html2canvas将div转换为canvas，传递配置对象作为第二个参数
+            html2canvas(fx.value, options).then((canvas) => {
+                // 创建一个新的图片元素
+                const img = new Image();
+                img.src = canvas.toDataURL();
+
+                imgsrc.value = img.src
+
+                fxshow.value = true
+
+            });
+
+        }
+
+
+
+
+        return { timeFormat, FromData, StoryDetail, loading, finished, fxshow, clonefx, GetRelativeComment, share, fx, imgsrc }
     }
 }
 
@@ -143,6 +202,52 @@ export default {
 
 
 <style lang="less" scoped>
+.fxmok {
+    width: 100%;
+    height: 100%;
+    // background: red;
+    position: absolute;
+    z-index: 1000000000;
+
+    .mk {
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.472);
+        position: absolute;
+        z-index: -1;
+    }
+
+    .img {
+        width: 200px;
+        height: 300px;
+        background: rgb(255, 255, 255);
+        z-index: 100;
+        margin: 100px auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+
+        img {
+            object-fit: contain;
+            width: 180px;
+            height: 300px;
+        }
+
+        span {
+            border-top: 1px solid rgb(227, 227, 227);
+            width: 100%;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 14px;
+
+        }
+
+    }
+}
+
 .detail {
     width: 100%;
     height: 100%;
@@ -185,96 +290,99 @@ export default {
                 text-align: right;
                 line-height: 20px;
             }
-
-
-
-
         }
 
-
-        // 评论的内容
-        .detail-comment {
-            height: 86px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-
-        // 评论内容
+    }
 
 
 
-        .detail-comment-center {
+
+
+
+
+
+    // 评论的内容
+    .detail-comment {
+        height: 86px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+
+    // 评论内容
+
+
+
+    .detail-comment-center {
+        width: 345px;
+        height: auto;
+        margin: 0px auto;
+        // background: red;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        //  // 评论
+
+
+
+
+
+        ul {
             width: 345px;
             height: auto;
-            margin: 0px auto;
+            overflow: auto;
+            border-radius: 14px;
             // background: red;
-            display: flex;
-            align-items: center;
-            flex-direction: column;
 
-            //  // 评论
-
-
-
-
-
-            ul {
-                width: 345px;
+            .center-item {
+                width: 100%;
                 height: auto;
-                overflow: auto;
-                border-radius: 14px;
-                // background: red;
+                // padding-bottom: 40px;
 
-                .center-item {
+                // 用户模块
+                .detail-pl-title-user {
                     width: 100%;
-                    height: auto;
-                    // padding-bottom: 40px;
-
-                    // 用户模块
-                    .detail-pl-title-user {
-                        width: 100%;
-                        height: 36px;
-                        overflow: hidden;
+                    height: 36px;
+                    overflow: hidden;
 
 
-                        a {
+                    a {
+                        display: flex;
+                        height: auto;
+
+                        span:nth-child(1) {
+                            display: block;
+                            overflow: hidden;
+                            border-radius: 100px;
+                            width: 36px;
+                            height: 36px;
+
+                            img {
+                                object-fit: cover;
+                                width: 100%;
+                                height: 100%;
+
+                            }
+                        }
+
+                        span:nth-child(2) {
+                            flex: 1;
                             display: flex;
-                            height: auto;
+                            flex-direction: column;
+                            justify-content: center;
+                            padding-left: 8px;
 
-                            span:nth-child(1) {
-                                display: block;
-                                overflow: hidden;
-                                border-radius: 100px;
-                                width: 36px;
-                                height: 36px;
-
-                                img {
-                                    object-fit: cover;
-                                    width: 100%;
-                                    height: 100%;
-
-                                }
+                            h4 {
+                                font-size: @heading3-font-size;
+                                font-weight: 900;
+                                color: @heading-color;
                             }
 
-                            span:nth-child(2) {
-                                flex: 1;
-                                display: flex;
-                                flex-direction: column;
-                                justify-content: center;
-                                padding-left: 8px;
-
-                                h4 {
-                                    font-size: @heading3-font-size;
-                                    font-weight: 900;
-                                    color: @heading-color;
-                                }
-
-                                p {
-                                    font-size: @secondary-text-font-size;
-                                    color: @heading-color;
-                                }
+                            p {
+                                font-size: @secondary-text-font-size;
+                                color: @heading-color;
                             }
                         }
                     }

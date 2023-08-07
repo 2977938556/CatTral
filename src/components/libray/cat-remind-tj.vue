@@ -40,11 +40,13 @@ export default {
     width: 100%;
     height: 22px;
     display: flex;
+    // justify-content: space-between;
     justify-content: space-between;
+
     .recen-good-center {
-        width: 345px;
+        // width: 100%;
         height: 22px;
-        margin: 0 auto;
+        // margin: 0 auto;
 
         img {
             width: 14px;
@@ -62,12 +64,13 @@ export default {
     }
 
     .recen-good-count {
-        flex: 0.2;
+        // flex: 0.2;
+        width: 200px;
+        width: auto;
         line-height: 22px;
         font-size: @heading3-font-size;
         font-weight: 700;
         color: @secondary-text-color;
-        // padding-left: 4px;
 
     }
 }

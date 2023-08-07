@@ -2,7 +2,7 @@
     <div class="full-img-content">
         <div class="full-img-box" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
             <div class="full-mask"></div>
-            <h1>{{ activeIndex }}</h1>
+            <!-- <h1>{{ activeIndex }}</h1> -->
             <div class="full-img-list" @click="cancel">
                 <img :class="{ active: activeIndex == index }" :src="item" alt="" v-for="(item, index) in openImg.data"
                     :key="index">

@@ -127,7 +127,7 @@ export const CommentDetail = (id) => {
 
 /**
  * @returns {promsie} replier
- * 获取评论模块
+ * 获取用户关注数据
  */
 export const GetFollow = () => {
     return request(`/detail/follows`, 'get')
@@ -139,7 +139,7 @@ export const GetFollow = () => {
 
 /**
  * @returns {promsie} replier
- * 获取评论模块
+ * 设置关注
  */
 export const PushFollow = (data) => {
     return request(`/detail/follows`, 'post', data)

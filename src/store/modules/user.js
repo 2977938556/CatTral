@@ -14,8 +14,9 @@ export default {
                 token: "",
                 configuration_information: ""
             },
-            catLove: [],
-            catapply: []
+            catLove: [],// 我的收藏
+            catapply: [],// 我的领养
+            space: [],// ta的空间数据 发布 收藏 领养数据
         }
     },
     mutations: {
@@ -63,6 +64,9 @@ export default {
         // 设置我的领养的数据
         SetCatApply(state, playload) {
             state.catapply = playload
+        },
+        SetSpace(state, playload) {
+            state.space = playload
         }
 
 

@@ -53,3 +53,8 @@ export let DeleteHistory = (data) => {
 export let SetPrivacy = (data) => {
     return request('/user/setprivacy', 'post', data)
 }
+
+// 获取关注数量模块
+export let GetGzMax = (data) => {
+    return request('/user/gzmax', 'post', data)
+} 

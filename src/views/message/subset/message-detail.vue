@@ -5,7 +5,8 @@
                 <CatReturn />
             </template>
             <template #center>
-                <p class="tltes">{{ messageList[0]?.fuser_id.username }}</p>
+                <!-- <p class="tltes">{{ messageList[0]?.fuser_id.username }}</p> -->
+                <p v-if="Us">{{ Us.username }}的聊天</p>
             </template>
             <template #right>
                 <router-link :to="`/message/setup/${route.params.id}`"><img style="width: 20px;height: 16px;"
@@ -107,6 +108,8 @@ GetUserData(route.params.id).then(({ result }) => {
 
 
 
+// 存储当前用户
+let Us = ref(null)
 
 // 存储信息列表
 let messageList = ref([])
@@ -117,13 +120,14 @@ socket.emit('getmessage_detail', { user_id: store.state.user.profile._id, fuser_
 
 
 // 这个是监听多个信息并push到数组里面
-socket.on('getmessage_deatil_data', (result) => {
+socket.on('getmessage_deatil_data', (result, user) => {
+    Us.value = user || null
     messageList.value.push(...result.message)
     let tiem = setTimeout(() => {
         contents.value.scrollTop = contents.value.scrollHeight - contents.value.clientHeight + 10;
     }, 10)
 
-    // clearTimeout(tiem)
+    clearTimeout(tiem)
 })
 
 
@@ -146,10 +150,6 @@ let message = ref("hellow")
 
 // 发送私聊数据
 let messagePush = () => {
-
-
-
-
     if (userData.value.configuration_information.private_letter == true) {
         return CatPromptJS({ text: store.state.user.profile._id == userData.value._id ? '你开启了禁止私聊' : '用户已经开了禁止私聊', type: "error" })
     }

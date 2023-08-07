@@ -50,6 +50,8 @@ import Aboutus from '@/views/user/subset/cat-aboutus-page.vue'// 关于我们
 
 
 
+// 个人中心模块(非自己)
+import SpacePage from '@/views/space/index.vue'
 
 
 
@@ -144,6 +146,9 @@ const routes = [
   { path: '/user/morefunction', component: MoreFunction },// 社交隐私模块
   { path: '/user/aboutus', component: Aboutus },// 关于我们模块
 
+
+  // 个人中心模块
+  { path: '/user/space/:id', component: SpacePage },// 个人中心模块
 
 
   // 登录与注册
