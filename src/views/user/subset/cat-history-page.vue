@@ -95,11 +95,11 @@ function getCatData() {
     // 这里是发送请求获取数据
     GetCatData(fromOtion).then(({ result }) => {
 
-        console.log(result);
+        // console.log(result);
 
         let daya = result.data.filter(item => item.cat_id != null)
 
-        console.log(daya);
+        // console.log(daya);
 
 
         if (daya.length != 0) {
@@ -108,7 +108,7 @@ function getCatData() {
             HistryList.value.push(...daya)
             fromOtion.option.page++
         } else {
-            console.log("进来了");
+            // console.log("进来了");
             loading.value = false
             finished.value = true
         }

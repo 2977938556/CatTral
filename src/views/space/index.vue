@@ -20,7 +20,7 @@
                 <img class="bg-user" :src="UserObj.bgimgUrl" alt="">
                 <div class="space-user-top">
                     <div class="top">
-                        <p>{{ gz <= 0 ? '还没人关注呢' : gz }}</p>
+                        <p>{{ gz <= 0 ? '还没人关注呢' : `${gz}人关注了ta` }}</p>
                     </div>
                     <div class="center">
                         <span>
@@ -216,8 +216,8 @@ GetFollow().then(({ result: { data } }) => {
         userFool.value = true
     }
 }).catch((err) => {
-    console.log(err);
-    CatPromptJS({ text: '获取数据失败', type: 'error', timeout: 1000 })
+    // console.log(err);
+    CatPromptJS({ text: '获取关注数据失败', type: 'error', timeout: 1000 })
 })
 
 
@@ -225,19 +225,19 @@ GetFollow().then(({ result: { data } }) => {
 //04 关注模块
 let cancellationUser = () => {
     PushFollow({ user_id: store.state.user.profile._id, follow_id: _id }).then(({ result: { data } }) => {
-        console.log(data)
-        // if (data?.follow == null) {
-        //     return userFool.value = false
-        // }
-        if (data === null) {
-            CatPromptJS({ text: '不能关注自己', type: 'error', timeout: 1000 })
-        } else if (data.follow.length == 0) {
-            userFool.value = false
-        } else if (data.follow.findIndex(item => item.follow_id == _id) >= 0) {
+
+        gz.value = data?.follow.length || 0
+
+        let index = data?.follow.findIndex(item => item.follow_id === _id)
+
+        if (index >= 0) {
             userFool.value = true
+        } else {
+            userFool.value = false
         }
+
     }).catch((err) => {
-        console.log(err);
+        // console.log(err);
         CatPromptJS({ text: '操作失败', type: 'error', timeout: 1000 })
     })
 }
@@ -274,10 +274,7 @@ let openMessage = () => {
 }
 
 
-
 let gz = ref(0)
-
-
 
 
 // 06 获取关注总数据
@@ -286,7 +283,6 @@ let gzMax = () => {
         gz.value = data
     })
 }
-
 gzMax()
 
 

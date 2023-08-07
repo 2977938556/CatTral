@@ -6,8 +6,9 @@
                 <img v-else src="../../assets/image/cat-home-notselect.png" alt="">
             </router-link>
         </div>
-        <div class="nav-item">
+        <div class="nav-item b">
             <router-link to="/message">
+                <span class="total" v-if="s > 1">{{ s || 0 }}</span>
                 <img v-if="$route.fullPath == '/message'" src="../../assets/image/cat-message-active.png" alt="">
                 <img v-else src="../../assets/image/cat-message-notselect.png" alt="">
             </router-link>
@@ -24,9 +25,34 @@
 
 
 <script >
+import { useStore } from 'vuex'
+import { computed, ref } from 'vue'
+import { socket } from '@/utils/socket.js'
+
 export default {
     name: "CatNavBar",
     setup() {
+        // 这里是获取用户的私信\
+
+        let store = useStore()
+
+        let s = ref(0)
+
+
+        socket.on('welcome', (result) => {
+            if (result) {
+                s.value = result.reduce((a, b) => {
+                    return a + b.unread.length
+                }, 0)
+            }
+        })
+
+
+
+
+
+
+        return { s }
 
     }
 
@@ -75,6 +101,23 @@ export default {
         height: 34px;
         // border: 1px solid red;
     }
+
+}
+
+
+.b {
+    position: relative;
+}
+
+.total {
+    position: absolute;
+    padding: 6px;
+    background: @primary-color;
+    right: 30px;
+    top: -10px;
+    border-radius: 200px;
+    color: @white-color;
+    border: 2px solid @white-color;
 
 }
 </style>

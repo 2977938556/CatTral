@@ -106,9 +106,9 @@ GetPhbDAta({ _id: store.state.user.profile._id }).then(({ result }) => {
 
 // 查找是否在里面有
 let findUserAppMax = (item) => {
-    console.log(item);
+    // console.log(item);
     let data = dataMxs.value.findIndex((items, index) => items._id == item)
-    console.log(data);
+    // console.log(data);
     if (data >= -1) {
         return data + 1
     } else {

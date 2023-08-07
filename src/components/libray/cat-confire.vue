@@ -129,7 +129,7 @@ export default {
 }
 
 .popup-body {
-    padding: 5px;
+    padding: 20px;
     border-radius: 10px;
     height: 80px;
 

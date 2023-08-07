@@ -18,13 +18,13 @@
         </CartStatusBav>
 
         <!-- 内容区域 -->
-        <div class="ymzn-center">
-            <div class="mjzn-banner">
+        <div class="ymzn-center" style="margin-top: 20px;">
+            <!-- <div class="mjzn-banner">
                 <CatBannner />
-            </div>
+            </div> -->
             <div class="mjzn-tj">
                 <RecenGood />
-                <div class="mjzn-tj-box">
+                <div class="mjzn-tj-box" v-if="GuideList">
                     <ul>
                         <li class="mjzn-tj-box-item" v-for="item in GuideList">
                             <router-link :to="`/home/mjzn/${item._id}`">

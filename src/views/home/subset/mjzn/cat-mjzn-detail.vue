@@ -94,7 +94,7 @@ watch(() => route.params.id, (newVal, olVal) => {
 
 
     }).catch(err => {
-        console.log(err);
+        // console.log(err);
         MessageJs({
             message: "获取数据失败",
             type: 'error',

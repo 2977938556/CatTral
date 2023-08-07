@@ -6,7 +6,7 @@
             </template>
             <template #center>
                 <!-- <p class="tltes">{{ messageList[0]?.fuser_id.username }}</p> -->
-                <p v-if="Us">{{ Us.username }}的聊天</p>
+                <p v-if="Us">你和 {{ Us.username }} 的聊天</p>
             </template>
             <template #right>
                 <router-link :to="`/message/setup/${route.params.id}`"><img style="width: 20px;height: 16px;"
@@ -101,7 +101,7 @@ let userData = ref(null)
 
 GetUserData(route.params.id).then(({ result }) => {
     userData.value = result.data
-}).catch(err => { console.log(err); })
+}).catch(err => { })
 
 
 

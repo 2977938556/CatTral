@@ -194,8 +194,6 @@ export default {
             // 这里有bug明天早上处理
             // 基于当前评论
             PushStoryHfCommment({ content: replay.value, commentId: commentId, user_id: userId, type: "mjgs" }).then(({ result:{data} }) => {
-                console.log(data);
-
                 // 这里我们设置了新添加的数据放添加到评论列表中
                 CommentRefyData.value.unshift(data)
                 // 这里我们需要调用调用他的父级方法将数据

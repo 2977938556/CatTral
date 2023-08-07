@@ -1,5 +1,5 @@
 <template>
-    <div class="Recen-good">
+    <div :class="['Recen-good', { 'masall': small }]">
         <div class="recen-good-center">
             <img src="../../assets/image/cat-tj-icon.png" :alt="title">
             <span>
@@ -22,6 +22,10 @@ export default {
         count: {
             type: String,
             default: ""
+        },
+        small: {
+            type: Boolean,
+            default: false
         }
     },
     setup() {
@@ -36,12 +40,18 @@ export default {
 
 
 <style lang="less" scoped>
+.masall {
+    width: 345px !important;
+}
+
 .Recen-good {
     width: 100%;
     height: 22px;
     display: flex;
     // justify-content: space-between;
     justify-content: space-between;
+
+    margin: 0 auto;
 
     .recen-good-center {
         // width: 100%;

@@ -48,16 +48,16 @@ export default {
 
         let handleTouchEnd = (e) => {
             if (distance.value > 100) {
-                console.log('向右滑动');
+                // console.log('向右滑动');
                 activeIndex.value--
 
                 // 执行向后切换的操作
                 if (activeIndex.value <= 0) {
-                    console.log("小于了");
+                    // console.log("小于了");
                     activeIndex.value = props.openImg.data.length - 1
                 }
             } else if (distance.value < -100) {
-                console.log('向左滑动');
+                // console.log('向左滑动');
                 // 执行向前切换的操作
                 activeIndex.value++
                 if (activeIndex.value >= props.openImg.data.length) {

@@ -108,13 +108,13 @@ export default {
 
             // 这里必须要转换成功的情况下才能显示图片
             ConvertFile(file).then(value => {
-                console.log(value);
+                // console.log(value);
                 SubmitData.name = value.name
                 SubmitData.size = value.size
                 SubmitData.base64 = value.base64
                 SubmitData.imgUrl = value.base64
             }).catch(err => {
-                console.log(err);
+                // console.log(err);
                 return CatPromptJS({ text: '图片上传失败', type: 'error' })
             })
         }

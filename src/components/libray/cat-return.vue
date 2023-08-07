@@ -25,8 +25,8 @@ export default {
             if (props.http == "") {
                 router.go(-1);
             } else {
-                console.log("进来1");
-                console.log(props.http);
+                // console.log("进来1");
+                // console.log(props.http);
                 router.push(props.http);
             }
         }

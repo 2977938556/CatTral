@@ -30,14 +30,13 @@
                                 <p>{{ DetailData.user_id?.username }}</p>
                                 <span>{{ DetailData.user_id?.slogin }}</span>
                             </div>
-                            <div class="gz">
-
-                                <span @click="pushFollowFn(DetailData.user_id._id)"
-                                    :class="[{ active: FollowData?.findIndex(itemss => itemss.follow_id == DetailData?.user_id._id) < 0 ? false : true }]">
-                                    {{ FollowData?.findIndex(itemssa => itemssa.follow_id == DetailData.user_id._id)
-                                        < 0 ? '关注' : '取关' }} </span>
-                            </div>
                         </router-link>
+                        <div class="gz">
+                            <span @click="pushFollowFn(DetailData.user_id._id)"
+                                :class="[{ active: FollowData?.findIndex(itemss => itemss.follow_id == DetailData?.user_id._id) < 0 ? false : true }]">
+                                {{ FollowData?.findIndex(itemssa => itemssa.follow_id == DetailData.user_id._id)
+                                    < 0 ? '关注' : '取关' }} </span>
+                        </div>
                     </div>
                     <div class="detail-right">
 
@@ -126,7 +125,7 @@
             <!-- 推荐内容区域 -->
             <!-- 内容区域 -->
             <div class="recommendeCount">
-                <RecenGood></RecenGood>
+                <RecenGood :small="true"></RecenGood>
                 <!-- 循环渲染 内容组件 -->
                 <div class="recommende-count" v-if="RemmendData.length != 0">
                     <CarGoodsItem :goodsitem="RemmendData" />
@@ -243,7 +242,7 @@ let GetGetDEtailCat = async () => {
         // 这里我们需要将帖子的数据存入vuex中
         store.commit('detail/SetDetailData', result.data.DetailData)
     }).catch(({ response: { data } }) => {
-        console.log(data);
+        // console.log(data);
         // 这里是没有数据的情况下。我们跳转到404页面上
         return router.push('/error')
     })
@@ -343,9 +342,9 @@ let openComment = () => {
 let pushFollowFn = (id) => {
     try {
         PushFollow({ user_id: userData._id, follow_id: id }).then((result) => {
-            console.log(result);
+            // console.log(result);
             if (!result.result.data) {
-                console.log(result.result.data);
+                // console.log(result.result.data);
                 return CatPromptJS({ text: `${result.message}`, type: "error" })
             }
 
@@ -441,6 +440,7 @@ let PrivateChatModule = async () => {
                     flex: 0.8;
                     height: 100%;
 
+                    display: flex;
 
                     a {
                         display: block;
@@ -488,32 +488,30 @@ let PrivateChatModule = async () => {
 
                         }
 
-                        .gz {
-                            flex: 0.8;
 
-                            span {
-                                display: block;
-                                width: 46px;
-                                height: 20px;
-                                border-radius: 16px;
-                                background: @comment-color;
-                                color: @white-color;
-                                text-align: center;
-                                line-height: 20px;
-
-                                &.active {
-                                    background: @primary-color;
-                                    color: @white-color;
-                                }
-                            }
-
-                        }
 
                     }
 
+                    .gz {
+                        flex: 0.8;
 
+                        span {
+                            display: block;
+                            width: 46px;
+                            height: 20px;
+                            border-radius: 16px;
+                            background: @comment-color;
+                            color: @white-color;
+                            text-align: center;
+                            line-height: 20px;
 
+                            &.active {
+                                background: @primary-color;
+                                color: @white-color;
+                            }
+                        }
 
+                    }
                 }
 
                 // 右边内容

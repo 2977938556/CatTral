@@ -289,7 +289,7 @@ export default {
 
             // 判断验证码
             if (FromData.code == "" || FromData.code != code.value) {
-                console.log("错误");
+                // console.log("错误");
                 FromErroe.code = "验证码错误"
             } else {
                 FromErroe.code = ""

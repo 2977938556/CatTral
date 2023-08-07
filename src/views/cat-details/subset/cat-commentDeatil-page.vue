@@ -170,7 +170,7 @@ export default {
                     // 这里我们需要修改vuex中的评论数据
                     store.commit('detail/AddCommentDetail', { addupId, commenter })
                 }).catch(err => {
-                    console.log(err);
+                    // console.log(err);
                     return CatPromptJS({ text: "点赞失败哦", type: "error", timeout: 1000 })
                 })
             } else if (e.target.getAttribute('alt') == 'b') {

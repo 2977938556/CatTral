@@ -122,7 +122,7 @@ let edit = ref(false)
 let editFun = (value) => {
     if (value == "取消") {
         store.commit('user/SetCatLove', CatgoodsList.value)
-        console.log("重置成功");
+        // console.log("重置成功");
     }
     // 这里是开启和关闭
     edit.value = !edit.value

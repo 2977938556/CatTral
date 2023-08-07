@@ -191,7 +191,7 @@ export default {
             // console.log(imgKey)
             // 删除图片需要删除掉fromDat'中的还需要删除掉imgUrl中的，这里我们选择的是点击的时候传递来的参数
             for (let [key, value] of formData.entries()) {
-                console.log(imgKey);
+                // console.log(imgKey);
                 if (value.name == name && value.size == size && key == imgKey) {
                     formData.delete(imgKey)
                 }
@@ -262,7 +262,7 @@ export default {
                     let FormDataList = await Promise.all(ConvertFile(formData))
                     // let UserDat = store.state.user.profile
                     let UserDat = JSON.parse(localStorage.getItem('user-store')).user.profile
-                    console.log(UserDat);
+                    // console.log(UserDat);
                     // 验证用户
                     RoleFm(UserDat)
                     // 发请求 
@@ -284,12 +284,12 @@ export default {
                         DefaultData()
 
                     }).catch(err => {
-                        console.log(err)
+                        // console.log(err)
                         loading.value = false
                         return MessageJs({ text: `${err.response.data.message}`, type: "error" })
                     })
                 } catch (error) {
-                    console.log(error)
+                    // console.log(error)
                     return MessageJs({ text: "上传失败请稍后重试哦~", type: "error" })
                 }
             } else {

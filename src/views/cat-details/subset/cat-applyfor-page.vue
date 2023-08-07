@@ -196,6 +196,8 @@ let sub = async () => {
                         border-radius: 3px;
                         background: @white-color;
                         border: 1px solid @body-color;
+                        background: red;
+
                     }
 
                     span {

@@ -9,6 +9,7 @@
                 <CatAddrs @changes="GetcityAddrs" :AddsCode="cityAddrs" />
             </span>
         </template>
+
     </CatOpenCity>
 
 
@@ -29,6 +30,11 @@
         </template>
         <template #center>
             <img class="logio-img" src="../../assets/image/cat-logo.png" alt="">
+        </template>
+        <template #right>
+            <router-link to="/search">
+                <img class="search-img" src="../../assets/image/cat-home-search.png" alt="">
+            </router-link>
         </template>
     </CartStatusBav>
 
@@ -281,6 +287,11 @@ export default {
 
 .logio-img {
     width: 58px;
+    height: 26px;
+}
+
+.search-img {
+    width: 26px;
     height: 26px;
 }
 
