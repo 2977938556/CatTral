@@ -280,17 +280,17 @@ export default {
                     }).then(value => {
                         // 关闭loding加载效果
                         loading.value = false
-                        MessageJs({ text: "发布成功正在审核中哦~", type: "success" })
+                        MessageJs({ text: "发布成功正在审核中哦~", type: "success", timeout: 1000 })
                         DefaultData()
 
                     }).catch(err => {
                         // console.log(err)
                         loading.value = false
-                        return MessageJs({ text: `${err.response.data.message}`, type: "error" })
+                        return MessageJs({ text: `${err.response.data.message}`, type: "error", timeout: 1000 })
                     })
                 } catch (error) {
                     // console.log(error)
-                    return MessageJs({ text: "上传失败请稍后重试哦~", type: "error" })
+                    return MessageJs({ text: "上传失败请稍后重试哦~", type: "error", timeout: 1000 })
                 }
             } else {
                 return MessageJs({ text: "请检查是否有信息没有填写哦~", type: 'error', timeout: 1000 })

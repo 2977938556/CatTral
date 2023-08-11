@@ -62,7 +62,7 @@ for (let i = 0; i < 20; i++) {
 
 
 // 模拟首页的数据
-Mock.mock(`${baseURL}/home/recommend`, 'get', { msg: "获取数据成功2推荐", result: tuij })
+// Mock.mock(`${baseURL}/home/recommend`, 'get', { msg: "获取数据成功2推荐", result: tuij })
 
 
 

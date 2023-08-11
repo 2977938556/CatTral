@@ -141,6 +141,12 @@ let goodsitem = computed(() => store.state.user.space) || []
 
 let MenuItem = ref('MyPublishing') // 状态
 let SwitchMenu = (val) => {
+    // 这里判断用户是否开启了收藏模块
+    if (val === 'MyCollection') {
+        if (UserObj.value.configuration_information.view_favorites == true) {
+            return CatPromptJS({ text: "用户开启了禁止查看收藏", type: 'error', timeout: 1000 })
+        }
+    }
     MenuItem.value = val
     fromOtion.types = val
 }
@@ -210,12 +216,15 @@ let userFool = ref(false)
 
 // 获取数据并初始化
 GetFollow().then(({ result: { data } }) => {
-    if (data.follow.length == 0) {
+    if (data.length <= 0) {
+        userFool.value = false
+    } else if (data.follow.length == 0) {
         userFool.value = false
     } else if (data.follow.findIndex(item => item.follow_id == _id) >= 0) {
         userFool.value = true
     }
 }).catch((err) => {
+    console.log(err);
     // console.log(err);
     CatPromptJS({ text: '获取关注数据失败', type: 'error', timeout: 1000 })
 })
@@ -237,6 +246,7 @@ let cancellationUser = () => {
         }
 
     }).catch((err) => {
+        console.log(err);
         // console.log(err);
         CatPromptJS({ text: '操作失败', type: 'error', timeout: 1000 })
     })
@@ -316,9 +326,10 @@ gzMax()
                 width: 375px;
                 height: 254px;
                 object-fit: cover;
-                filter: blur(4px);
                 position: absolute;
                 z-index: -1;
+                filter: brightness(50%) blur(4px);
+                /* 使用 brightness() 函数调整亮度 */
             }
 
 

@@ -51,7 +51,7 @@
 
             <!-- 这里设置一个加载数据的loding的数据结构 -->
             <div class="loadings" v-else>
-                <CatLodingItem width="375" height="60" v-for="item in 15"></CatLodingItem>
+                <CatLodingItem width="375" height="70" v-for="item in 4"></CatLodingItem>
             </div>
 
 
@@ -74,20 +74,16 @@ export default {
     setup() {
         let store = useStore()
         let _id = store.state.user.profile._id
+        console.log(_id);
 
         let PushActivityList = ref(null)
-        try {
-            // 这里是获取数据列表
-            watch(_id, async (newVal, olVal) => {
-                let { result: { data: { activities } } } = await GetMjhdSubmit(_id)
 
-                PushActivityList.value = activities
-            }, { immediate: true })
-        } catch (err) {
+        GetMjhdSubmit(_id).then(({ result: { data: { activities } } }) => {
+            PushActivityList.value = activities
+
+        }).catch(err => {
             return CatPromptJS({ text: "获取数据失败请重试", type: "error" })
-        }
-
-
+        })
 
         return { PushActivityList, FromTimeArrat }
     }
@@ -102,9 +98,9 @@ export default {
     height: 100%;
     // border: 1px solid red;
     height: 100%;
-    
+
     // justify-content: space-between;
-    .shang{
+    .shang {
         margin-top: 10px;
         margin: 10px auto;
     }

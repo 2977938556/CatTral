@@ -83,7 +83,7 @@ export default {
             let datas = state.StoryComment.find(item => item._id === commentId)
             if (datas) {
                 datas.replies.push(playload)
-                console.log("添加成功");
+                // console.log("添加成功");
             }
         },
         // 点赞模块的数据

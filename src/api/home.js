@@ -2,8 +2,8 @@ import request from "@/utils/request";
 
 
 // 获取首页banner的数据
-export const GetHomePageBanner = () => {
-    return request('/home/banner', 'get')
+export const GetHomePageBanner = (data) => {
+    return request('/home/banner', 'post', data)
 }
 
 

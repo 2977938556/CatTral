@@ -11,9 +11,7 @@
                 </span>
             </a>
         </div>
-        <div class="input">
-            <input ref="input" type="text" v-model="replay" :placeholder="playloadval" @keydown.enter="sendCommentOrReply">
-        </div>
+
 
 
         <!-- 评论详情 -->
@@ -55,7 +53,12 @@
             </div>
         </div>
 
+
     </li>
+
+    <div class="input">
+        <input ref="input" type="text" v-model="replay" :placeholder="playloadval" @keydown.enter="sendCommentOrReply">
+    </div>
 </template>
 <script>
 import { PushStoryLike, PushStoryReplay, PushStoryHfCommment } from '@/api/story.js'
@@ -190,10 +193,11 @@ export default {
 
 
 .input {
-    width: 90%;
+    width: 100%;
     height: 72px;
     position: fixed;
     bottom: 10px;
+    left: 0px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -202,7 +206,6 @@ export default {
     z-index: 1000000;
     margin: 0 auto;
     border-radius: 10px;
-
 
     input {
         width: 100%;

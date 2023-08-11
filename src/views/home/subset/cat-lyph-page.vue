@@ -11,7 +11,7 @@
                 </CatReturn>
             </template>
             <template #center>
-                <h4 style="color: wheat;">领养排行</h4>
+                <h4 style="color: rgb(255, 255, 255);">领养排行</h4>
             </template>
         </CartStatusBav>
 
@@ -19,25 +19,44 @@
         <!-- 内容区域 -->
         <div class="phb-conter">
             <div class="bg">
+                <p>感谢你萌领养替代购买</p>
             </div>
 
-
-            <div class="phb-center" v-if="userApplys != null">
-                <div class="phb-user">
-                    <div class="left">
+            <div class="phb-center" v-if="dataMxs?.length != 0 && dataMxs != null">
+                <div class="phb-user" v-if="userApplys != null">
+                    <div class=" left">
                         <p>领养数量</p>
-                        <h2>{{ userApplys?.length }}只</h2>
+                        <h2>{{ userApplys == null ? 0 : userApplys.length || 0 }}只</h2>
                     </div>
                     <div class="center">
-                        <a href="javascript">
+                        <router-link :to="`/user/space/${user._id}`">
                             <span>
-                                <img :src="userApplys[0].user_id.bgimgUrl" alt="">
+                                <img :src="user.bgimgUrl" alt="">
                             </span>
-                        </a>
+                        </router-link>
                     </div>
                     <div class="right">
                         <p>排名</p>
-                        <h2>{{ findUserAppMax(userApplys[0].user_id._id) }}</h2>
+                        <h2>{{ findUserAppMax(user._id) || "" }}</h2>
+                    </div>
+                </div>
+
+
+                <div v-else class="phb-user">
+                    <div class="left">
+                        <p>领养数量</p>
+                        <h2>{{ 0 }}只</h2>
+                    </div>
+                    <div class="center">
+                        <router-link :to="`/user/space/${user._id}`">
+                            <span>
+                                <img :src="user.bgimgUrl" alt="">
+                            </span>
+                        </router-link>
+                    </div>
+                    <div class="right">
+                        <p>排名</p>
+                        <h2>未上榜</h2>
                     </div>
                 </div>
 
@@ -45,7 +64,7 @@
                 <!-- 列表 -->
                 <div class="max-list">
                     <ul v-if="dataMxs != null">
-                        <li v-for="(item, index) in dataMxs" :key="index">
+                        <li v-for="( item, index ) in  dataMxs " :key="index">
                             <div class="left">
                                 <img v-if="index + 1 == 1" src="../../../assets/image/cat-lyph-noe.png" alt="">
                                 <img v-if="index + 1 == 2" src="../../../assets/image/cat-lyph-tow.png" alt="">
@@ -53,12 +72,12 @@
                                 <p v-if="index + 1 > 3">{{ index + 1 }}</p>
                             </div>
                             <div class="center">
-                                <a href="javascript:;">
+                                <router-link :to="`/user/space/${item.user._id}`">
                                     <span>
                                         <img :src="item.user.bgimgUrl" alt="">
                                     </span>
                                     <h3>{{ item.user.username }}</h3>
-                                </a>
+                                </router-link>
                             </div>
                             <div class="right">
                                 <h2>{{ item.count }}只</h2>
@@ -72,7 +91,9 @@
                 </div>
 
             </div>
-
+            <div class="no" v-else>
+                <CatLoding :loading="false" :finished="true" />
+            </div>
         </div>
     </div>
 </template>
@@ -89,23 +110,32 @@ let store = useStore()
 let route = useRoute()
 let router = useRouter()
 
-let userApplys = ref(null)
+let userApplys = ref([])
 let dataMxs = ref(null)
 
+let user = store.state.user.profile
+
+
+
 GetPhbDAta({ _id: store.state.user.profile._id }).then(({ result }) => {
+    console.log(result);
     dataMxs.value = result.dataMx
-    userApplys.value = result.userApply
+    if (result.userApply.length <= 0) {
+        userApplys.value = null
+    } else {
+        userApplys.value = result.userApply
+    }
+
 }).catch(err => {
     CatPromptJS({ text: "获取数据失败", type: 'error', timeout: 1000 })
 })
 
 
-
-
-
-
 // 查找是否在里面有
 let findUserAppMax = (item) => {
+    if (item == undefined) {
+        return "未上榜"
+    }
     // console.log(item);
     let data = dataMxs.value.findIndex((items, index) => items._id == item)
     // console.log(data);
@@ -113,9 +143,7 @@ let findUserAppMax = (item) => {
         return data + 1
     } else {
         return "不在排行榜"
-
     }
-
 }
 
 
@@ -142,7 +170,7 @@ let findUserAppMax = (item) => {
 .phb {
     width: 100%;
     height: 100%;
-    padding-bottom: 10%;
+    padding-bottom: 80%;
     background: @background-color;
 
 
@@ -161,15 +189,26 @@ let findUserAppMax = (item) => {
         height: 100%;
         position: relative;
         display: flex;
-        justify-content: center;
+        // justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
 
         .bg {
             width: 100%;
-            height: 72px;
+            height: 100px;
             position: absolute;
             background: @primary-color;
             border-radius: 0px 0px 50px 50px;
             z-index: -0;
+
+            p {
+                font-size: 14px;
+                text-align: center;
+                line-height: 50px;
+                color: white;
+                width: 100%;
+            }
 
 
         }
@@ -177,7 +216,7 @@ let findUserAppMax = (item) => {
         .phb-center {
             width: 345px;
             height: 100%;
-            margin-top: 20px;
+            margin-top: 50px;
             z-index: 1;
 
             // 用户模块‘
@@ -372,6 +411,9 @@ let findUserAppMax = (item) => {
 
 
         }
+
+
+
     }
 
 }

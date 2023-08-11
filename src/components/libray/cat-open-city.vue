@@ -112,8 +112,13 @@ export default {
 }
 
 .popup-body {
+    border-top: 1px solid @background-color;
     padding: 5px;
-    border-radius: 10px;
+    // border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
 
 }
 

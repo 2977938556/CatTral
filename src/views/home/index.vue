@@ -38,12 +38,19 @@
         </template>
     </CartStatusBav>
 
+
     <!-- 轮播图组件 -->
     <div class="banner">
-        <CatBannner v-if="items && items.length" :items="items" />
-        <CatLodingItem v-else :width="380" :height="170" />
+        <template v-if="banLogind">
+            <CatLodingItem :width="340" :height="170" :animate="true" />
+        </template>
+        <template v-else>
+            <CatBannner v-if="items.length !== 0" :items="items" />
+            <div class="errbanner" v-else>
+                <CatImage imageSrc="http://ryhi4ojn4.hn-bkt.clouddn.com/img-error.png" />
+            </div>
+        </template>
     </div>
-
     <!-- 按钮组件 -->
     <div class="tab-nav">
         <div class="tab-nav-four">
@@ -71,6 +78,8 @@
     </div>
 
 
+
+
     <!-- 推荐bar -->
     <div class="Reconed">
         <!-- 这个是固定的推荐bar -->
@@ -87,10 +96,9 @@
             <CarGoodsItem :goodsitem="goodsitem" />
         </div>
         <div class="recommende-count lodings" v-else-if="loading == true">
-            <CatLodingItem v-for="item in 3" key="item" :width="179" :height="160" />
+            <CatLodingItem v-for="item in 3" key="item" :width="160" :height="160" :animate="true" />
         </div>
     </div>
-
     <!-- loding加载效果 -->
     <CatLoding :loading="loading" :finished="finished" @infinite="getRecommend()" />
 </template>
@@ -117,13 +125,33 @@ export default {
 
         let loading = ref(false)// 控制是否在加载  false 代表可以加载
         let finished = ref(false)// 控制是还有数据 false代表还有数据
+        let items = computed(() => store.state.home.HomeBanner) || [] // 获取轮播图的数据
 
-        let items = computed(() => store.state.home.HomeBanner)   // 获取轮播图的数据
+
+
+        let banLogind = ref(false)
         // 获取banner的数据
-        GetHomePageBanner().then(value => {
-            // 将数据添加进去
-            store.commit('home/SetHomeBanner', value.result)
-        })
+        let getBanner = () => {
+            banLogind.value = true
+            GetHomePageBanner({ type: 'home' }).then(({ result: { data } }) => {
+                // 将数据添加进去
+                store.commit('home/SetHomeBanner', data)
+                banLogind.value = false
+            }).catch(err => {
+                store.commit('home/SetHomeBanner', [])
+                banLogind.value = false
+            })
+        }
+
+
+
+        if (items.value.length <= 0) {
+            getBanner()
+        }
+
+
+
+
         // 获取bar的响应性数据
         const CatRecommendBar = computed(() => store.state.home.CatRecommendBar)
         // 获取用户的数据
@@ -208,10 +236,11 @@ export default {
                     loading.value = false
                 }
                 loading.value = false
-            }).catch(err => {
+            }).catch(({ response }) => {
+                console.log(err, '首页测试');
                 finished.value = false
                 loading.value = false
-                MessageJs({ text: "获取数据失败请重试", type: 'error' })
+                MessageJs({ text: response.data.message || "获取数据失败请重试", type: 'error' })
             })
         }
         // 监听bar状态栏
@@ -239,7 +268,7 @@ export default {
         // }
 
 
-        return { items, goodsitem, showfalge, GetcityAddrs, CartConfig, cityAddrs, getRecommend, cancels, confirms, CartConfig, loading, finished }
+        return { items, goodsitem, showfalge, GetcityAddrs, CartConfig, cityAddrs, getRecommend, cancels, confirms, CartConfig, loading, finished, banLogind }
     }
 
 };
@@ -275,6 +304,25 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .errbanner {
+        width: 350px;
+        height: 174px;
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        // border: 1px solid red;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+
+        }
+
+    }
 }
 
 

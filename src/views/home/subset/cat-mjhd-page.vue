@@ -112,6 +112,7 @@ export default {
                     loading.value = false;
                     if (result.data && result.data.length !== 0) {
                         // 将数据添加进去
+                        console.log(result.data.filter(item => item.to_examine != 'delete'));
                         store.commit('mjhd/SetMjhdData', result.data)
                         // 每次请求之后就将当前页添加1页
                         CartConfig.page++

@@ -6,7 +6,7 @@
             </template>
             <template #center>
                 <!-- <p class="tltes">{{ messageList[0]?.fuser_id.username }}</p> -->
-                <p v-if="Us">你和 {{ Us.username }} 的聊天</p>
+                <p v-if="Us">{{ Us.username.length > 5 ? Us.username.slice(0, 5) + '..' : Us.username }}</p>
             </template>
             <template #right>
                 <router-link :to="`/message/setup/${route.params.id}`"><img style="width: 20px;height: 16px;"
@@ -133,7 +133,7 @@ socket.on('getmessage_deatil_data', (result, user) => {
 
 // 这里是监听单个信息pus到数组里面
 socket.on('getmessage_deatil_data_item', (res) => {
-    console.log(res);
+    // console.log(res);
     messageList.value.push(res)
 
     let tiem = setTimeout(() => {
@@ -160,11 +160,11 @@ let messagePush = () => {
 
     // socket.off('black_detai');
     socket.on('black_detai', async ({ messages, data }) => {
-        console.log("调用了");
+        // console.log("调用了");
         if (data != null) {
             return CatPromptJS({ text: messages, type: "error" })
         } else {
-            console.log("无数据");
+            // console.log("无数据");
             // 分别发送信息内容,发送者,接收者
             socket.emit('pushMessage', { message: message.value, user_id: store.state.user.profile._id, fuser_id: route.params.id });
 

@@ -77,6 +77,8 @@ import { ref, computed, onMounted } from 'vue'
 import CatPromptJS from '@/components/libray/CatPrompt.js'
 // 在顶部导入所需库和方法
 import html2canvas from 'html2canvas';
+import { scrollToTop } from '@/utils/animact.js'
+
 // import domtoimage from 'dom-to-image';
 
 export default {
@@ -177,6 +179,8 @@ export default {
                 height: fx.value.offsetHeight,  // 设置图片高度为div的高度
             };
 
+
+
             // 使用html2canvas将div转换为canvas，传递配置对象作为第二个参数
             html2canvas(fx.value, options).then((canvas) => {
                 // 创建一个新的图片元素
@@ -186,8 +190,9 @@ export default {
                 imgsrc.value = img.src
 
                 fxshow.value = true
-
+                scrollToTop()
             });
+
 
         }
 
@@ -207,7 +212,7 @@ export default {
     height: 100%;
     // background: red;
     position: absolute;
-    z-index: 1000000000;
+    z-index: 10000000;
 
     .mk {
         width: 100%;

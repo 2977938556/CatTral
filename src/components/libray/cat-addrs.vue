@@ -1,6 +1,5 @@
 <template>
     <div class="c enter">
-
         <div v-if="cityList.length == 0">lodgin</div>
         <div v-else>
             <select v-model="province" name="sheng">
@@ -173,12 +172,6 @@ let GetCityJson = () => {
         }
     })
 }
-
-
-
-
-
-
 </script>
 
 
@@ -191,7 +184,7 @@ let GetCityJson = () => {
         width: 100%;
         display: flex;
         justify-content: center;
-
+        justify-content: center;
 
         // height: 77px;
         select {

@@ -66,7 +66,7 @@ export default {
         // 评论详情中的点赞与取消
         AddCommentDetail(state, { addupId, commenter }) {
             let index = state.CommentDetail.addup.findIndex(item => item == commenter)
-            console.log(index);
+            // console.log(index);
             if (index < 0) {
                 state.CommentDetail.addup.push(commenter)
             } else {

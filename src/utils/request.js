@@ -16,7 +16,9 @@ import MessageJs from '@/components/libray/CarMessage.js'
 // export const baseURL = ' http://192.168.43.57:3000/api';
 // export const baseURL = ' http://172.16.74.249:3000/api';
 // export const baseURL = ' http://47.115.207.47:8848/api';
-export const baseURL = ' http://192.168.1.107:3000/api';
+export const baseURL = ' http://192.168.137.1:3000/api';
+// export const baseURL = ' http://121.37.119.45:3000/api';
+
 
 
 const instance = axios.create({
@@ -39,7 +41,6 @@ instance.interceptors.request.use(config => {
 })
 
 
-
 // 请求拦截器
 instance.interceptors.response.use(res => res.data, err => {
     // 判断是否是401状态
@@ -48,6 +49,13 @@ instance.interceptors.response.use(res => res.data, err => {
         // 2. 跳转到登录页
         // 3. 跳转需要传参（当前路由地址）给登录页码
         store.commit('user/SetUser', {})
+        store.commit('user/SetUser', {})// 清空用户数据
+        store.commit('home/SetcityAddrs', {})// 清空地区数据
+        store.commit('home/DeleteGoodsitem', []) //清空首页数据
+        store.commit('user/SetCatLove', []) //清空收藏数据
+        store.commit('user/SetHomeBanner', []) //清空收藏数据
+
+
 
         // 基于当前的路径存储在回调地址中
         MessageJs({ text: `${err.response.data.message}`, type: "error" })

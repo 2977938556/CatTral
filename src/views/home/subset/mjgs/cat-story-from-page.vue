@@ -23,7 +23,7 @@
             <!-- 写故模块 -->
             <div class="release-a story">
                 <div class="a center">
-                    <p>用户名称</p>
+                    <p>故事内容</p>
                     <textarea type="text" v-model="SubmitData.story" placeholder="请写下你的故事"></textarea>
                 </div>
             </div>
@@ -31,7 +31,7 @@
 
             <div class="release-e story">
                 <div class="e center">
-                    <p>选择头像</p>
+                    <p>上传封面</p>
                     <div>
                         <label for="upload">
                             <span>上传图片</span>

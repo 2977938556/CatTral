@@ -9,6 +9,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 
 
+
+// 性能优化版本
 const Home = () => import('@/views/home/index.vue')// 首页
 const Search = () => import('@/views/search/index.vue')//搜索
 const CatLogin = () => import('@/views/login/index.vue')//登录
@@ -17,12 +19,17 @@ const Release = () => import('@/views/release/index.vue')// 发布页面
 
 
 // 首页功能模块
-import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'// 猫迹故事
-import CatStoryFromPage from '@/views/home/subset/mjgs/cat-story-from-page.vue'// 故事分享
-import CatMjsdDetail from '@/views/home/subset/mjgs/cat-mjgs-detail.vue'// 详情页面
+// import CatMjgsPage from '@/views/home/subset/cat-mjgs-page.vue'// 猫迹故事
+// import CatStoryFromPage from '@/views/home/subset/mjgs/cat-story-from-page.vue'// 故事分享
+// import CatMjsdDetail from '@/views/home/subset/mjgs/cat-mjgs-detail.vue'// 详情页面
 
+// 首页功能模块 性能优化版本
+const CatMjgsPage = () => import('@/views/home/subset/cat-mjgs-page.vue')// 猫迹故事
+const CatStoryFromPage = () => import('@/views/home/subset/mjgs/cat-story-from-page.vue')// 故事分享
+const CatMjsdDetail = () => import('@/views/home/subset/mjgs/cat-mjgs-detail.vue')// 详情页面
+// const CatLyphPage = () => import('@/views/home/subset/cat-lyph-page.vue')// 领养排行版本
 
-import CatLyphPage from '@/views/home/subset/cat-lyph-page.vue'// 猫迹商店
+import CatLyphPage from '@/views/home/subset/cat-lyph-page.vue'// 领养排行版本
 
 
 

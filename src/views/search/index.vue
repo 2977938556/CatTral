@@ -12,12 +12,11 @@
             </template>
         </CartStatusBav>
 
-
         <div class="search-content">
             <div class="search-center">
                 <div class="input">
                     <img src="../../assets/image/cat-search-msall-icon.png" alt="">
-                    <input type="text" placeholder="请输入你的搜索内容" v-model="fromOtion.search" @blur="submiotSearch">
+                    <input type="text" placeholder="请输入你的搜索内容" v-model="fromOtion.search" @keydown.enter="submiotSearch">
                 </div>
 
 
@@ -33,7 +32,7 @@
 
                     <div class="tag">
                         <template v-if="his != null">
-                            <p v-for="item in his" :key="item.key">{{ item.history }}</p>
+                            <p v-for="item in his" :key="item.key" @click="searchHis(item.history)">{{ item.history }}</p>
                         </template>
                     </div>
                 </div>
@@ -102,7 +101,6 @@ let loading = ref(false)
 let finished = ref(false)
 
 
-
 // 搜索配置项
 let fromOtion = reactive({
     search: '',
@@ -151,7 +149,7 @@ GetHistoryData(fromOtion).then(({ result }) => {
 
 
 
-
+// 清空历史记录
 let deleteHis = () => {
     if (his != null && his.length != 0) {
         DeleteHistory(fromOtion).then(value => {
@@ -165,6 +163,11 @@ let deleteHis = () => {
 
 
 
+
+let searchHis = (val) => {
+    fromOtion.search = val
+    submiotSearch()
+}
 
 
 

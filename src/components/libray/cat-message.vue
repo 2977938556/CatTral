@@ -96,7 +96,6 @@ export default {
     // transform: translateY(-100%);
 
     p {
-        // padding: 5px 5px 5px 5px;
         color: #fff;
     }
 }

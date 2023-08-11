@@ -1,22 +1,33 @@
 <template>
     <div class="cat-banner">
         <div class="banner-box">
-            <div class="item-banner" @touchend="open" @touchstart="stop" v-for="(item, index) in items" :key="item.id"
+            <!-- 轮播图一个是轮播点击需要全屏的 一个是 有链接的需要跳转页面  -->
+            <div class="item-banner" @touchend="open" @touchstart="stop" v-for="(item, index) in   items  " :key="index"
                 :class="{ selectbanner: selectIndex == index }">
-                <a href="javascript:;" v-if="item?.imgUrl && item?.imgUrl != '' && item?.title != ''">
-                    <img :src="item?.imgUrl" :title="item.title">
-                </a>
-                <a href="javascript:;" v-else>
-                    <img :src="item" :title="item"
-                        @click="opneMax({ target: item, data: JSON.parse(JSON.stringify(items)) })">
-                </a>
-            </div>
-            <div class="banner-item-checkout">
-                <template v-if="items.length <= 0">
-                    <span @click="slelceBanner(index)" :class="{ active: selectIndex == index }"
-                        v-for="(item, index) in items.length" :key="index"></span>
+                <!-- 这里是有链接的模块 【首页轮播图】-->
+                <template v-if="item?.pagepath">
+                    <!-- 判断是否有链接和跳转to_id -->
+                    <div v-if="item.pagepath != '' && item.to_id != ''" class="boxs">
+                        <router-link :to="`${item.pagepath}/${item.to_id}`">
+                            <span class="titles">{{ item.title }}</span>
+                            <CatImage :imageSrc="item.imageUrl" />
+                        </router-link>
+                    </div>
+                    <!-- 没有的情况那么只需要显示图片 -->
+                    <div v-else>
+                        <CatImage :imageSrc="item.imageUrl" />
+                    </div>
+                </template>
+                <!-- 这里是轮播图模块没有链接跳转 -->
+                <template v-else>
+                    <CatImage :imageSrc="item" :item="items" @opneMax="opneMax" />
                 </template>
             </div>
+            <div class="banner-item-checkout">
+                <span @click="slelceBanner(index)" :class="{ active: selectIndex == index }"
+                    v-for="( item, index ) in  items.length " :key="index"></span>
+            </div>
+
         </div>
     </div>
 </template>
@@ -45,6 +56,7 @@ export default {
 
     },
     setup(props, { emit }) {
+
 
         // 控制显示哪张图片
         let selectIndex = ref(0);
@@ -110,7 +122,6 @@ export default {
 
 
 
-
         return { selectIndex, slelceBanner, stop, open, opneMax }
     }
 }
@@ -140,7 +151,6 @@ export default {
         border-radius: 10px;
         background: #e0e0e0;
 
-
         .item-banner {
             width: 345px;
             height: 160px;
@@ -149,13 +159,35 @@ export default {
             transition: all 0.5s;
             overflow: hidden;
 
-            a {
-                img {
-                    object-fit: cover;
-                    width: 100%;
-                    height: 100%;
-                }
+            img {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
             }
+
+            .boxs {
+                position: relative;
+                width: 345px;
+                height: 160px;
+
+                .titles {
+                    display: block;
+                    width: 345px;
+                    padding: 6px;
+                    font-size: 12px;
+                    background: linear-gradient(90deg, rgb(0, 0, 0) 0%, rgba(255, 132, 0, 0.02) 100%);
+                    color: white;
+                    position: absolute;
+                    left: 0px;
+                    bottom: 0px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+
+            }
+
         }
 
         .item-banner:nth-child(1) {

@@ -159,7 +159,7 @@ import { Processingregion } from '@/utils/timeFilter.js'
 import CatPromptJS from '@/components/libray/CatPrompt.js'
 import router from '../../router'
 import { socket } from '@/utils/socket.js'
-
+import { scrollToTop } from '@/utils/animact.js'
 
 
 
@@ -242,11 +242,9 @@ let GetGetDEtailCat = async () => {
         // 这里我们需要将帖子的数据存入vuex中
         store.commit('detail/SetDetailData', result.data.DetailData)
     }).catch(({ response: { data } }) => {
-        // console.log(data);
         // 这里是没有数据的情况下。我们跳转到404页面上
         return router.push('/error')
     })
-
 
     // 获取用户的收藏数据
     let { result } = await GetCollect(userData._id)
@@ -261,10 +259,7 @@ let GetGetDEtailCat = async () => {
     FollowData.value = follow
 }
 
-
 GetGetDEtailCat()
-
-
 
 // 设置节流阀
 let Debouncing = null
@@ -277,7 +272,6 @@ let CollectFn = () => {
             GetcollectObje({ DetailData: DetailData.value, cat_id: GoodsId.value, userData: userData, collectFlage: collectFlage.value }).then(({ result }) => {
                 // 这里由于我直接修改了储存收藏的数据所以会自动更新
                 collectData.value = result.data.bookmarks.map(item => item.cat_id) || []
-
 
                 // 下面的代码表示的是每次用户点击收藏按钮都会将收藏的数据返回回(每次返回的都是添加收藏或者取消收藏的数据)
 
@@ -302,13 +296,11 @@ let CollectFn = () => {
 
 // 这里我是直接监听收藏的数据
 watch(() => collectData.value, (newVal, olVal) => {
-
     // 这里我们设置了一下如果没有值的情况那么就会直接赋值为1
     if (collectData.value.length == 0) {
         collectFlage.value = false
         return
     }
-
     // // 这里是查早是否有数据
     let index = collectData.value.findIndex(item => item._id == GoodsId.value);
 
@@ -322,12 +314,20 @@ watch(() => collectData.value, (newVal, olVal) => {
 }, { immediate: true })
 
 
+
+
+
+
+
+
 // 这里是监听的当前页面其他的流浪猫卡片
 watch(() => route.params.id, (newVal, olVal) => {
     if (newVal != olVal) {
         // 将当前需要被查询的帖子id进行查询
+
         GoodsId.value = newVal
         GetGetDEtailCat()
+        scrollToTop()
     }
 })
 

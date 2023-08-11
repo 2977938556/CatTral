@@ -132,7 +132,7 @@ export default {
 
         // 这里是发送数据获取当前评论的数据
         GetCommentData(CatId).then(value => {
-            console.log("获取到的数据", value.result.data);
+            // console.log("获取到的数据", value.result.data);
 
             //这里我们使用vuex进行管理
             state.commit('detail/SetCommentDat', value.result.data)

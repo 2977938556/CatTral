@@ -1,7 +1,9 @@
 <template>
     <div class="user">
         <div class="user-bg">
-            <img src="../../assets/image/cat-user-bg.png" alt="用户背景图片">
+            <span>
+                <img :src="UserData?.bgimgUrl" alt="用户背景图片">
+            </span>
         </div>
         <!-- 头部数据 -->
         <div class="user-title-content">
@@ -194,6 +196,7 @@ export default {
                 store.commit('home/SetcityAddrs', {})// 清空地区数据
                 store.commit('home/DeleteGoodsitem', []) //清空首页数据
                 store.commit('user/SetCatLove', []) //清空收藏数据
+                store.commit('user/SetHomeBanner', []) //清空收藏数据
 
                 // 这里可以优化一下 弹窗确认
                 MessageJs({ text: '退出登录成功', type: 'success', timeout: 1000 })
@@ -230,18 +233,29 @@ export default {
         height: 100%;
         // border: 1px solid red;
         align-items: center;
-        // position: fixed;
-        z-index: -100000;
+        position: fixed;
+        z-index: -1;
         position: absolute;
         background: @background-color;
 
+        // border-radius: 30px;
+        span {
+            display: block;
+            width: 100%;
+            height: 275px;
+            overflow: hidden;
+            border-radius: 0px 0px 20px 20px;
+        }
 
 
 
         img {
             object-fit: cover;
             width: 100%;
-            height: 309px;
+            height: 300px;
+            // filter: blur(10px);
+            filter: brightness(70%) blur(8px);
+            /* 使用 brightness() 函数调整亮度 */
         }
     }
 
@@ -412,7 +426,7 @@ export default {
                 border-radius: 20px;
                 // border: 1px solid rgb(255, 238, 0);
                 background: @white-color;
-                box-shadow: 0px 12px 10px 0px rgba(255, 124, 0, 0.05);
+                // box-shadow: 0px 12px 10px 0px rgba(255, 124, 0, 0.05);
 
 
 

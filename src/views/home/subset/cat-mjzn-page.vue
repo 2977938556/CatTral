@@ -1,7 +1,7 @@
 <template>
     <div class="mjzn">
         <!-- 头状态栏 -->
-        <CartStatusBav :isstyle="true">
+        <CartStatusBav :isstyle="false">
             <!-- 左边内容插槽 -->
             <template #left>
                 <!-- 返回 -->
@@ -11,7 +11,6 @@
             <template #center>
                 <p>养猫指南</p>
             </template>
-
             <template #right>
                 <span class="shengq"></span>
             </template>

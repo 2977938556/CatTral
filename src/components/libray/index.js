@@ -52,6 +52,9 @@ import CatSubmit from './cat-submit.vue'
 // import CarCommentCommponent from './cat-comment-component.vue'
 // 猫迹故事组件
 import CatMjgsItem from './cat-mjgs-item.vue'
+// 图片加载错误组件
+// 图片组件
+import CatImage from './CatImage.vue'
 
 export default {
     install(app) {
@@ -82,6 +85,7 @@ export default {
         app.component(CatSubmit.name, CatSubmit)
         // app.component(CarCommentCommponent.name, CarCommentCommponent)
         app.component(CatMjgsItem.name, CatMjgsItem)
+        app.component('CatImage', CatImage)// 图片错误组件
 
 
     }

@@ -2,8 +2,11 @@
     <div class="footer">
         <div class="nav-item">
             <router-link to="/home">
-                <img v-if="$route.fullPath == '/home'" src="../../assets/image/cat-home-active.png" alt="">
-                <img v-else src="../../assets/image/cat-home-notselect.png" alt="">
+                <img v-if="$route.fullPath == '/home' && scrollDistance < 1000" src="../../assets/image/cat-home-active.png"
+                    alt="">
+                <img v-else-if="$route.fullPath != '/home'" src="../../assets/image/cat-home-notselect.png" alt="">
+                <img v-if="scrollDistance > 1000 && $route.fullPath == '/home'" class="fhdb" @click="scrollToTop()"
+                    src="../../assets/image/home-fhdb-icon.png">
             </router-link>
         </div>
         <div class="nav-item b">
@@ -26,8 +29,9 @@
 
 <script >
 import { useStore } from 'vuex'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { socket } from '@/utils/socket.js'
+import { scrollToTop } from '@/utils/animact.js'
 
 export default {
     name: "CatNavBar",
@@ -48,11 +52,27 @@ export default {
         })
 
 
+        const handleScroll = () => {
+            // 处理滚动事件的逻辑
+            scrollDistance.value = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+        };
+
+
+        // 滚动的距离
+        let scrollDistance = ref(0)
+
+        onMounted(() => {
+            window.addEventListener('scroll', handleScroll);
+        });
+
+        // 注销监听
+        onBeforeUnmount(() => {
+            window.removeEventListener('scroll', handleScroll);
+        });
 
 
 
-
-        return { s }
+        return { s, scrollDistance, scrollToTop }
 
     }
 
@@ -63,6 +83,14 @@ export default {
 
 
 <style lang="less" scoped>
+.fhdb {
+    display: block;
+    width: 300px !important;
+    height: 100px !important;
+    object-fit: cover !important;
+    // border: 1px solid red;
+}
+
 .footer {
     display: flex;
     justify-content: space-between;
@@ -86,6 +114,7 @@ export default {
     display: flex;
     align-items: center;
     // border: 1px solid blue;
+    height: 100%;
     justify-content: center;
 }
 
@@ -97,8 +126,8 @@ export default {
 
     img {
         object-fit: cover;
-        width: 34px;
-        height: 34px;
+        // width: 34px;
+        // height: 34px;
         // border: 1px solid red;
     }
 
